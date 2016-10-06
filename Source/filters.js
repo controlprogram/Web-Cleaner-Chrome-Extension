@@ -45,6 +45,7 @@ var word_count = 0; // This is a counter variable for the text filter for blocki
 
 var text_observer;
 var image_observer;
+var image_block_cache = {};
 
 // Using the 'DOMContentLoaded event means that you might be able to briefly see a flash of the content that will eventually be filtered. If the page takes a long time, you will get a good look at content that should be filtered.
 // However, directly calling the load_filters funtion results in some text content escaping both the filter and the Mutation observer.
@@ -585,7 +586,7 @@ function image_filter(images)
 		
 	
 		// This code will work for image scanning. Comment for test case 010 until you reach the end of this if block
-		if (options.image_scanner == true)
+		if (options.image_scanner == true && image_block_cache[images[i].src] != false)
 		{			
 			
 			
@@ -629,6 +630,11 @@ function EventHandler()
 			// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
 			var reader = new FileReader(); // This should encode the image data as base64 to use with the PNG class.
 			reader.addEventListener("loadend", function() {
+				if (!/^data:image\//i.test(reader.result)) {
+					// The file isn't an image
+					image_block_cache[xhr._original.src] = false;
+					return;
+				}
 				var image = new Image();
 				image.onload = function() {
 					ImageHandler(xhr._original, image);
@@ -643,37 +649,46 @@ function EventHandler()
 
 function ImageHandler(original, image)
 {
-	// Draw the image onto a canvas.
-	var canvas = document.createElement('canvas');
-	canvas.width = image.width;
-	canvas.height = image.height;
-	var ctx = canvas.getContext('2d');
-	ctx.drawImage(image, 0, 0);
-	var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+	if (!(original.src in image_block_cache)) {
+		// Draw the image onto a canvas.
+		var canvas = document.createElement('canvas');
+		canvas.width = image.width;
+		canvas.height = image.height;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(image, 0, 0);
+		var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
-	var skin_count = 0; // initialize a skin counter
+		var skin_count = 0; // initialize a skin counter
 
-	var limit = ((image.width * image.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
-	var block = false;
+		var limit = ((image.width * image.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
+		var block = false;
 
-	for (var x = 0; x < data.length && !block; x += 4) // While we can still read data and we haven't blocked the image...
-	{
-		var R = data[x]; // first byte is for R
-		var G = data[x+1]; // the next for G
-		var B = data[x+2]; // and the final for B
-		
-		// Now RGB is the decimal representation of the RGB values of the pixel.
-		if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
+		for (var x = 0; x < data.length && !block; x += 4) // While we can still read data and we haven't blocked the image...
 		{
-			skin_count++; // if we find a skin-colored pixel, increment the skin counter
-			if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
-			{
-				block = true;
-				original.src = chrome.extension.getURL("joseph'slogo2(transparent).png");
-				break;
-			} // end if
-		} // end if
+			var R = data[x]; // first byte is for R
+			var G = data[x+1]; // the next for G
+			var B = data[x+2]; // and the final for B
 			
-	} // end for
+			// Now RGB is the decimal representation of the RGB values of the pixel.
+			if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
+			{
+				skin_count++; // if we find a skin-colored pixel, increment the skin counter
+				if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
+				{
+					block = true;
+					break;
+				} // end if
+			} // end if
+				
+		} // end for
+
+		image_block_cache[original.src] = block
+	}
+
+	if (image_block_cache[original.src]) {
+		var replacement = chrome.extension.getURL("joseph'slogo2(transparent).png");
+		image_block_cache[replacement] = false; // the replacement does not get blocked by definition
+		original.src = replacement;
+	}
 	
 } // end Event Handler function
