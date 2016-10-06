@@ -20,14 +20,28 @@ Date Modified: 3-19-2013
    limitations under the License.
 */
 
+/* Some modifications were done to make use of native image parsing.
+Author: rob204
+Date Modified: 6-10-2016
 
+	   Copyright 2016 rob204
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 
 var options; // Give the options object global reference so we can hopefully use it in the DOM Mutation stuff.
 var word_count = 0; // This is a counter variable for the text filter for blocking pages. It is given global scope so that we can use it in the initial filter as well as the text_changes_filter.
-var scanner_images = null;
-var xml_requests = null;
-var scanned_images = null;
 
 var text_observer;
 var image_observer;
@@ -136,14 +150,6 @@ function(response)
 				//window.alert(window.location.hostname); // used for testing.
 				//window.alert("Website not whitelisted."); // Used for testing.
 				
-				// If we haven't created them yet, initialize the scanner_images and xml_requests as arrays.
-				if (scanner_images == null)
-				{
-					scanner_images = new Array(); // Used to hold all the image nodes in the webpage to be scanned.
-					xml_requests = new Array(); // Used to hold all the xml requests for images.
-					scanned_images = new Array();
-					
-				} // end if
 				image_preparation();
 				
 				//window.alert("Called image filter, making image observer."); // used for testing.
@@ -161,14 +167,6 @@ function(response)
 		else
 		{
 		
-			// If we haven't created them yet, initialize the scanner_images and xml_requests as arrays.
-			if (scanner_images == null)
-			{
-				scanner_images = new Array(); // Used to hold all the image nodes in the webpage to be scanned.
-				xml_requests = new Array(); // Used to hold all the xml requests for images.
-				scanned_images = new Array();
-				
-			} // end if
 			image_preparation();
 			
 			//window.alert("Called image filter, making image observer."); // used for testing.
@@ -611,20 +609,19 @@ function image_filter(images)
 	
 		// This code will work for image scanning. Comment for test case 010 until you reach the end of this if block
 		if (options.image_scanner == true)
-		{
-		
-		
-			scanner_images.push(images[i]); // Add the image to the list of images to be scanned.
+		{			
 			
 			
-			
-			// If the image is a PNG, use the PNG class, which will handle the base64 array buffer returned by the xml request.
-			if (images[i].src.match(/.png/i) != null)
+			// If the image src is a DataURL, use it synchronously.
+			if (images[i].src.match(/^data:/i) != null)
 			{
-			
+				ImageHandler(images[i], images[i]);
+			} // end sync if
+
+			else // load it asynchronously
+			{
 				// Now create an xml request for the image so we can circumvent the cross-origin problem.
-				var xml = new XMLHttpRequest();
-				var index = xml_requests.push(xml); // Add the request to the array of requests so we don't lose it later.
+				var xhr = new XMLHttpRequest();
 			
 			// The code below does not use the array of nodes to hold the image as it is reloaded for scanning. I'm not sure that it works properly, but I'm leaving the commented code for now.
 			//	xml.open('GET', images[i].src) // Use an asynchronous get request on the image url.
@@ -634,65 +631,13 @@ function image_filter(images)
 			//	xml.onreadystatechange = EventHandler; // Call EventHandler on a state change (will happen when the image is loaded.)
 			//	xml.send(); // Send the request.
 		
-				xml_requests[index - 1].open('GET', images[i].src) // Use an asynchronous get request on the image url.
-				xml_requests[index - 1].setRequestHeader('Content-Type', 'text/xml'); // Request the content type header.
-				xml_requests[index - 1]._url = images[i].src;
-				xml_requests[index - 1].responseType = 'arraybuffer'; // Used so we can encode the binary into base64
-				xml_requests[index - 1].onreadystatechange = EventHandler; // Call EventHandler on a state change (will happen when the image is loaded.)
-				xml_requests[index - 1].send(); // Send the request.
-			} // end png if
+				xhr.open('GET', images[i].src) // Use an asynchronous get request on the image url.
+				xhr._original = images[i];
+				xhr.responseType = 'blob'; // Used so we can encode the binary into base64
+				xhr.onreadystatechange = EventHandler; // Call EventHandler on a state change (will happen when the image is loaded.)
+				xhr.send(); // Send the request.
+			} // end async if
 			
-			else // Assume that the image is a JPEG, and use the JPEG class to get the data and then parse the image.
-			{
-				// Create the JPEG class image.
-				var image = new JpegImage();
-				var index = scanned_images.push(image);
-				scanned_images[index - 1].url = images[i].src; // Give it the source.
-				scanned_images[index - 1].onload = function () // Write the load function.
-				{
-					//window.alert("JPEG loaded.");
-					
-					var data = this.getData(this.width, this.height); // data contains pixel color values in the following format: RGBRGBRGB...
-					
-					//	window.alert(data[0]); // First R value
-					//	window.alert(data[1]); // First G value
-					//	window.alert(data[2]); // First B value
-				
-					var skin_count = 0; // Initialize a skin counter to 0
-					var limit = ((data.length)/3) * (options.scanner_sensitivity/100); // Calculate the limit before blocking the image.
-				
-					for (var i = 0; i < data.length; i += 3) // Loop through all the pixels
-					{
-						var RGB = data[i] + data[i + 1] + data[i + 2]; // Calculate the sum of the 3 color values.
-						if ((0.35 <= data[i]/RGB) && (data[i]/RGB <= 0.75) && (0.25 <= data[i+1]/RGB) && (data[i+1]/RGB <= 0.45) && (data[i+2]/RGB <= 0.5)) // This will recognize skin-colored pixels.
-						{
-							skin_count++; // Increment the skin counter.
-							//window.alert("Found skin pixel."); // used for testing.
-		
-							if (skin_count >= limit) // If we surpass the limit, then find the image we are scanning.
-							{
-								//window.alert("Blocking image with src: "); // used for testing.
-								
-								for (var y = 0; y < scanner_images.length; y++) // Loop through all the images that we are scanning until we find the one that we are scanning in this instance of the function.
-								{
-									if (scanner_images[y].src == this.url) // We found the image.
-									{
-									
-										scanner_images[y].src = chrome.extension.getURL("joseph'slogo2(transparent).png"); // Replace the image
-										scanner_images.splice(y, 1); // remove the image from the list to scan.
-										scanned_images.splice(scanned_images.indexOf(this), 1); // remove this element from the list of image objects.
-										break; // Break out of the loop
-									} // end if
-								} // end for
-								return false; // end the function (we are still inside another for loop)
-							} // end if
-						} // end if
-					} // end for 
-				}; // End callback function
-				
-				scanned_images[index - 1].load(images[i].src); // Load the image.
-				
-			} // end JPEG else
 		} // end image scanner else
 		// End working image scanner code.
 			
@@ -705,66 +650,62 @@ function image_filter(images)
 
 function EventHandler()
 {
-
+	var xhr = this;
 	// If the request is ready...
-	if (this.readyState == 4)
+	if (xhr.readyState == 4)
 	{
 		// And we got an OK response...
-		if (this.status == 200)
+		if (xhr.status == 200)
 		{
-			// Convert the binary string to base64, then put it into a PNG class to extract pixel data from it.
-			var base64 = base64ArrayBuffer(this.response); // This should encode the image data as base64 to use with the PNG class.
-
-
-			// Create the PNG class image using the base64 string.
-			var image = new PNG(base64);
-			var skin_count = 0; // initialize a skin counter
-			
-			var index = 0; // initialize an index used to access the proper image from the array of images we are scanning.
-	
-			for (var l = 0; l < scanner_images.length; l++)
-			{
-				if (scanner_images[l].src == this._url) // find the correct image that we are scanning
-				{
-					index = l;
-					break;
-				} // end if
-			} // end for
-
-			var limit = ((image.width * image.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
-			var block = false;
-		
-			while (line = image.readLine() && !block) // While we can still read data and we haven't blocked the image...
-			{
-				for (var x = 0; x < line.length; x++) // for each element in the array...
-				{
-					var string = line[x].toString(16); // Convert the hex number to a string.
-					var R = string.slice(0, 2); // first 2 characters are for R
-					var G = string.slice(2, 4); // the next 2 for G
-					var B = string.slice(4); // and the final 2 for B
-					R = parseInt(R, 16); // Convert the strings to ints
-					G = parseInt(G, 16);
-					B = parseInt(B, 16);
-					
-					// Now RGB is the decimal representation of the RGB values of the pixel.
-					if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
-					{
-						skin_count++; // if we find a skin-colored pixel, increment the skin counter
-						if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
-						{
-							block = true;
-							scanner_images[index].src = chrome.extension.getURL("joseph'slogo2(transparent).png");
-							scanner_images.splice(index, 1); // remove the image from the list to scan.
-							xml_requests.splice(xml_requests.indexOf(this), 1); // remove this xml request from the list of xml requests, as it is done with its job
-							break;
-						} // end if
-					} // end if
-					
-				} // end for
-			} // end while
-			
+			// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
+			var reader = new FileReader(); // This should encode the image data as base64 to use with the PNG class.
+			reader.addEventListener("loadend", function() {
+				var image = new Image();
+				image.onload = function() {
+					ImageHandler(xhr._original, image);
+				};
+				image.src = reader.result;
+			});
+			reader.readAsDataURL(xhr.response);
 		} // end if
 	} // end if
+}  // end Event Handler function
+
+
+function ImageHandler(original, image)
+{console.log('testing ' + original.src);
+	// Draw the image onto a canvas.
+	var canvas = document.createElement('canvas');
+	canvas.width = image.width;
+	canvas.height = image.height;
+	var ctx = canvas.getContext('2d');
+	ctx.drawImage(image, 0, 0);
+	var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+	var skin_count = 0; // initialize a skin counter
+
+	var limit = ((image.width * image.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
+	var block = false;
+
+	for (var x = 0; x < data.length && !block; x += 4) // While we can still read data and we haven't blocked the image...
+	{
+		var R = data[x]; // first byte is for R
+		var G = data[x+1]; // the next for G
+		var B = data[x+2]; // and the final for B
+		
+		// Now RGB is the decimal representation of the RGB values of the pixel.
+		if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
+		{
+			skin_count++; // if we find a skin-colored pixel, increment the skin counter
+			if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
+			{
+				block = true;
+				original.src = chrome.extension.getURL("joseph'slogo2(transparent).png");
+				break;
+			} // end if
+		} // end if
+			
+	} // end for
 	
 } // end Event Handler function
 
