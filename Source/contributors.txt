@@ -2,8 +2,10 @@ Name: Web Cleaner Extension
 Author: Joseph Gray, with contributions from:
 		Maria Solomond (Logo)
 		Notmasteryet (jpg.js, Base64.js, Deflate.js)
-		Sebastian Markbåge (PNG.js)
+		Sebastian MarkbÃ¥ge (PNG.js)
 		Jonleighton (base64ArrayBuffer)
 		Google (mutation_summary.js)
 
-
+This version contains some modifications made by rob204.
+In particular all image file parsing has been replaced
+by native browser functions.
