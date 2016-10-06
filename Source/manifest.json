@@ -4,7 +4,7 @@
    },
    "content_scripts": [ {
       "all_frames": true,
-      "js": [ "filters.js", "mutation_summary.js", "PNG.js", "Deflate.js", "Base64.js", "jpg.js" ],
+      "js": [ "filters.js", "mutation_summary.js" ],
       "matches": [ "\u003Call_urls>" ],
       "run_at": "document_start"
    } ],

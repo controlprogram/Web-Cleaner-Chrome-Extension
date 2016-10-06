@@ -673,7 +673,7 @@ function EventHandler()
 
 
 function ImageHandler(original, image)
-{console.log('testing ' + original.src);
+{
 	// Draw the image onto a canvas.
 	var canvas = document.createElement('canvas');
 	canvas.width = image.width;
