@@ -171,22 +171,52 @@ This is the options page for the  extension
 			NOTE: Due to the nature of this scanner, when it is working properly it may block close-up facial images.
 			</p>
 
-			<!-- The form that holds the checkbox indicating if the image scanner is on or off. -->
-			<form id = "image_scanner">
-			
-				<input type = "checkbox" name = "image_scanner_on" value = "true"> Use Image Scanner
-				
-			</form>
 
-			<br>
 
-			<!-- The slider bar for the sensitivity of the image scanner -->
-			<form id = "scanner_sensitivity">
-			
-				<input type = "range" min = "0" max = "100" step = "1">
-				<span id = "range2"></span>
+			<!-- The div that contains the two options used to specify scanner / sensitivity and image replacement strategy. -->
+			<div id = "image_options_boxes" style = "vertical-align: top;">
+
+				<!-- The div that holds the box that contains the words to block images on. -->
+				<div id = "image_scanner_box" style = "display: inline-block; float: left; vertical-align: top;">
+
+					<!-- The form that holds the checkbox indicating if the image scanner is on or off. -->
+					<form id = "image_scanner">
+					
+						<input type = "checkbox" name = "image_scanner_on" value = "true"> Use Image Scanner
+						
+					</form>
+
+					<br>
 				
-			</form>
+					<!-- The slider bar for the sensitivity of the image scanner -->
+					<form id = "scanner_sensitivity">
+					
+						<input type = "range" min = "0" max = "100" step = "1">
+						<span id = "range2"></span>
+						
+					</form>
+					
+				</div> <!-- The end of image_scanner_box div -->
+
+				<!-- The div that holds the box containing the image replacement strategy -->
+				<div id = "image_replacement_box" style = "padding-left: 50px; display: inline-block; float: left; vertical-align: top;">
+				
+					<!-- The radio button form for selecting the replacement image -->
+					<form id = "image_replacement">
+					
+						<input type = "radio" name = "image_replacement" value = "logo">Logo
+						<input type = "radio" name = "image_replacement" value = "pixels">Pixelation
+						
+					</form>
+					
+				</div> <!-- the end of image_replacement_box div -->
+
+				<!-- This is used to ensure that the container div wraps around the two floating divs -->
+				<div style = "clear: both;"></div>
+
+				<p>When entering words/websites into the above boxes, please only place one word/website per line with no punctuation. Also, please use the following format for websites: www.foxnews.com</p>
+
+			</div> <!-- The end of the image_options_boxes div -->
 
 			<br>
 			<br>

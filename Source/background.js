@@ -47,7 +47,7 @@ function initialize_options()
 	localStorage["image_blocked_words"] = "sex\nbreast\nboob\npenis\nvagina\ndick\nfuck\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude\nbra \npanties\nrisque\nraunch\nmaxim\nplayboy\nstripper\nprostitute\nlingerie";
 	localStorage["image_whitelisted_websites"]  = "";
 	localStorage["scanner_sensitivity"] = 50;
-
+	localStorage["image_replacement"] = "logo";
 	
 }
 
@@ -173,6 +173,9 @@ function load_variables(options)
 	if (localStorage["scanner_sensitivity"])
 		options.scanner_sensitivity = localStorage["scanner_sensitivity"];
 
+	if (localStorage["image_replacement"])
+		options.image_replacement = localStorage["image_replacement"];
+
 }
 
 // This is an object that holds all the options available for the user to set.
@@ -217,6 +220,8 @@ options.image_scanner = null;
 // This is an integer between 0 and 100. It tells the sensitivity of the image scanner as a percentage.
 options.scanner_sensitivity = null;
 
+// This is a string specifying the replacement strategy.
+options.image_replacement = null;
 
 // Function to pass options object to content script.
 chrome.extension.onMessage.addListener(

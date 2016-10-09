@@ -32,6 +32,7 @@ function default_options()
 	var word_or_sentence = document.getElementById("word_or_sentence");
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity");
 	var range2 = document.getElementById("range2");
+	var image_replacement = document.getElementById("image_replacement");
 	
 	
 	// This loop will set the text filter to on.
@@ -69,6 +70,9 @@ function default_options()
 	
 	scanner_sensitivity.children[0].value = 50;
 	range2.innerHTML = "50%";
+
+
+	image_replacement.children[0].checked = "true";
 }
 
 // This function updates an html element to show the change in a the slider bar value for the image scanner sensitivity.
@@ -96,6 +100,7 @@ function load_options()
 	var image_scanner = document.getElementById("image_scanner");
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity");
 	var range2 = document.getElementById("range2");
+	var image_replacement = document.getElementById("image_replacement");
 	var saved_note = document.getElementById("saved_note");
 	
 	
@@ -184,6 +189,12 @@ function load_options()
 	scanner_sensitivity.children[0].value = localStorage["scanner_sensitivity"];
 	
 	range2.innerHTML = localStorage["scanner_sensitivity"] + "%";
+
+	var image_replacement_strategy = localStorage["image_replacement"] && image_replacement.querySelector("[value='" + localStorage["image_replacement"] + "']");
+	if (image_replacement_strategy)
+	{console.log(image_replacement_strategy)
+		image_replacement_strategy.checked = true;
+	}
 	
 	// Check if there is a saved note and that it is not empty. If so, load the note with the date/time the options were saved.
 	if (localStorage["saved_note"] && localStorage["saved_note"] != "")
@@ -377,6 +388,11 @@ function save_and_update_background()
 	// This is an integer between 0 and 100. It tells the sensitivity of the image scanner as a percentage.
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity").children[0].value;
 	
+	// This is a string specifying the replacement strategy
+	var image_replacement = document.querySelector("[name=image_replacement]:checked");
+	image_replacement = image_replacement ? image_replacement.value : "";
+
+
 	// This element holds the time that the save button was clicked.
 	var time = new Date();
 	
@@ -471,6 +487,9 @@ function save_and_update_background()
 	// Store the scanner sensitivity
 	localStorage["scanner_sensitivity"] = scanner_sensitivity;
 	background.scanner_sensitivity = scanner_sensitivity;
+
+	localStorage["image_replacement"] = image_replacement;
+	background.image_replacement = image_replacement;
 
 }
 

@@ -20,9 +20,11 @@ Date Modified: 3-19-2013
    limitations under the License.
 */
 
-/* Some modifications were done to make use of native image parsing.
+/* Some modifications were done to
+    - make use of native image parsing
+    - use pixelation
 Author: rob204
-Date Modified: 6-10-2016
+Date Modified: 9-10-2016
 
 	   Copyright 2016 rob204
 
@@ -45,7 +47,14 @@ var word_count = 0; // This is a counter variable for the text filter for blocki
 
 var text_observer;
 var image_observer;
-var image_block_cache = {};
+var image_cache = {
+	good: new Map(), // stores all good urls as {url: replacementUrl}
+	bad: new Map(), // stores all bad urls as {url: replacementUrl}
+	unsure: new Map(), // stores all untested urls as {url: replacementUrl}
+	replacements: new Set(), // stores all replacements
+	analyzing: new Map(), // stores all currently analyzed images as {url: [listeners]}
+	converting: new Map() // stores all currently converted images as {url: [listeners]}
+};
 
 // Using the 'DOMContentLoaded event means that you might be able to briefly see a flash of the content that will eventually be filtered. If the page takes a long time, you will get a good look at content that should be filtered.
 // However, directly calling the load_filters funtion results in some text content escaping both the filter and the Mutation observer.
@@ -498,197 +507,358 @@ function image_filter(images)
 	var word_pat = new RegExp( '(\\S*' + options.image_blocked_words.split('\n').join('\\S*|\\S*') + '\\S*)', 'igm');
 	
 	//window.alert(word_pat); // Used for testing.
+
+	var	good = image_cache.good,
+		bad = image_cache.bad,
+		unsure = image_cache.unsure,
+		analyzing = image_cache.analyzing,
+		converting = image_cache.converting,
+		replacements = image_cache.replacements;
 	
 	for (var i = 0; i < images.length; i++)
 	{
-	
+		var block = false;
 		//window.alert("Src text: " + images[i].src + '\n Alt text: ' + images[i].alt + "\nDest text: " + images[i].attr("dest_src")); // used for testing.
 		
-		// Otherwise, if the image has a title that matches a blocked word...
-		if (images[i].title.match(word_pat) != null)
+		var img = images[i];
+		var data = img.wcData;
+		if (!data)
 		{
-			// Replace the image with a blank white image.
-			var matches = images[i].title.match(word_pat);
-			images[i].src = chrome.extension.getURL("joseph'slogo2(transparent).png");
-			for (var j = 0; j < matches.length; j++)
+			data = img.wcData = new Map();
+		}
+		
+		// Otherwise, if the image has a title that matches a blocked word...
+		if (data.has('replacedTitle') && data.get('replacedTitle') === img.title)
+		{
+			block = true;
+		}
+		else 
+		{
+			data.set('originalTitle', img.title);
+			if (img.title.match(word_pat) != null)
 			{
-				images[i].title = images[i].title.replace(matches[j], new Array(matches[j].length + 1).join('*'));
-			}
-			
+				img.title = img.title.replace(word_pat, function(m) {
+					return '*'.repeat(m.length);
+				});
+				data.set('replacedTitle', img.title);
+				
+				block = true;
 
-			continue; // go to next image
-		} // end else if
+			} // end if
+			else
+			{
+				data.delete('replacedTitle');
+			}
+		}
 		
 		
-		// If the image URL has a match with a blocked word...
-		else if (images[i].src.match(word_pat) != null)
+		// If the image URL has a match with a blocked word... All replacement URLs are not blocked by definition.
+		if (!replacements.has(img.src) && img.src.match(word_pat) != null)
 		{
 		
 			// HAVING A PROBLEM WITH WORD MATCHING IN SRC ATTRIBUTE. PROBLEM SOLVED JANUARY 2013
 			//window.alert("Replacing image step 1."); // used for testing.
 			//window.alert("Image number: " + i); //used for testing.
 			
-			// Replace the image with a blank white image.
-			images[i].src = chrome.extension.getURL("joseph'slogo2(transparent).png");
+			block = true;
 
-			continue; // Go to next image.
 		} // end if
 		
 		
-		
-		// Otherwise if the image alternate text has a match with a blocked word...
-		else if (images[i].alt.match(word_pat) != null)
+		if (data.has('replacedAlt') && data.get('replacedAlt') === img.alt)
 		{
-			//window.alert("Replacing image step 3."); // used for testing.
-			//window.alert("Image number: " + i); //used for testing.
-			
-			// Replace the image with a blank white image.
-			images[i].src = chrome.extension.getURL("joseph'slogo2(transparent).png"); // Doesn't work on all websites.
-			
-
-			continue; // go to next image
-			
-		} // end else if
+			block = true;
+		}
+		else
+		{
+			data.set('originalAlt', img.alt);
+			// If the image alternate text has a match with a blocked word...
+			if (img.alt.match(word_pat) != null)
+			{
+				//window.alert("Replacing image step 3."); // used for testing.
+				//window.alert("Image number: " + i); //used for testing.
+				img.alt = img.alt.replace(word_pat, function(m) {
+					return '*'.repeat(m.length);
+				});
+				data.set('replacedAlt', img.alt);
+				
+				block = true
+				
+			} // end if
+			else
+			{
+				data.delete('replacedAlt');
+			}
+		}
 		
 		
 		
-		// Otherwise, if the image name has a match with a blocked word...
-		else if (images[i].name.match(word_pat) != null)
+		// If the image name has a match with a blocked word...
+		if (img.name.match(word_pat) != null)
 		{
 			//window.alert("Replacing image step 2."); // used for testing.
 			//window.alert("Image number: " + i); //used for testing.
 			
-			// Replace the image with a blank white image.
-			images[i].src = chrome.extension.getURL("joseph'slogo2(transparent).png");
-			
+			block = true;
 
-			continue; // go to next image
-		} // end else if
+		} // end if
 		
 		
-		// Otherwise, check if the image is the child of a link. (This is usually the case and is when the image itself is the link)
+		// Check if the image is the child of a link. (This is usually the case and is when the image itself is the link)
 		// If the image is a link, and the link address or title contains a blocked word, block the image.
-		else if (images[i].parentNode.nodeName == 'A')
+		if (img.parentNode.nodeName == 'A')
 		{
 
-			if (images[i].parentNode.href.match(word_pat) != null)
+			if (img.parentNode.href.match(word_pat) != null)
 			{
-				images[i].src = chrome.extension.getURL("joseph'slogo2(transparent).png");
-				continue;
+				block = true;
 			} // end if
 			
-			else if (images[i].parentNode.title.match(word_pat) != null)
+			else if (img.parentNode.title.match(word_pat) != null)
 			{
-				images[i].src = chrome.extension.getURL("joseph'slogo2(transparent).png");
-				continue;
+				block = true;
 			} // end else if
-		} // end else if for parent node
+		} // end if for parent node
 		
-	
-		// This code will work for image scanning. Comment for test case 010 until you reach the end of this if block
-		if (options.image_scanner == true && image_block_cache[images[i].src] != false)
-		{			
-			
-			
-			// If the image src is a DataURL, use it synchronously.
-			if (images[i].src.match(/^data:/i) != null)
-			{
-				ImageHandler(images[i], images[i]);
-			} // end sync if
+		img.task = {
+			img: img,
+			src: img.src,
+			block: block
+		};
 
-			else // load it asynchronously
-			{
-				// Now create an xml request for the image so we can circumvent the cross-origin problem.
-				var xhr = new XMLHttpRequest();
-		
-				xhr.open('GET', images[i].src) // Use an asynchronous get request on the image url.
-				xhr._original = images[i];
-				xhr.responseType = 'blob'; // Used so we can encode the binary into base64
-				xhr.onreadystatechange = EventHandler; // Call EventHandler on a state change (will happen when the image is loaded.)
-				xhr.send(); // Send the request.
-			} // end async if
-			
-		} // end image scanner else
-		// End working image scanner code.
-			
-	
-		// If none of these things happen, continue to the next image.
+		processTask(img.task);
 		
 	} // End for loop
 } // end image filter function
 
+function processTask(task) {
+	if (task.img.task !== task) {
+		// Task has been replaced.
+		return;
+	}
+	var img = task.img,
+		data = img.wcData,
+		src = task.src,
+		canvas = task.canvas,
+		good = image_cache.good,
+		bad = image_cache.bad,
+		unsure = image_cache.unsure,
+		analyzing = image_cache.analyzing,
+		converting = image_cache.converting,
+		replacements = image_cache.replacements;
 
-function EventHandler()
-{
-	var xhr = this;
-	// If the request is ready...
-	if (xhr.readyState == 4)
-	{
-		// And we got an OK response...
-		if (xhr.status == 200)
-		{
-			// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
-			var reader = new FileReader(); // This should encode the image data as base64 to use with the PNG class.
-			reader.addEventListener("loadend", function() {
-				if (!/^data:image\//i.test(reader.result)) {
-					// The file isn't an image
-					image_block_cache[xhr._original.src] = false;
-					return;
-				}
-				var image = new Image();
-				image.onload = function() {
-					ImageHandler(xhr._original, image);
-				};
-				image.src = reader.result;
+	// Check if the preconditions have changed.
+	if (
+		src !== img.src || 
+		data.has('replacedTitle') && img.title !== data.get('replacedTitle') ||
+		data.has('replacedAlt') && img.alt !== data.get('replacedAlt')
+	) {
+		// A new task will be scheduled soon.
+		delete img.task;
+	}
+
+	// Check if image is already blocked.
+	else if (replacements.has(src)) {
+		delete img.task;
+	}
+
+	// Check if it's known that the image has to be blocked.
+	else if (bad.has(src) || task.block) {
+		// Maybe we have the replacement somewhere already.
+		if (
+			typeof bad.get(src) === 'string' ||
+			typeof unsure.get(src) === 'string' ||
+			typeof good.get(src) === 'string'
+		) {
+			img.src = bad.get(src) || unsure.get(src) || good.get(src) || '';
+			delete img.task;
+		} else {
+			// It's necessary to convert the image.
+			if (converting.has(src)) {
+				converting.get(src).push(task);
+			} else {
+				converting.set(src, [task]);
+				getReplacement(task, function(replacement) {
+					replacements.add(replacement);
+					if (bad.has(src)) {
+						bad.set(src, replacement);
+					} else if (good.has(src)) {
+						good.set(src, replacement);
+					} else {
+						unsure.set(src, replacement);
+					}
+					var tasks = converting.get(src);
+					converting.delete(src);
+					tasks.forEach(processTask);
+				});
+			}
+		}
+	}
+
+	// Check if it's known that the image has not to be blocked.
+	else if (good.has(src) || options.image_scanner != true) {
+		delete img.task;
+	}
+
+	else {
+		// It's necessary to analyze the image.
+		if (analyzing.has(src)) {
+			// Analying process is already running. Just add this task.
+			analyzing.get(src).push(task);
+		} else {
+			analyzing.set(src, [task]);
+			getUrlAsCanvas(src, function(canvas) {
+				analyzeCanvas(canvas, function(nude) {
+					var replacement = true;
+					if (unsure.has(src)) {
+						replacement = unsure.get(src);
+						unsure.delete(src);
+					}
+					if (nude) {
+						bad.set(src, replacement);
+					} else {
+						good.set(src, replacement);
+					}
+					var tasks = analyzing.get(src);
+					analyzing.delete(src);
+					tasks.forEach(function(task) {
+						task.canvas = canvas;
+					});
+					tasks.forEach(processTask);
+				});
 			});
-			reader.readAsDataURL(xhr.response);
-		} // end if
-	} // end if
-}  // end Event Handler function
+		}
+	}
+}
 
+function getUrlAsCanvas(src, callback) {
+	// If the image src is a DataURL, use it synchronously.
+	if (src.startsWith('data:'))
+	{
+		getDataUrlAsCanvas(src, callback);
+	} // end sync if
 
-function ImageHandler(original, image)
-{
-	if (!(original.src in image_block_cache)) {
+	else // load it asynchronously
+	{
+		// Now create an xml request for the image so we can circumvent the cross-origin problem.
+		var xhr = new XMLHttpRequest();
+
+		xhr.open('GET', src) // Use an asynchronous get request on the image url.
+		xhr.responseType = 'blob'; // Used so we can encode the binary into base64
+		xhr.onreadystatechange = function() {
+			// If the request is ready...
+			if (xhr.readyState == 4)
+			{
+				// And we got an OK response...
+				if (xhr.status == 200)
+				{
+					// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
+					var reader = new FileReader();
+					reader.addEventListener("loadend", function() {
+						getDataUrlAsCanvas(reader.result, callback);
+					});
+					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+				} // end if
+			} // end if
+		};
+		xhr.send(); // Send the request.
+	} // end async if
+}
+
+function getDataUrlAsCanvas(src, callback) {
+	if (!src.startsWith('data:image/')) {
+		// The file isn't an image
+		callback(null);
+		return;
+	}
+	var image = new Image();
+	image.onload = function() {
 		// Draw the image onto a canvas.
 		var canvas = document.createElement('canvas');
 		canvas.width = image.width;
 		canvas.height = image.height;
 		var ctx = canvas.getContext('2d');
 		ctx.drawImage(image, 0, 0);
-		var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+		callback(canvas);
+	};
+	image.src = src;
+}
 
-		var skin_count = 0; // initialize a skin counter
 
-		var limit = ((image.width * image.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
-		var block = false;
+function analyzeCanvas(canvas, callback)
+{
+	if (!canvas) {
+		callback(false);
+		return;
+	}
+	var ctx = canvas.getContext('2d');
+	var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
-		for (var x = 0; x < data.length && !block; x += 4) // While we can still read data and we haven't blocked the image...
+	var skin_count = 0; // initialize a skin counter
+
+	var limit = ((canvas.width * canvas.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
+	var nude = false;
+
+	for (var x = 0; x < data.length && !nude; x += 4) // While we can still read data and we haven't blocked the image...
+	{
+		var R = data[x]; // first byte is for R
+		var G = data[x+1]; // the next for G
+		var B = data[x+2]; // and the final for B
+		
+		// Now RGB is the decimal representation of the RGB values of the pixel.
+		if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
 		{
-			var R = data[x]; // first byte is for R
-			var G = data[x+1]; // the next for G
-			var B = data[x+2]; // and the final for B
-			
-			// Now RGB is the decimal representation of the RGB values of the pixel.
-			if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
+			skin_count++; // if we find a skin-colored pixel, increment the skin counter
+			if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
 			{
-				skin_count++; // if we find a skin-colored pixel, increment the skin counter
-				if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
-				{
-					block = true;
-					break;
-				} // end if
+				nude = true;
+				break;
 			} // end if
-				
-		} // end for
+		} // end if
+			
+	} // end for
 
-		image_block_cache[original.src] = block
-	}
-
-	if (image_block_cache[original.src]) {
-		var replacement = chrome.extension.getURL("joseph'slogo2(transparent).png");
-		image_block_cache[replacement] = false; // the replacement does not get blocked by definition
-		original.src = replacement;
-	}
-	
+	callback(nude);	
 } // end Event Handler function
+
+
+function getReplacement(task, callback)
+{
+	if (options.image_replacement == "logo")
+	{
+		callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
+	} // end logo if
+
+	else // use pixelation
+	{
+		if (task.canvas) {
+			pixelateCanvas(task.canvas);
+			callback(task.canvas.toDataURL());
+		} else {
+			getUrlAsCanvas(task.src, function(canvas) {
+				if (!canvas) {
+					callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
+					return;
+				}
+				task.canvas = canvas;
+				pixelateCanvas(task.canvas);
+				callback(task.canvas.toDataURL());
+			});
+		}
+	} // end pixelation if
+}
+
+function pixelateCanvas(canvas) {
+	if (!canvas) {
+		return;
+	}
+	var width = canvas.width,
+		height = canvas.height;
+	var ctx = canvas.getContext('2d');
+	var pxScale = 30 / Math.max(width, height),
+		pxWidth = Math.round(width * pxScale),
+		pxHeight = Math.round(height * pxScale);
+	ctx.drawImage(canvas, 0, 0, pxWidth, pxHeight);
+	ctx.imageSmoothingEnabled = false;
+	ctx.drawImage(canvas, 0, 0, pxWidth, pxHeight, 0, 0, width, height);
+}
