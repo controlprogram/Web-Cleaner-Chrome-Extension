@@ -20,9 +20,11 @@ Date Modified: 3-19-2013
    limitations under the License.
 */
 
-/* Some modifications were done to
+/* Some modifications were done
     - make use of native image parsing
     - use pixelation
+    - tweaking text filtering
+
 Author: rob204
 Date Modified: 9-10-2016
 
@@ -93,7 +95,7 @@ function(response)
 	{
 		var whitelist = new RegExp( '(\S*' + options.whitelisted_websites.split('\n').join('\S*|\S*') + '\S*)', 'igm');
 		var website = window.location.hostname;
-		if (website.match(whitelist) == null) // the indexOf will return -1 if it does not find the hostname in the whitelist
+		if (!whitelist.test(website)) // the indexOf will return -1 if it does not find the hostname in the whitelist
 		{
 			
 			//window.alert(options.whitelisted_websites.split('\n')); // used for testing.
@@ -154,7 +156,7 @@ function(response)
 		{
 			var whitelist = new RegExp( '(' + options.image_whitelisted_websites.split('\n').join('|') + ')', 'igm');
 			var website = window.location.hostname;
-			if (website.match(whitelist) == null) 
+			if (!whitelist.test(website)) 
 			{
 				//window.alert(options.whitelisted_websites.split('\n')); // used for testing.
 				//window.alert(window.location.hostname); // used for testing.
@@ -283,7 +285,7 @@ function text_filter(text_nodes)
 
 	
 	/*   ERROR WITH THIS FEATURE
-	// If we are going to be replacing sentences, use the created the blocked_pat for sentences, if we are going to only block words, set blocked_pat for just the words.
+	// If we are going to be replacing sentences, use the created the word_pat for sentences, if we are going to only block words, set word_pat for just the words.
 	// We could also choose to not store the RegExp in a variable, and re-create it every iteration through the loop. I am unsure of which would be better, but I suspect that taking up
 	// memory is better than creating additional actions for the CPU to perform.
 	if (options.replace_sentence == true)
@@ -291,13 +293,13 @@ function text_filter(text_nodes)
 		//window.alert("Making Sentence Pattern."); // used for testing. Test Case 006
 		
 		// We are replacing sentences, so make the pattern accordingly.
-		var blocked_pat = new RegExp( '([A-Z]?[\\s\\S]*' + options.blocked_words.split('\n').join('[\\s\\S]*[.?!]?|[A-Z]?[\\s\\S]*') + '[\\s\\S]*[.?!]?)', 'igm');
+		var word_pat = new RegExp( '([A-Z]?[\\s\\S]*' + options.blocked_words.split('\n').join('[\\s\\S]*[.?!]?|[A-Z]?[\\s\\S]*') + '[\\s\\S]*[.?!]?)', 'igm');
 		// The [A-Z] will match any uppercase letter (the capital letter hopefully at the beginning of a sentence.) followed by any number of either whitespace characters (\s) or non-whitespace characterss (\S).
 		// We then join the array of blocked words into a string separated by notation that looks for any number of whitespace and non-whitespace characters followed by either '.', '?', or '!' and then the 'or' symbol,
 		// followed by the the beginning of sentence notation described above. This should find all sentences containing one or more of the blocked words. However, if a sentence has multiple blocked words, it will
 		// find the same sentence multiple times, one time for each word. This may be able to be optimized at a later date.
 		
-		//window.alert(blocked_pat); // Used for testing.
+		//window.alert(word_pat); // Used for testing.
 	} // end if
 	else
 	{
@@ -306,13 +308,14 @@ function text_filter(text_nodes)
 		// This creates a RegExp that looks for each of the blocked words, with any number of word characters surrounding it.
 		// So if options.blocked_words contains bob\nsam\ntom, then blocked_words_pat will be the RegExp (\w*bob\w*|\w*sam\w*|\w*tom\W*) with igm modifiers.
 		// This RegExp matches any word that contains either bob, sam, or tom within it, with global multi-line matching and is not case sensitive.
-		var blocked_pat = new RegExp( '(\\w*' + options.blocked_words.split('\n').join('\\w*|\\w*') + '\\w*)', 'igm');
+		var word_pat = new RegExp( '(\\w*' + options.blocked_words.split('\n').join('\\w*|\\w*') + '\\w*)', 'igm');
 		
 	} // end else
 	*/
-	var blocked_pat = new RegExp( '(\\w*' + options.blocked_words.split('\n').join('\\w*|\\w*') + '\\w*)', 'igm');
+	var word_pat = new RegExp( '(\\w*' + options.blocked_words.split('\n').join('\\w*|\\w*') + '\\w*)', 'igm');
+	var blocked_pat = new RegExp( '(' + options.blocked_words.split('\n').join('|') + ')', 'igm');
 	
-	//window.alert(blocked_pat); // Used for testing.	
+	//window.alert(word_pat); // Used for testing.	
 	//window.alert(text_nodes); // used for testing.
 	//window.alert("Number of text nodes: " + text_nodes.length); // Used for testing purposes.
 	/*for (var i = 0; i < text_nodes.length; i++) // Used for testing
@@ -325,13 +328,18 @@ function text_filter(text_nodes)
 	// loop through the array of text nodes, scrubbing each node as you go.
 	for (var i = 0; i < text_nodes.length; i++)
 	{
+		// Do not replace words in things we don't understand.
+		if (['SCRIPT'].indexOf(text_nodes[i].parentNode.tagName) >= 0) {
+			continue;
+		}
+
 		var paragraph_count = 0; // This creates a paragraph counter to check against the number to block paragraphs on (if the option is selected).
 		
-		//window.alert(blocked_pat); // Used for testing.
+		//window.alert(word_pat); // Used for testing.
 		
 		
 		
-		var matches = text_nodes[i].nodeValue.match(blocked_pat); // This creates an array containing all the strings that matched the blocked_words_pat and gives it the name matches.
+		var matches = text_nodes[i].nodeValue.match(word_pat); // This creates an array containing all the strings that matched the blocked_words_pat and gives it the name matches.
 		
 		if (matches != null) // If we have matches...
 		{
@@ -412,15 +420,9 @@ function text_filter(text_nodes)
 				break; // This breaks out of the loop going through the text nodes.
 			} // end webpage block if
 
-			// If we neither block the paragraph nor webpage loop through all the matches, and then replace each word/sentence with a string of '*' of equivalent length.
-			for (var j = 0; j < matches.length; j++)
-			{
-				// The replace method will return a string where all the first arguments are replaced by the second argument.
-				// new Array(matches[j].length + 1) will create an array of null values that has 1 more element than the number of characters in matches[j]
-				// Once this array is created, join is called on it. This returns the array as a string, with each element of the array separated by an *. Since the elements are null, this will
-				// only return the *'s. Also, since there is one more element than the num of characters in matches[j], the num of * will be the same as the number of characters in matches[j].
-				text_nodes[i].nodeValue = text_nodes[i].nodeValue.replace(matches[j], new Array(matches[j].length + 1).join('*'));
-			} // end for
+			text_nodes[i].nodeValue = text_nodes[i].nodeValue.replace(blocked_pat, function(m) {
+				return '*'.repeat(m.length);
+			});
 			
 		} // end matches if
 		
@@ -504,9 +506,9 @@ function image_filter(images)
 	// This RegExp matches any word that contains either bob, sam, or tom within it, with global multi-line matching and is not case sensitive.
 	// I used \S instead of \w since \w only matches word characters (letters and numbers) while \S matches anything not whitespace.
 	// This is necessary since image urls will contain non-word non-whitespace characters in the singel string.
-	var word_pat = new RegExp( '(\\S*' + options.image_blocked_words.split('\n').join('\\S*|\\S*') + '\\S*)', 'igm');
+	var blocked_pat = new RegExp( '(' + options.image_blocked_words.split('\n').join('|') + ')', 'igm');
 	
-	//window.alert(word_pat); // Used for testing.
+	//window.alert(blocked_pat); // Used for testing.
 
 	var	good = image_cache.good,
 		bad = image_cache.bad,
@@ -530,19 +532,19 @@ function image_filter(images)
 		// Otherwise, if the image has a title that matches a blocked word...
 		if (data.has('replacedTitle') && data.get('replacedTitle') === img.title)
 		{
-			block = true;
+			block = 'replaced title ' + data.get('originalTitle');
 		}
 		else 
 		{
 			data.set('originalTitle', img.title);
-			if (img.title.match(word_pat) != null)
+			if (blocked_pat.test(img.title))
 			{
-				img.title = img.title.replace(word_pat, function(m) {
+				img.title = img.title.replace(blocked_pat, function(m) {
 					return '*'.repeat(m.length);
 				});
 				data.set('replacedTitle', img.title);
 				
-				block = true;
+				block = 'original title ' + data.get('originalTitle');
 
 			} // end if
 			else
@@ -553,36 +555,37 @@ function image_filter(images)
 		
 		
 		// If the image URL has a match with a blocked word... All replacement URLs are not blocked by definition.
-		if (!replacements.has(img.src) && img.src.match(word_pat) != null)
+		// Also ignore data urls since they don't contain words.
+		if (!img.src.startsWith('data:') && !replacements.has(img.src) && blocked_pat.test(img.src))
 		{
 		
 			// HAVING A PROBLEM WITH WORD MATCHING IN SRC ATTRIBUTE. PROBLEM SOLVED JANUARY 2013
 			//window.alert("Replacing image step 1."); // used for testing.
 			//window.alert("Image number: " + i); //used for testing.
 			
-			block = true;
+			block = 'src ' + img.src;
 
 		} // end if
 		
 		
 		if (data.has('replacedAlt') && data.get('replacedAlt') === img.alt)
 		{
-			block = true;
+			block = 'replaced alt ' + data.get('originalAlt');
 		}
 		else
 		{
 			data.set('originalAlt', img.alt);
 			// If the image alternate text has a match with a blocked word...
-			if (img.alt.match(word_pat) != null)
+			if (blocked_pat.test(img.alt))
 			{
 				//window.alert("Replacing image step 3."); // used for testing.
 				//window.alert("Image number: " + i); //used for testing.
-				img.alt = img.alt.replace(word_pat, function(m) {
+				img.alt = img.alt.replace(blocked_pat, function(m) {
 					return '*'.repeat(m.length);
 				});
 				data.set('replacedAlt', img.alt);
 				
-				block = true
+				block = 'original alt ' + data.get('originalTitle');
 				
 			} // end if
 			else
@@ -594,12 +597,12 @@ function image_filter(images)
 		
 		
 		// If the image name has a match with a blocked word...
-		if (img.name.match(word_pat) != null)
+		if (blocked_pat.test(img.name))
 		{
 			//window.alert("Replacing image step 2."); // used for testing.
 			//window.alert("Image number: " + i); //used for testing.
 			
-			block = true;
+			block = 'name ' + img.name;
 
 		} // end if
 		
@@ -609,14 +612,14 @@ function image_filter(images)
 		if (img.parentNode.nodeName == 'A')
 		{
 
-			if (img.parentNode.href.match(word_pat) != null)
+			if (blocked_pat.test(img.parentNode.href))
 			{
-				block = true;
+				block = 'link href ' + img.parentNode.href;
 			} // end if
 			
-			else if (img.parentNode.title.match(word_pat) != null)
+			else if (blocked_pat.test(img.parentNode.title))
 			{
-				block = true;
+				block = 'link title ' + img.parentNode.title;
 			} // end else if
 		} // end if for parent node
 		
@@ -639,6 +642,7 @@ function processTask(task) {
 	var img = task.img,
 		data = img.wcData,
 		src = task.src,
+		block = task.block,
 		canvas = task.canvas,
 		good = image_cache.good,
 		bad = image_cache.bad,
@@ -663,7 +667,8 @@ function processTask(task) {
 	}
 
 	// Check if it's known that the image has to be blocked.
-	else if (bad.has(src) || task.block) {
+	else if (bad.has(src) || block && src) {
+		// Replace image without analyzing it.
 		// Maybe we have the replacement somewhere already.
 		if (
 			typeof bad.get(src) === 'string' ||
@@ -695,8 +700,8 @@ function processTask(task) {
 		}
 	}
 
-	// Check if it's known that the image has not to be blocked.
-	else if (good.has(src) || options.image_scanner != true) {
+	// Check if it's known that the image does not have to be blocked.
+	else if (good.has(src) || options.image_scanner != true || !src) {
 		delete img.task;
 	}
 
@@ -766,8 +771,8 @@ function getUrlAsCanvas(src, callback) {
 }
 
 function getDataUrlAsCanvas(src, callback) {
-	if (!src.startsWith('data:image/')) {
-		// The file isn't an image
+	if (!/^data:image\/[^,;]+;base64,[-+_/a-z0-9]+=?=?$/i.test(src)) {
+		// The url isn't an image or invalid.
 		callback(null);
 		return;
 	}
@@ -837,6 +842,7 @@ function getReplacement(task, callback)
 		} else {
 			getUrlAsCanvas(task.src, function(canvas) {
 				if (!canvas) {
+					console.log('could not pixelate ' + task.src);
 					callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
 					return;
 				}
