@@ -1,0 +1,3 @@
+img:not([data-web-cleaner-ready]) {
+	filter: blur(15px);
+}
