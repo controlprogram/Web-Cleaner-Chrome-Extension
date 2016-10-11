@@ -173,7 +173,7 @@ This is the options page for the  extension
 
 
 
-			<!-- The div that contains the two options used to specify scanner / sensitivity and image replacement strategy. -->
+			<!-- The div that contains the two options used to specify scanner / sensitivity, image replacement and blurring strategy. -->
 			<div id = "image_options_boxes" style = "vertical-align: top;">
 
 				<!-- The div that holds the box that contains the words to block images on. -->
@@ -210,6 +210,18 @@ This is the options page for the  extension
 					</form>
 					
 				</div> <!-- the end of image_replacement_box div -->
+
+				<!-- The div that holds the box containing the image blurring strategy -->
+				<div id = "image_blurring_box" style = "padding-left: 50px; display: inline-block; float: left; vertical-align: top;">
+				
+					<!-- The radio button form for selecting the blurring image -->
+					<form id = "image_blurring">
+					
+						<input type = "checkbox" id = "image_blurring_checkbox" name = "image_blurring_checkbox">Initial Blurring
+						
+					</form>
+					
+				</div> <!-- the end of image_blurring_box div -->
 
 				<!-- This is used to ensure that the container div wraps around the two floating divs -->
 				<div style = "clear: both;"></div>

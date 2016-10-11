@@ -33,6 +33,7 @@ function default_options()
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity");
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
+	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
 	
 	
 	// This loop will set the text filter to on.
@@ -73,6 +74,9 @@ function default_options()
 
 
 	image_replacement.children[0].checked = "true";
+
+
+	image_blurring_checkbox.checked = "true";
 }
 
 // This function updates an html element to show the change in a the slider bar value for the image scanner sensitivity.
@@ -101,6 +105,7 @@ function load_options()
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity");
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
+	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
 	var saved_note = document.getElementById("saved_note");
 	
 	
@@ -192,9 +197,16 @@ function load_options()
 
 	var image_replacement_strategy = localStorage["image_replacement"] && image_replacement.querySelector("[value='" + localStorage["image_replacement"] + "']");
 	if (image_replacement_strategy)
-	{console.log(image_replacement_strategy)
+	{
 		image_replacement_strategy.checked = true;
 	}
+
+	// Sets the block paragraph checkbox
+	if (localStorage["image_blurring"] == "true")
+		image_blurring_checkbox.checked = true;
+	
+	else
+		image_blurring_checkbox.checked = false;
 	
 	// Check if there is a saved note and that it is not empty. If so, load the note with the date/time the options were saved.
 	if (localStorage["saved_note"] && localStorage["saved_note"] != "")
@@ -392,6 +404,9 @@ function save_and_update_background()
 	var image_replacement = document.querySelector("[name=image_replacement]:checked");
 	image_replacement = image_replacement ? image_replacement.value : "";
 
+	// This is a boolean value. True means the user wants to blur images not analyzed yet.
+	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox").checked;
+
 
 	// This element holds the time that the save button was clicked.
 	var time = new Date();
@@ -490,6 +505,9 @@ function save_and_update_background()
 
 	localStorage["image_replacement"] = image_replacement;
 	background.image_replacement = image_replacement;
+
+	localStorage["image_blurring"] = image_blurring_checkbox;
+	background.image_blurring = image_blurring_checkbox;
 
 }
 

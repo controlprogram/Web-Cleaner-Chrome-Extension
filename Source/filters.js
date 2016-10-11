@@ -629,6 +629,10 @@ function image_filter(images)
 			block: block
 		};
 
+		if (options.image_blurring) {
+			delete img.dataset.webCleanerReady;
+		}
+
 		processTask(img.task);
 		
 	} // End for loop
@@ -663,7 +667,7 @@ function processTask(task) {
 
 	// Check if image is already blocked.
 	else if (replacements.has(src)) {
-		delete img.task;
+		finish();
 	}
 
 	// Check if it's known that the image has to be blocked.
@@ -676,7 +680,7 @@ function processTask(task) {
 			typeof good.get(src) === 'string'
 		) {
 			img.src = bad.get(src) || unsure.get(src) || good.get(src) || '';
-			delete img.task;
+			finish();
 		} else {
 			// It's necessary to convert the image.
 			if (converting.has(src)) {
@@ -702,7 +706,7 @@ function processTask(task) {
 
 	// Check if it's known that the image does not have to be blocked.
 	else if (good.has(src) || options.image_scanner != true || !src) {
-		delete img.task;
+		finish();
 	}
 
 	else {
@@ -733,6 +737,12 @@ function processTask(task) {
 				});
 			});
 		}
+	}
+	function finish() {
+		if (options.image_blurring) {
+			img.dataset.webCleanerReady = true;
+		}
+		delete img.task;
 	}
 }
 
