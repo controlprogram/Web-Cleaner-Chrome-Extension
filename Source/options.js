@@ -34,7 +34,7 @@ function default_options()
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
-	
+	var save_note = document.getElementById("save_note");
 	
 	// This loop will set the text filter to on.
 	for (var i = 0; i < text_on.children.length; i++)
@@ -77,6 +77,7 @@ function default_options()
 
 
 	image_blurring_checkbox.checked = "true";
+
 }
 
 // This function updates an html element to show the change in a the slider bar value for the image scanner sensitivity.
@@ -106,6 +107,7 @@ function load_options()
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
+	var save_note = document.getElementById("save_note");
 	var saved_note = document.getElementById("saved_note");
 	
 	
@@ -220,12 +222,17 @@ function load_options()
 		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["month"] + "-" + localStorage["day"] + "-" + localStorage["year"] + " at " + localStorage["hour"] + ":" + localStorage["minute"] + " " + localStorage["morning"] + ". With no note.";
 	}
 
+	if (localStorage["save_note"] == "true")
+		save_note.checked = true;
+
+	else
+		save_note.checked = false;
 }
 
 
 function load_page()
 {
-	if (localStorage["text_on"] || localStorage["image_on"])
+	if (localStorage["text_on"] || localStorage["image_on"] || localStorage["save_note"])
 		load_options();
 	else
 		default_options();
@@ -238,7 +245,14 @@ function load_page()
 // So that the note, date/time will appear immediately.
 function store_date_and_note (date)
 {
-	var prompt_choice = window.prompt("Do you wish to save a note explaining why you changed the settings?", "Note");
+	var save_note = document.getElementById("save_note").checked;
+	var prompt_choice = "";
+	
+	if (save_note) {
+		prompt_choice = window.prompt("Do you wish to save a note explaining why you changed the settings?", "Note");
+		if (typeof prompt_choice != 'string')
+			return false;
+	}
 	
 	var year = String(date.getFullYear());
 	var month = String(date.getMonth() + 1);
@@ -323,7 +337,7 @@ function store_date_and_note (date)
 	hour = String(hour);
 		
 	// If there is a note, save the note along with the date and time, and update the options page accordingly.
-	if (prompt_choice != null)
+	if (prompt_choice != "")
 	{
 		localStorage["saved_note"] = prompt_choice;
 		localStorage["year"] = year;
@@ -351,6 +365,8 @@ function store_date_and_note (date)
 		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + month + "-" + day + "-" + year + " at " + hour + ":" + minute + " " + AM_or_PM + ". With no note.";
 		
 	}
+
+	return true;
 }
 
 function save_and_update_background()
@@ -407,13 +423,17 @@ function save_and_update_background()
 	// This is a boolean value. True means the user wants to blur images not analyzed yet.
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox").checked;
 
+	var save_note = document.getElementById("save_note").checked;
+
 
 	// This element holds the time that the save button was clicked.
 	var time = new Date();
 	
 	
 	// Calls the function that stores the date/time as well as updates the page.
-	store_date_and_note(time);
+	if (!store_date_and_note(time)) {
+		return false;
+	}
 	
 	
 	
@@ -509,6 +529,9 @@ function save_and_update_background()
 	localStorage["image_blurring"] = image_blurring_checkbox;
 	background.image_blurring = image_blurring_checkbox;
 
+	localStorage["save_note"] = save_note;
+
+	return true;
 }
 
 
@@ -518,12 +541,8 @@ function save_and_update_background()
 
 function save_button()
 {
-	var choice = window.confirm("Are you sure you want to save?");
-	
-	if (choice == true)
-	{
-		save_and_update_background();
-	}
+	if (save_and_update_background())
+		close();
 }
 
 // These are the event handlers for the options page.

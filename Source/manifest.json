@@ -6,7 +6,7 @@
       "all_frames": true,
       "js": [ "filters.js", "mutation_summary.js" ],
       "css": [ "assets/css/blockimg.css" ],
-      "matches": [ "\u003Call_urls>" ],
+      "matches": [ "<all_urls>" ],
       "run_at": "document_start"
    } ],
    "description": "Filters inappropriate content from the internet.",
