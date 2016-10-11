@@ -48,7 +48,8 @@ function initialize_options()
 	localStorage["image_whitelisted_websites"]  = "";
 	localStorage["scanner_sensitivity"] = 50;
 	localStorage["image_replacement"] = "logo";
-	
+	localStorage["image_blurring"] = true;
+	localStorage["save_note"] = true;
 }
 
 initialize_options();
@@ -176,6 +177,16 @@ function load_variables(options)
 	if (localStorage["image_replacement"])
 		options.image_replacement = localStorage["image_replacement"];
 
+	if (localStorage["image_blurring"])
+		options.image_blurring = true;
+	else
+		options.image_blurring = false;
+
+	if (localStorage["save_note"])
+		options.save_note = true;
+	else
+		options.save_note = false;
+
 }
 
 // This is an object that holds all the options available for the user to set.
@@ -222,6 +233,11 @@ options.scanner_sensitivity = null;
 
 // This is a string specifying the replacement strategy.
 options.image_replacement = null;
+
+// This is a string specifying the replacement strategy.
+options.image_blurring = null;
+
+options.save_note = null;
 
 // Function to pass options object to content script.
 chrome.extension.onMessage.addListener(
