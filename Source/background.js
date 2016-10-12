@@ -50,6 +50,7 @@ function initialize_options()
 	localStorage["scanner_sensitivity"] = 50;
 	localStorage["image_replacement"] = "logo";
 	localStorage["image_blurring"] = true;
+	localStorage["image_two_pass"] = true;
 	localStorage["save_note"] = true;
 }
 
@@ -183,6 +184,11 @@ function load_variables(options)
 	else
 		options.image_blurring = false;
 
+	if (localStorage["image_two_pass"])
+		options.image_two_pass = true;
+	else
+		options.image_two_pass = false;
+
 	if (localStorage["save_note"])
 		options.save_note = true;
 	else
@@ -237,6 +243,9 @@ options.image_replacement = null;
 
 // This is a string specifying the replacement strategy.
 options.image_blurring = null;
+
+// This is a string specifying the two-pass strategy.
+options.image_two_pass = null;
 
 options.save_note = null;
 

@@ -810,34 +810,85 @@ function analyzeCanvas(canvas, callback)
 		callback(false);
 		return;
 	}
+
+	var width = canvas.width;
+	var height = canvas.height;
 	var ctx = canvas.getContext('2d');
-	var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+	var data = ctx.getImageData(0, 0, width, height).data;
+	var sensitivity = options.scanner_sensitivity / 100;
 
-	var skin_count = 0; // initialize a skin counter
+	var strategies;
+	var conjunction;
 
-	var limit = ((canvas.width * canvas.height)) * (options.scanner_sensitivity/100); // create a limit that tells us when to block the image.
-	var nude = false;
+	if (options.two_pass) {
+		strategies = [simple, nudejs];
+		conjunction = 'or';
+	} else {
+		strategies = [simple];
+		conjunction = 'or';
+	}
 
-	for (var x = 0; x < data.length && !nude; x += 4) // While we can still read data and we haven't blocked the image...
-	{
-		var R = data[x]; // first byte is for R
-		var G = data[x+1]; // the next for G
-		var B = data[x+2]; // and the final for B
-		
-		// Now RGB is the decimal representation of the RGB values of the pixel.
-		if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
+	nextStep();
+
+	function nextStep() {
+		if (strategies.length == 0) {
+			callback(false);
+		} else {
+			strategies.shift()(function(nude) {
+				if (strategies.length == 0 || nude == (conjunction == 'or')) {
+					callback(nude);
+				} else {
+					nextStep();
+				}
+			});
+		}
+	}
+
+	function simple(callback) {
+		var skin_count = 0; // initialize a skin counter
+
+		var limit = width * height * sensitivity; // create a limit that tells us when to block the image.
+		var nude = false;
+
+		for (var x = 0; x < data.length && !nude; x += 4) // While we can still read data and we haven't blocked the image...
 		{
-			skin_count++; // if we find a skin-colored pixel, increment the skin counter
-			if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
-			{
-				nude = true;
-				break;
-			} // end if
-		} // end if
+			var R = data[x]; // first byte is for R
+			var G = data[x+1]; // the next for G
+			var B = data[x+2]; // and the final for B
 			
-	} // end for
+			// Now RGB is the decimal representation of the RGB values of the pixel.
+			if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
+			{
+				skin_count++; // if we find a skin-colored pixel, increment the skin counter
+				if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
+				{
+					nude = true;
+					break;
+				} // end if
+			} // end if
+				
+		} // end for
+		callback(nude);
+	}
 
-	callback(nude);	
+	function nudejs(callback) {
+		// Get image data and create scanner worker
+		var myWorker = new Worker("assets/js/worker.nude.js");
+		var message = [data, width, height];
+		myWorker.postMessage(message);
+		myWorker.onmessage = function(event) {
+			var pixels = event.data.pixels,
+				skin = event.data.skin,
+				regions = event.data.regions,
+				nude =
+					3 <= regions.length && regions.length <= 60 &&
+					skin / pixels >= sensitivity &&
+					regions[0] / skin >= 0.45;
+
+			callback(nude);
+		};
+	}
+
 } // end Event Handler function
 
 

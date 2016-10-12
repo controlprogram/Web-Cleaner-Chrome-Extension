@@ -35,6 +35,7 @@ function default_options()
 	var image_replacement = document.getElementById("image_replacement");
 	var image_scanner = document.getElementById("image_scanner");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
+	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox");
 	var save_note = document.getElementById("save_note");
 	
 	// This loop will set the text filter to on.
@@ -79,7 +80,7 @@ function default_options()
 
 
 	image_blurring_checkbox.checked = "true";
-
+	image_two_pass_checkbox.checked = "true";
 }
 
 // This function updates an html element to show the change in a the slider bar value for the image scanner sensitivity.
@@ -109,6 +110,7 @@ function load_options()
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
+	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox");
 	var save_note = document.getElementById("save_note");
 	var saved_note = document.getElementById("saved_note");
 	
@@ -205,12 +207,19 @@ function load_options()
 		image_replacement_strategy.checked = true;
 	}
 
-	// Sets the block paragraph checkbox
+	// Sets the image blurring checkbox
 	if (localStorage["image_blurring"] == "true")
 		image_blurring_checkbox.checked = true;
 	
 	else
 		image_blurring_checkbox.checked = false;
+
+	// Sets the image two-pass checkbox
+	if (localStorage["image_two_pass"] == "true")
+		image_two_pass_checkbox.checked = true;
+	
+	else
+		image_two_pass_checkbox.checked = false;
 	
 	// Check if there is a saved note and that it is not empty. If so, load the note with the date/time the options were saved.
 	if (localStorage["saved_note"] && localStorage["saved_note"] != "")
@@ -238,7 +247,7 @@ function load_page()
 		load_options();
 	else
 		default_options();
-	
+
 	toggleImageFilterWrapper();
 	toggleTextFilterWrapper();
 }
@@ -428,6 +437,9 @@ function save_and_update_background()
 	// This is a boolean value. True means the user wants to blur images not analyzed yet.
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox").checked;
 
+	// This is a boolean value. True means the user wants to two-pass images.
+	var image_two_pass_checkbox = document.getElementById("image_blurring_checkbox").checked;
+
 	var save_note = document.getElementById("save_note").checked;
 
 
@@ -533,6 +545,9 @@ function save_and_update_background()
 
 	localStorage["image_blurring"] = image_blurring_checkbox;
 	background.image_blurring = image_blurring_checkbox;
+
+	localStorage["image_two_pass"] = image_two_pass_checkbox;
+	background.image_two_pass = image_two_pass_checkbox;
 
 	localStorage["save_note"] = save_note;
 
