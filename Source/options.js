@@ -238,6 +238,9 @@ function load_page()
 		load_options();
 	else
 		default_options();
+	
+	toggleImageFilterWrapper();
+	toggleTextFilterWrapper();
 }
 
 
@@ -536,6 +539,25 @@ function save_and_update_background()
 	return true;
 }
 
+function toggleTextFilterWrapper() {
+	var text_on = document.querySelector('[name=text_on]:checked');
+	var wrapper = document.getElementById('text_filter_wrapper');
+	if (text_on.value == "true") {
+		wrapper.classList.remove('hidden');
+	} else {
+		wrapper.classList.add('hidden');
+	}
+}
+
+function toggleImageFilterWrapper() {
+	var text_on = document.querySelector('[name=image_on]:checked');
+	var wrapper = document.getElementById('image_filter_wrapper');
+	if (text_on.value == "true") {
+		wrapper.classList.remove('hidden');
+	} else {
+		wrapper.classList.add('hidden');
+	}
+}
 
 
 
@@ -557,3 +579,11 @@ document.addEventListener('DOMContentLoaded', load_page);
 
 // This event handles what happens when the save button is clicked.
 document.getElementById("save_button").children[0].addEventListener('click', save_button);
+
+[].forEach.call(document.getElementsByName('image_on'), function(radio) {
+	radio.addEventListener('change', toggleImageFilterWrapper);
+});
+
+[].forEach.call(document.getElementsByName('text_on'), function(radio) {
+	radio.addEventListener('change', toggleTextFilterWrapper);
+});
