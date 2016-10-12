@@ -11,3 +11,5 @@ In particular all image file parsing has been replaced
 by native browser functions and pixelation has been added.
 
 Also Mopar revamped the options page.
+
+And now it also uses Nude.js (MIT License) by Patrick Wied.

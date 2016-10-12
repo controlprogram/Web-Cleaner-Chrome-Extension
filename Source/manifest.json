@@ -19,5 +19,11 @@
    "options_page": "options.html",
    "permissions": [ "http://*/", "https://*/" ],
    "version": "1.0.0",
-   "web_accessible_resources": [ "assets/css/blockimg.css", "joseph'slogo.png", "joseph'slogo2(transparent).png", "joseph'slogo2(white).png" ]
+   "web_accessible_resources": [
+      "assets/css/blockimg.css",
+      "assets/js/worker.nude.js",
+      "joseph'slogo.png",
+      "joseph'slogo2(transparent).png",
+      "joseph'slogo2(white).png"
+   ]
 }
