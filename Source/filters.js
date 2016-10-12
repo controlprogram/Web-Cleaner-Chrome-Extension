@@ -780,6 +780,7 @@ function getUrlAsCanvas(src, callback) {
 	} // end async if
 }
 
+// This function loads the data url as a down scaled(!) canvas.
 function getDataUrlAsCanvas(src, callback) {
 	if (!/^data:image\/[^,;]+;base64,[-+_/a-z0-9]+=?=?$/i.test(src)) {
 		// The url isn't an image or invalid.
@@ -789,11 +790,14 @@ function getDataUrlAsCanvas(src, callback) {
 	var image = new Image();
 	image.onload = function() {
 		// Draw the image onto a canvas.
+		var width = image.width,
+			height = image.height,
+			scale = 30 / Math.max(width, height);
 		var canvas = document.createElement('canvas');
-		canvas.width = image.width;
-		canvas.height = image.height;
+		canvas.width = Math.round(width * scale);
+		canvas.height = Math.round(height * scale);
 		var ctx = canvas.getContext('2d');
-		ctx.drawImage(image, 0, 0);
+		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 		callback(canvas);
 	};
 	image.src = src;
@@ -847,7 +851,7 @@ function getReplacement(task, callback)
 	else // use pixelation
 	{
 		if (task.canvas) {
-			pixelateCanvas(task.canvas);
+			task.canvas = scaleImage(task.canvas, task.img.width, task.img.height);
 			callback(task.canvas.toDataURL());
 		} else {
 			getUrlAsCanvas(task.src, function(canvas) {
@@ -856,25 +860,22 @@ function getReplacement(task, callback)
 					callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
 					return;
 				}
-				task.canvas = canvas;
-				pixelateCanvas(task.canvas);
+				task.canvas = scaleImage(canvas, task.img.width, task.img.height);
 				callback(task.canvas.toDataURL());
 			});
 		}
 	} // end pixelation if
 }
 
-function pixelateCanvas(canvas) {
-	if (!canvas) {
+function scaleImage(image, width, height) {
+	if (!image) {
 		return;
 	}
-	var width = canvas.width,
-		height = canvas.height;
+	var canvas = document.createElement('canvas');
+	canvas.width = width;
+	canvas.height = height;
 	var ctx = canvas.getContext('2d');
-	var pxScale = 30 / Math.max(width, height),
-		pxWidth = Math.round(width * pxScale),
-		pxHeight = Math.round(height * pxScale);
-	ctx.drawImage(canvas, 0, 0, pxWidth, pxHeight);
 	ctx.imageSmoothingEnabled = false;
-	ctx.drawImage(canvas, 0, 0, pxWidth, pxHeight, 0, 0, width, height);
+	ctx.drawImage(image, 0, 0, width, height);
+	return canvas;
 }
