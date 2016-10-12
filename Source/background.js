@@ -265,3 +265,14 @@ chrome.extension.onMessage.addListener(
 	
 
   });
+
+chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
+    if (info.status && options.image_on && options.image_blurring) {
+        chrome.tabs.insertCSS(tabId, {
+            file: "assets/css/blockimg.css",
+            runAt: "document_start",
+            allFrames: true,
+            matchAboutBlank: true
+        });
+    }
+});
