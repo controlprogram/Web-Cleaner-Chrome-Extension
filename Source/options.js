@@ -33,6 +33,7 @@ function default_options()
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity");
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
+	var image_scanner = document.getElementById("image_scanner");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
 	var save_note = document.getElementById("save_note");
 	
@@ -69,6 +70,7 @@ function default_options()
 	
 	//word_or_sentence.children[0].checked = 'true'; // error with this feature
 	
+	image_scanner.children[0].checked = "true";
 	scanner_sensitivity.children[0].value = 50;
 	range2.innerHTML = "50%";
 
@@ -247,7 +249,7 @@ function store_date_and_note (date)
 {
 	var save_note = document.getElementById("save_note").checked;
 	var prompt_choice = "";
-	
+
 	if (save_note) {
 		prompt_choice = window.prompt("Do you wish to save a note explaining why you changed the settings?", "Note");
 		if (typeof prompt_choice != 'string')
