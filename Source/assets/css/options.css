@@ -7,7 +7,7 @@
 #saved_note_outer {
     width: 100%;
     padding: 6px 0px 6px 0px;
-    background-color: #FFB2B2
+    background-color: #9EC0F7
 }
 #saved_note {
     margin: 0px 0px 0px 15px
@@ -20,16 +20,16 @@
     padding: 0px 20px 5px 0px
 }
 #image_replacement_box {
-	padding-left: 15px
+    padding-left: 15px
 }
 #image_settings_box {
-	padding-left: 25px;
-	display: inline-block
+    padding-left: 25px;
+    display: inline-block
 }
 #image_replacement_box,
 #image_settings_box {
-	float: left;
-	vertical-align: top
+    float: left;
+    vertical-align: top
 }
 #image_scanner_box,
 .paragraph {
@@ -39,21 +39,24 @@
     vertical-align: top
 }
 .container {
-    padding: 0px 30px 30px 30px;
     width: 600px;
+    padding: 0px 30px 33px 30px;
     position: absolute;
     left: 50%;
     -webkit-transform: translate(-50%);
     transform: translate(-50%);
     vertical-align: top;
     background: #EEEEEE none repeat scroll 0 0;
-	-webkit-box-shadow: 0 0 20px #000000
+    -webkit-box-shadow: 0 0 20px #000000
 }
 .range {
     border: none
 }
 .clear {
-    clear: both;
+    clear: both
+}
+.inline {
+    display: inline-block
 }
 .sub_text {
     font-size: 12px
@@ -64,18 +67,19 @@
 }
 .fillin_blank {
     border-width: 0px 0px 2px 0px;
-    border-color: #FFB2B2;
+    border-color: #8BADE4;
     background-color: #EEEEEE;
     text-align: center;
     font-family: Lucida Sans Unicode
 }
 h2.title {
-	display: inline-block
+    display: inline-block
 }
 p.text {
     font-size: 15px
 }
 p.notice {
+    margin-bottom: 0px;
     font-size: 13px;
     letter-spacing: 0.25px;
     color: #CB6D51;
@@ -84,16 +88,16 @@ p.notice {
 table {
     width: 100%
 }
-textarea {
-	width: 95%;
-    border: 1px solid #CCCCCC;
-	resize: none
-}
 th {
     font-size: 16px
 }
 td {
-	 width: 50%
+    width: 50%
+}
+textarea {
+    width: 95%;
+    border: 1px solid #CCCCCC;
+    resize: none
 }
 body {
     margin: 0;

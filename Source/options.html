@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
-	This is the options page for the  extension
-			Author: Joseph Gray & Mopar
+	This is the options page.
+			Author: Joseph Gray & updated by Mopar
 			Date Created: 10/22/2012
 			Date Updated: 10/11/2016
 
@@ -31,7 +31,7 @@
 			<h2 class="title">Image Filter</h2>
 			
 				<!-- The radio button form for turning the image filter on/off -->
-				<form id="image_active" style="display: inline-block">
+				<form class="inline" id="image_active">
 					<input type="radio" name="image_on" value="true">On
 					<input type="radio" name="image_on" value="false">Off
 				</form><!-- '#image_active' form -->
@@ -47,7 +47,7 @@
 					</form><!-- '#image_scanner' form -->
 					
 					<!-- The range form for adjusting the image scanner sensitivity. -->
-					<form id="scanner_sensitivity" style="display: inline-block">
+					<form class="inline" id="scanner_sensitivity">
 						<input class="range" type="range" min="0" max="100" step="1">
 						<span id="range2"></span>
 					</form><!-- '#scanner_sensitivity' form -->
@@ -109,32 +109,36 @@
 				
 				</div><!-- '#image_text_boxes' div -->
 			</div><!-- '#image_filter_wrapper' div -->
+			
 			<!-- 
 				 # TEXT FILTER #
 								 -->
 			<h2 class="title">Text Filter</h2>
 			
 				<!-- The radio button form for turning the text filter on/off. -->
-				<form id="text_active" style="display: inline-block">
+				<form class="inline" id="text_active">
 					<input type="radio" name="text_on" value="true">On
 					<input type="radio" name="text_on" value="false">Off
 				</form><!-- '#text_active' form -->
+
 			<div id="text_filter_wrapper" class="wrapper">
+
 <!--
 				<!-- The radio button form that controls wether or not the word or the sentence is replaced.
 				<div id="replace_word/sentence/paragraph">
 					<form id="word_or_sentence">
-						<input type="radio" name="WordOrSentence" value="word"> Only replace the blocked word. <br>
+						<input type="radio" name="WordOrSentence" value="word"> Only replace the blocked word.
+						<br>
 						<input type="radio" name="WordOrSentence" value="sentence"> Replace the entire sentence containing the blocked word.
-					</form><!-- 'word_or_sentence' form
+					</form><!-- 'word_or_sentence' form 
 -->
 
 				<br>
 				<!-- The radio button form that controls when a paragraph is replaced or a webpage is blocked. -->
-				<form id="block_page/paragraph" style="margin-bottom: 15px">
-					<input type="checkbox" id="block_paragraph_checkbox" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="number_for_paragraph" maxlength="3" size="1" style="text-align: right; display: inline;"> or more instances of blocked words.
+				<form id="block_page/paragraph">
+					<input type="checkbox" id="block_paragraph_checkbox" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="number_for_paragraph" maxlength="3" size="1"> or more instances of blocked words.
 					<br>
-					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1" style="text-align: right; display: inline;"> or more instances of blocked words.
+					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1"> or more instances of blocked words.
 				</form><!-- '#block_page/paragraph' form -->
 				<!-- Text Filter explanation -->
 				<div class="paragraph">
@@ -155,6 +159,7 @@
 					<p class="notice">NOTE: Only place one word / website per line without punctuation.</p>
 				</div><!-- 'text_boxes' div -->
 			</div><!-- 'text_filter_wrapper' div -->
+
 			<!-- 
 				 # SAVE SETTINGS #
 								   -->
