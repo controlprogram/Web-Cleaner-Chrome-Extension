@@ -8,4 +8,6 @@ Author: Joseph Gray, with contributions from:
 
 This version contains some modifications made by rob204.
 In particular all image file parsing has been replaced
-by native browser functions.
+by native browser functions and pixelation has been added.
+
+Also Mopar revamped the options page.
