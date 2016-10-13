@@ -110,9 +110,9 @@ body {
     opacity: 1;
     -webkit-transition: max-height 0.8s;
     -moz-transition: max-height 0.8s;
-    transition: max-height 0.8s, opacity 1s;
+    transition: max-height 0.8s, opacity 1s
 }
 .hidden.wrapper {
     max-height: 0;
-    opacity: 0;
+    opacity: 0
 }
