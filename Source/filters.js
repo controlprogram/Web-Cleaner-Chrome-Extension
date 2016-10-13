@@ -913,7 +913,8 @@ function getReplacement(task, callback)
 					callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
 					return;
 				}
-				task.canvas = scaleImage(canvas, task.canvas.originalWidth, task.canvas.originalHeight);
+				task.canvas = canvas;
+				task.canvas = scaleImage(task.canvas, task.canvas.originalWidth, task.canvas.originalHeight);
 				callback(task.canvas.toDataURL());
 			});
 		}
