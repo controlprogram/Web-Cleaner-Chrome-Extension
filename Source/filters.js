@@ -794,6 +794,8 @@ function getDataUrlAsCanvas(src, callback) {
 			height = image.height,
 			scale = 30 / Math.max(width, height);
 		var canvas = document.createElement('canvas');
+		canvas.originalWidth = width;
+		canvas.originalHeight = height;
 		canvas.width = Math.round(width * scale);
 		canvas.height = Math.round(height * scale);
 		var ctx = canvas.getContext('2d');
@@ -902,7 +904,7 @@ function getReplacement(task, callback)
 	else // use pixelation
 	{
 		if (task.canvas) {
-			task.canvas = scaleImage(task.canvas, task.img.width, task.img.height);
+			task.canvas = scaleImage(task.canvas, task.canvas.originalWidth, task.canvas.originalHeight);
 			callback(task.canvas.toDataURL());
 		} else {
 			getUrlAsCanvas(task.src, function(canvas) {
@@ -911,7 +913,7 @@ function getReplacement(task, callback)
 					callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
 					return;
 				}
-				task.canvas = scaleImage(canvas, task.img.width, task.img.height);
+				task.canvas = scaleImage(canvas, task.canvas.originalWidth, task.canvas.originalHeight);
 				callback(task.canvas.toDataURL());
 			});
 		}
