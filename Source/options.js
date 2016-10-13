@@ -383,6 +383,34 @@ function store_date_and_note (date)
 	return true;
 }
 
+function validateWordLists() {
+	['blocked_words', 'image_blocked_words'].map(function(id) {
+		return document.getElementById(id);
+	}).forEach(function(element) {
+		element.value = element.value.split('\n')
+			// Words shouldn't start or end with whitespace.
+			.map(function(word) {
+				return word.trim();
+			})
+			// Words shouldn't be empty.
+			.filter(Boolean)
+			// Words should be a valid regexp pattern that doesn't match the empty string.
+			.map(function(pattern) {
+				try {
+					if (!new RegExp(pattern).test('')) {
+						return pattern;
+					}
+					// Matches the empty string.
+				} catch (e) {
+					// Non-valid pattern.
+				}
+				// Escape everything that isn't escaped.
+				return pattern.replace(/\\?((?:\\\\)*[\\\.\+\*\?\^\$\|\[\]\{\}\(\)])/g, "\\$1");
+			})
+		.join('\n');
+	});
+}
+
 function save_and_update_background()
 {
 
@@ -580,6 +608,7 @@ function toggleImageFilterWrapper() {
 
 function save_button()
 {
+	validateWordLists();
 	if (save_and_update_background())
 		close();
 }
