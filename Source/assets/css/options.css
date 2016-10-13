@@ -17,9 +17,9 @@
     margin-left: 18px;
 }
 #range2 {
-	vertical-align: middle;
-	position: relative;
-	top: -10px
+    vertical-align: middle;
+    position: relative;
+    top: -10px
 }
 #image_scanner_box {
     padding: 0px 20px 5px 0px
@@ -72,7 +72,7 @@
     display: inline-block
 }
 .range {
-	margin-left: 6px
+    margin-left: 6px
 }
 .sub_text {
     font-size: 12px
@@ -102,17 +102,17 @@ p.notice {
     margin-left: 2em
 }
 input[type=range]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	border: 1px solid #000000;
-	background: #ffffff;
-	box-shadow: 1px 1px 1px rgba(13,13,13,0.2), 0px 0px 1px rgba(13,13,13,0.2)
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+    background: #ffffff;
+    box-shadow: 1px 1px 1px rgba(13, 13, 13, 0.2), 0px 0px 1px rgba(13, 13, 13, 0.2)
 }
 input[type=range]::-webkit-slider-runnable-track {
-    background: -webkit-linear-gradient(left, rgba(255,178,178,1), rgba(178,255,216,1));
-    background: linear-gradient(to right, rgba(255,178,178,1), rgba(178,255,216,1));
-	border: 2px solid #CCCCCC
+    background: -webkit-linear-gradient(left, rgba(255, 178, 178, 1), rgba(178, 255, 216, 0.8));
+    background: linear-gradient(to right, rgba(255, 178, 178, 1), rgba(178, 255, 216, 0.8));
+    border: 2px solid #CCCCCC
 }
-a  {
+a {
     color: #CB6D51
 }
 table {
