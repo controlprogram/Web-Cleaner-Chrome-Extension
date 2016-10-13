@@ -438,7 +438,7 @@ function save_and_update_background()
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox").checked;
 
 	// This is a boolean value. True means the user wants to two-pass images.
-	var image_two_pass_checkbox = document.getElementById("image_blurring_checkbox").checked;
+	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox").checked;
 
 	var save_note = document.getElementById("save_note").checked;
 
