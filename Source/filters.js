@@ -329,7 +329,7 @@ function text_filter(text_nodes)
 	for (var i = 0; i < text_nodes.length; i++)
 	{
 		// Do not replace words in things we don't understand.
-		if (['SCRIPT'].indexOf(text_nodes[i].parentNode.tagName) >= 0) {
+		if (['script', 'style'].indexOf(text_nodes[i].parentNode.tagName.toLowerCase()) >= 0) {
 			continue;
 		}
 
