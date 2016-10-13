@@ -14,7 +14,12 @@
 }
 #scanner_sensitivity {
     margin-top: 5px;
-    margin-left: 18px
+    margin-left: 18px;
+}
+#range2 {
+	vertical-align: middle;
+	position: relative;
+	top: -10px
 }
 #image_scanner_box {
     padding: 0px 20px 5px 0px
@@ -60,14 +65,14 @@
     max-height: 0;
     opacity: 0
 }
-.range {
-    border: none
-}
 .clear {
     clear: both
 }
 .inline {
     display: inline-block
+}
+.range {
+	margin-left: 6px
 }
 .sub_text {
     font-size: 12px
@@ -95,6 +100,20 @@ p.notice {
     letter-spacing: 0.25px;
     color: #CB6D51;
     margin-left: 2em
+}
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border: 1px solid #000000;
+	background: #ffffff;
+	box-shadow: 1px 1px 1px rgba(13,13,13,0.2), 0px 0px 1px rgba(13,13,13,0.2)
+}
+input[type=range]::-webkit-slider-runnable-track {
+    background: -webkit-linear-gradient(left, rgba(255,178,178,1), rgba(178,255,216,1));
+    background: linear-gradient(to right, rgba(255,178,178,1), rgba(178,255,216,1));
+	border: 2px solid #CCCCCC
+}
+a  {
+    color: #CB6D51
 }
 table {
     width: 100%

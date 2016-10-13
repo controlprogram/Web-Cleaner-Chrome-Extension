@@ -43,7 +43,7 @@
 				<div id="image_scanner_box">
 					<!-- The checkbox form that indicates if the image scanner is on or off. -->
 					<form id="image_scanner">
-						<input type="checkbox" name="image_scanner_on" value="true"> Scan Images
+						<input type="checkbox" name="image_scanner_on" value="true"> Scan Images for at least...
 					</form><!-- '#image_scanner' form -->
 					
 					<!-- The range form for adjusting the image scanner sensitivity. -->
@@ -89,13 +89,13 @@
 				
 				<!-- Image Filter explanation -->
 				<div class="paragraph">
-					<p class="text">The Image Filter scans image names and search tags for any of the 'Blocked Filenames'. If a match is found, the image will be replaced. Partial word matches are detected. If a listed word appears as part of a word that is in the image name or search tag, then the image will still be blocked. In other words, if you listed 'porn' as a blocked word, then the word 'pornography' will also be blocked, since the word 'porn' appears in 'pornography'.</p>
+					<p class="text">The Image Filter scans image names and search tags for any of the 'Blocked Filenames'. If a match is found, the image will be replaced. Partial word matches are detected. If a listed word appears as part of a word that is in the image name or search tag, then the image will still be blocked. In other words, if you listed 'porn' as a blocked word, then the word 'pornography' will also be checked, since the word 'porn' appears in 'pornography'.</p>
 				</div><!-- '.paragraph' div for Image Filter -->
 				<br>
 				<div id="image_text_boxes">
 					<table>
 						<tr>
-							<th>Blocked Filenames<br><span class="sub_text">(Partial matches are detected)</span></th>
+							<th>Blocked Filenames<br><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
 							<th>Website Whitelist<br><span class="sub_text">(format: www.foxnews.com)</span></th>
 						</tr>
 						<tr>
@@ -133,22 +133,21 @@
 					</form><!-- 'word_or_sentence' form 
 -->
 
-				<br>
 				<!-- The radio button form that controls when a paragraph is replaced or a webpage is blocked. -->
 				<form id="block_page/paragraph">
-					<input type="checkbox" id="block_paragraph_checkbox" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="number_for_paragraph" maxlength="3" size="1"> or more instances of blocked words.
+					<input type="checkbox" id="block_paragraph_checkbox" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="number_for_paragraph" maxlength="3" size="1"> or more bad words.
 					<br>
-					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1"> or more instances of blocked words.
+					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1"> or more bad words.
 				</form><!-- '#block_page/paragraph' form -->
 				<!-- Text Filter explanation -->
 				<div class="paragraph">
-					<p class="text">The Text Filter searches for any 'Bad Words' listed below. When it finds one of these words, it will replace the entire word with '*'s. As with the Image Filter, partial word matches are detected. If a listed word appears as part of a word that is in the image name or search tag, then the image will still be blocked.</p>
+					<p class="text">The Text Filter searches for any 'Bad Words' listed below. When it finds one of these words, it will replace the entire word with '*'s. As with the Image Filter, partial word matches are detected. If a listed word appears as part of a whole word, then the word will still be replaced.</p>
 				</div><!-- '.paragraph' div for Text Filter -->
 				<br>
 				<div id="text_boxes">
 					<table>
 						<tr>
-							<th>Bad Words<br><span class="sub_text">(Partial matches are detected)</span></th>
+							<th>Bad Words<br><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
 							<th>Website Whitelist<br><span class="sub_text">(format: www.foxnews.com)</span></th>
 						</tr>
 						<tr>
