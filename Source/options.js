@@ -263,7 +263,7 @@ function store_date_and_note (date)
 	var prompt_choice = "";
 
 	if (save_note) {
-		prompt_choice = window.prompt("Do you wish to save a note explaining why you changed the settings?", "Note");
+		prompt_choice = window.prompt("Do you wish to save a note explaining why you changed the settings?", localStorage["saved_note"]);
 		if (typeof prompt_choice != 'string')
 			return false;
 	}
