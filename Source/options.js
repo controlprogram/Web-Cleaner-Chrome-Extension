@@ -230,7 +230,7 @@ function load_options()
 	// Otherwise, if there is a saved date/time, just load that. NOTE: if there is a saved note, there will be a saved date/time
 	else if (localStorage["year"])
 	{
-		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["month"] + "-" + localStorage["day"] + "-" + localStorage["year"] + " at " + localStorage["hour"] + ":" + localStorage["minute"] + " " + localStorage["morning"] + ". With no note.";
+		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["month"] + "-" + localStorage["day"] + "-" + localStorage["year"] + " at " + localStorage["hour"] + ":" + localStorage["minute"] + " " + localStorage["morning"] + ".";
 	}
 
 	if (localStorage["save_note"] == "true")
