@@ -68,12 +68,15 @@ var stats = {
 };
 
 function updateStats(adds) {
+	if (!adds) {
+		adds = {};
+	}
 	try {
 		Object.keys(adds || {}).forEach(function(type) {
 			Object.keys(adds[type]).forEach(function(slot) {
 				var value = adds[type][slot];
 				stats[type][slot] += adds[type][slot];
-				if (type == 'images' && slot == 'blocked' && value > 0) {
+				if (pane && type == 'images' && slot == 'blocked' && value > 0) {
 					pane.open();
 				}
 			});
@@ -83,8 +86,18 @@ function updateStats(adds) {
 			pane.nodes.blocked.textContent = stats.images.blocked.toLocaleString();
 			pane.nodes.avg_pixels.textContent = (stats.pixels.total ? Math.round(stats.pixels.skin / stats.pixels.total * 100) + '%/' : '') + stats.pixels.images.toLocaleString();
 		}
+		if (window!=top) {
+			chrome.extension.sendMessage({"greeting": "update_stats", adds: adds});
+			return;
+		}
 	} catch (e) { console.log(e); }
 }
+
+if (window==top) chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	if (request.greeting == "update_stats")
+		updateStats(request.adds);
+});
+
 
 if (document.querySelector('#wc_pane_root')) {
 	console.log('already running');
@@ -1025,7 +1038,7 @@ function pixelate(canvas, maxPixels) {
 }
 
 function insertTemplates() {
-	if (pane) {
+	if (pane || window!=top) {
 		return;
 	}
 	var root = document.createElement('div');

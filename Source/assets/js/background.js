@@ -283,6 +283,12 @@ chrome.extension.onMessage.addListener(
 
 		sendResponse({farewell: options, templates: templates});
 	}
+
+	else if (request.greeting == "update_stats")
+	{
+		// forward message
+		chrome.tabs.sendMessage(sender.tab.id, request);
+	}
 	
 
   });
