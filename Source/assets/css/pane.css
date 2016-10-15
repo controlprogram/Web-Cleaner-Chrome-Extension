@@ -63,8 +63,8 @@
     text-align: right;
     overflow: hidden
 }
-a.wc_close,
-a.wc_close:visited {
+a.wc_pane_close,
+a.wc_pane_close:visited {
     text-decoration: none;
     color: #FFFFFF
 }
