@@ -45,6 +45,7 @@ Date Modified: 9-10-2016
 
 
 var options; // Give the options object global reference so we can hopefully use it in the DOM Mutation stuff.
+var templates, pane;
 var word_count = 0; // This is a counter variable for the text filter for blocking pages. It is given global scope so that we can use it in the initial filter as well as the text_changes_filter.
 
 var text_observer;
@@ -58,11 +59,39 @@ var image_cache = {
 	converting: new Map() // stores all currently converted images as {url: [listeners]}
 };
 
+var debug = false;
+var imageLoadPixel = 30;
+var imageMaxPixel = 30;
+var stats = {
+	pixels: {total: 0, skin: 0},
+	images: {total: 0, processed: 0, blocked: 0}
+};
+
+function updateStats(adds) {
+	try {
+		Object.keys(adds || {}).forEach(function(type) {
+			Object.keys(adds[type]).forEach(function(slot) {
+				var value = adds[type][slot];
+				stats[type][slot] += adds[type][slot];
+				if (type == 'images' && slot == 'blocked' && value > 0) {
+					pane.open();
+				}
+			});
+		});
+		if (pane) {
+			pane.nodes.images.textContent = stats.images.processed + '/' + stats.images.total;
+			pane.nodes.blocked.textContent = stats.images.blocked;
+			pane.nodes.avg_pixels.textContent = stats.pixels.total ? Math.round(stats.pixels.skin / stats.pixels.total * 100) + '%' : '-';
+		}
+	} catch (e) { console.log(e); }
+}
+
 // Using the 'DOMContentLoaded event means that you might be able to briefly see a flash of the content that will eventually be filtered. If the page takes a long time, you will get a good look at content that should be filtered.
 // However, directly calling the load_filters funtion results in some text content escaping both the filter and the Mutation observer.
 // So we do both.
 load_filters();
 document.addEventListener('DOMContentLoaded', load_filters);
+
 
 
 
@@ -76,7 +105,9 @@ chrome.extension.sendMessage({"greeting": "request_options"},
 function(response)
 {
   options = (response.farewell);
-  
+  templates = (response.templates);
+  insertTemplates();
+
   // This must be placed here, since sendMessage is an asyncronous function, meaning that code execution continues after this function before this function completes.
   // Therefore, everything that requires the options object must be placed  within this function to ensure that it executes after the options object is retrieved from the background script.
   
@@ -622,6 +653,10 @@ function image_filter(images)
 				block = 'link title ' + img.parentNode.title;
 			} // end else if
 		} // end if for parent node
+
+		if (!img.task) {
+			updateStats({images: {total: 1}});
+		}
 		
 		img.task = {
 			img: img,
@@ -662,16 +697,20 @@ function processTask(task) {
 		data.has('replacedAlt') && img.alt !== data.get('replacedAlt')
 	) {
 		// A new task will be scheduled soon.
+		updateStats({images: {total: -1}});
 		delete img.task;
 	}
 
 	// Check if image is already blocked.
 	else if (replacements.has(src)) {
+		task.block = true;
 		finish();
 	}
 
 	// Check if it's known that the image has to be blocked.
 	else if (bad.has(src) || block && src) {
+		task.block = true;
+		if (debug) console.log('blocked image because ' + (block || 'is bad') + ': ' + src.slice(0, 100));
 		// Replace image without analyzing it.
 		// Maybe we have the replacement somewhere already.
 		if (
@@ -716,7 +755,7 @@ function processTask(task) {
 			analyzing.get(src).push(task);
 		} else {
 			analyzing.set(src, [task]);
-			getUrlAsCanvas(src, function(canvas) {
+			getCanvasFromUrl(src, imageLoadPixel, function(canvas) {
 				analyzeCanvas(canvas, function(nude) {
 					var replacement = true;
 					if (unsure.has(src)) {
@@ -739,6 +778,7 @@ function processTask(task) {
 		}
 	}
 	function finish() {
+		updateStats({images: {processed: 1, blocked: task.block ? 1 : 0}});
 		if (options.image_blurring) {
 			img.dataset.webCleanerReady = true;
 		}
@@ -746,11 +786,11 @@ function processTask(task) {
 	}
 }
 
-function getUrlAsCanvas(src, callback) {
+function getCanvasFromUrl(src, maxPixels, callback) {
 	// If the image src is a DataURL, use it synchronously.
 	if (src.startsWith('data:'))
 	{
-		getDataUrlAsCanvas(src, callback);
+		getCanvasFromDataUrl(src, maxPixels, callback);
 	} // end sync if
 
 	else // load it asynchronously
@@ -770,7 +810,7 @@ function getUrlAsCanvas(src, callback) {
 					// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
 					var reader = new FileReader();
 					reader.addEventListener("loadend", function() {
-						getDataUrlAsCanvas(reader.result, callback);
+						getCanvasFromDataUrl(reader.result, maxPixels, callback);
 					});
 					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
 				} // end if
@@ -781,7 +821,7 @@ function getUrlAsCanvas(src, callback) {
 }
 
 // This function loads the data url as a down scaled(!) canvas.
-function getDataUrlAsCanvas(src, callback) {
+function getCanvasFromDataUrl(src, maxPixels, callback) {
 	if (!/^data:image\/[^,;]+;base64,[-+_/a-z0-9]+=?=?$/i.test(src)) {
 		// The url isn't an image or invalid.
 		callback(null);
@@ -792,10 +832,14 @@ function getDataUrlAsCanvas(src, callback) {
 		// Draw the image onto a canvas.
 		var width = image.width,
 			height = image.height,
-			scale = 30 / Math.max(width, height);
+			scale = 1;
+		if (0 < maxPixels && (maxPixels < width || maxPixels < height)) {
+			scale = maxPixels / Math.max(width, height);
+		}
 		var canvas = document.createElement('canvas');
 		canvas.originalWidth = width;
 		canvas.originalHeight = height;
+		canvas.scale = scale;
 		canvas.width = Math.round(width * scale);
 		canvas.height = Math.round(height * scale);
 		var ctx = canvas.getContext('2d');
@@ -816,7 +860,8 @@ function analyzeCanvas(canvas, callback)
 	var width = canvas.width;
 	var height = canvas.height;
 	var ctx = canvas.getContext('2d');
-	var data = ctx.getImageData(0, 0, width, height).data;
+	var imgData = ctx.getImageData(0, 0, width, height);
+	var data = imgData.data;
 	var sensitivity = options.scanner_sensitivity / 100;
 
 	var strategies;
@@ -852,7 +897,7 @@ function analyzeCanvas(canvas, callback)
 		var limit = width * height * sensitivity; // create a limit that tells us when to block the image.
 		var nude = false;
 
-		for (var x = 0; x < data.length && !nude; x += 4) // While we can still read data and we haven't blocked the image...
+		for (var x = 0; x < data.length; x += 4) // While we can still read data and we haven't blocked the image...
 		{
 			var R = data[x]; // first byte is for R
 			var G = data[x+1]; // the next for G
@@ -862,7 +907,7 @@ function analyzeCanvas(canvas, callback)
 			if ((0.35 <= R/(R+G+B)) && (R/(R+G+B) <= 0.75) && (0.25 <= G/(R+G+B)) && (G/(R+G+B) <= 0.45) && (B/(R+G+B) <= 0.5))
 			{
 				skin_count++; // if we find a skin-colored pixel, increment the skin counter
-				if (skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
+				if (!nude && skin_count >= limit) // if we have surpassed the limit, set block to true (to break the while loop) and then block the image and remove it from the list of images we are scanning.
 				{
 					nude = true;
 					break;
@@ -870,6 +915,11 @@ function analyzeCanvas(canvas, callback)
 			} // end if
 				
 		} // end for
+
+		updateStats({
+			pixels: {total: x / 4 + (nude ? 1 : 0), skin: skin_count}
+		});
+
 		callback(nude);
 	}
 
@@ -887,6 +937,9 @@ function analyzeCanvas(canvas, callback)
 					skin / pixels >= sensitivity &&
 					regions[0] / skin >= 0.45;
 
+			updateStats({
+				pixels: {total: pixels, skin: skin}
+			});
 			callback(nude);
 		};
 	}
@@ -904,18 +957,16 @@ function getReplacement(task, callback)
 	else // use pixelation
 	{
 		if (task.canvas) {
-			task.canvas = scaleImage(task.canvas, task.canvas.originalWidth, task.canvas.originalHeight);
-			callback(task.canvas.toDataURL());
+			callback(pixelate(task.canvas, imageMaxPixel).toDataURL());
 		} else {
-			getUrlAsCanvas(task.src, function(canvas) {
+			getCanvasFromUrl(task.src, imageLoadPixel, function(canvas) {
 				if (!canvas) {
-					console.log('could not pixelate ' + task.src);
+					console.log('could not load ' + task.src);
 					callback(chrome.extension.getURL("joseph'slogo2(transparent).png"));
 					return;
 				}
 				task.canvas = canvas;
-				task.canvas = scaleImage(task.canvas, task.canvas.originalWidth, task.canvas.originalHeight);
-				callback(task.canvas.toDataURL());
+				getReplacement(task, callback);
 			});
 		}
 	} // end pixelation if
@@ -932,4 +983,54 @@ function scaleImage(image, width, height) {
 	ctx.imageSmoothingEnabled = false;
 	ctx.drawImage(image, 0, 0, width, height);
 	return canvas;
+}
+
+function pixelate(canvas, maxPixels) {
+	if (canvas.originalWidth <= maxPixels && canvas.originalHeight <= maxPixels) {
+		return canvas;
+	} else if (canvas.width <= maxPixels && canvas.height <= maxPixels) {
+		var canvas2 = document.createElement('canvas');
+		canvas2.width = canvas.originalWidth;
+		canvas2.height = canvas.originalHeight;
+		var ctx = canvas2.getContext('2d');
+		ctx.imageSmoothingEnabled = false;
+		ctx.drawImage(canvas, 0, 0, canvas.originalWidth, canvas.originalHeight);
+		return canvas2;
+	} else {
+		var canvas2 = document.createElement('canvas');
+		canvas2.width = canvas.originalWidth;
+		canvas2.height = canvas.originalHeight;
+		var ctx = canvas2.getContext('2d');
+
+		var scale = maxPixels / Math.max(canvas.originalWidth, canvas.originalHeight),
+			width = Math.round(canvas.originalWidth * scale),
+			height = Math.round(canvas.originalHeight * scale);
+		ctx.drawImage(canvas, 0, 0, width, height);
+		ctx.imageSmoothingEnabled = false;
+		ctx.drawImage(canvas2, 0, 0, width, height, 0, 0, canvas.originalWidth, canvas.originalHeight);
+		return canvas2;
+	}
+}
+
+function insertTemplates() {
+	var root = document.createElement('div');
+	root.innerHTML = templates['pane.html'];
+	pane = {
+		nodes: {},
+	};
+	['root', 'close', 'images', 'blocked', 'avg_pixels'].forEach(function(name) {
+		pane.nodes[name] = root.querySelector(['#wc_pane', name].filter(Boolean).join('_'));
+	});
+	pane.close = function() {
+		pane.nodes.root.classList.remove('open');
+	};
+	pane.open = function() {
+		pane.nodes.root.classList.add('open');
+	}
+	pane.nodes.close.addEventListener('click', function(e) {
+		e.preventDefault();
+		pane.close();
+	}, false);
+	document.children[0].appendChild(pane.nodes.root);
+	updateStats();
 }

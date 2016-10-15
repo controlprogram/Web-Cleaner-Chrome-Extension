@@ -5,6 +5,7 @@
    "content_scripts": [ {
       "all_frames": true,
       "js": [ "filters.js", "mutation_summary.js" ],
+      "css": [ "assets/css/pane.css" ],
       "matches": [ "<all_urls>" ],
       "run_at": "document_start"
    } ],

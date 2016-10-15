@@ -55,6 +55,7 @@ function initialize_options()
 }
 
 initialize_options();
+loadTemplates();
 
 // Will need to load the variables upon the first check from the content script. This will be done by checking to see if text_on is null. If it is, the background script will execute a function that will
 // load the options from localStorage. If text_on is not null, that means the options have already been loaded and they will be used.
@@ -249,6 +250,8 @@ options.image_two_pass = null;
 
 options.save_note = null;
 
+var templates = new Object();
+
 // Function to pass options object to content script.
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -270,7 +273,7 @@ chrome.extension.onMessage.addListener(
 		//window.alert("No need for loading options object."); // Used for testing. Test Case 002. same for line below
 		//window.alert("Options object: " + "\ntext_on " + options.text_on + "\n" + "blocked_words " + options.blocked_words + "\n" + "whitelisted_websites " + options.whitelisted_websites + '\n' + "replace_sentence " + options.replace_sentence + '\n' + "block_paragraph " + options.block_paragraph + '\n' + "block_webpage " + options.block_webpage + '\n' + "num_paragraph " + options.num_for_paragraph + '\n'+ "num_webpage " + options.num_for_webpage + '\n' + "image_on " + options.image_on + '\n' + "image_blocked_words " + options.image_blocked_words + '\n' + "image_whitelist " + options.image_whitelisted_websites + '\n'+ "image_scanner " + options.image_scanner + '\n' + "scanner_sensitivity " + options.scanner_sensitivity);  //Used for testing.
 
-		sendResponse({farewell: options});
+		sendResponse({farewell: options, templates: templates});
 	}
 	
 
@@ -286,3 +289,23 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
         });
     }
 });
+
+function loadTemplates() {
+	chrome.runtime.getPackageDirectoryEntry(function(root) {
+		root.getDirectory("assets/templates/", {create: false}, function(dir) {
+			dir.createReader().readEntries(function(files) {
+				files.filter(function(file) {
+					return file.isFile;
+				}).forEach(function(file) {
+					file.file(function(blob) {
+						var reader = new FileReader();
+						reader.onloadend = function(e) {
+							templates[file.name] = reader.result;
+						};
+						reader.readAsText(blob);
+					});
+				});
+			});
+		});
+	});
+}
