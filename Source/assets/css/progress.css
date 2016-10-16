@@ -1,6 +1,3 @@
-.progress-container {
-    padding: 0 3px
-}
 .progress-wrapper {
     width: 100%;
     height: 40px;
@@ -91,9 +88,6 @@
     border-style: solid;
     border-width: 2px 0 2px 2px
 }
-.progress .progress-bar.progress-full:before {
-    width: 50px;
-}
 .progress .progress-bar .progress-progress {
     border-width: 2px 0 2px 0
 }
@@ -106,10 +100,10 @@
     font-size: 16px;
     color: #737576
 }
-.progress .progress-bar,
+.progress,
 .progress .progress-mss-wrapper {
     padding: 0 25px
 }
 body {
-    width: 700px
+    width: 800px
 }
