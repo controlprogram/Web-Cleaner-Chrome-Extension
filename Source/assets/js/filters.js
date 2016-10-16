@@ -85,6 +85,11 @@ function updateStats(adds) {
 			pane.nodes.images.textContent = stats.images.processed.toLocaleString() + '/' + stats.images.total.toLocaleString();
 			pane.nodes.blocked.textContent = stats.images.blocked.toLocaleString();
 			pane.nodes.avg_pixels.textContent = (stats.pixels.total ? Math.round(stats.pixels.skin / stats.pixels.total * 100) + '%/' : '') + stats.pixels.images.toLocaleString();
+			if (stats.images.processed >= stats.images.total) {
+				pane.nodes.root.classList.add('wc_scanning_complete');
+			} else {
+				pane.nodes.root.classList.remove('wc_scanning_complete');
+			}
 		}
 		if (window!=top) {
 			chrome.extension.sendMessage({"greeting": "update_stats", adds: adds});
@@ -1050,10 +1055,10 @@ function insertTemplates() {
 		pane.nodes[name] = root.querySelector(['#wc_pane', name].filter(Boolean).join('_'));
 	});
 	pane.close = function() {
-		pane.nodes.root.classList.remove('open');
+		pane.nodes.root.classList.remove('wc_pane_opened');
 	};
 	pane.open = function() {
-		pane.nodes.root.classList.add('open');
+		pane.nodes.root.classList.add('wc_pane_opened');
 	}
 	pane.nodes.close.addEventListener('click', function(e) {
 		e.preventDefault();

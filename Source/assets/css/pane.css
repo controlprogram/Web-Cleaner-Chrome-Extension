@@ -10,7 +10,7 @@
     opacity: 0;
     transition: opacity .5s 0s, visibility 0s .5s
 }
-#wc_pane_root.open {
+#wc_pane_root.wc_pane_opened {
     visibility: visible;
     opacity: 1;
     transition: visibility 0s 0s, opacity .5s 0s
@@ -37,6 +37,10 @@
     background-color: #39AEFF;
     font-size: 12px
 }
+#wc_pane_root.wc_scanning_complete #wc_pane_close {
+    background-color: #AEFF39
+}
+
 #wc_pane_background {
     width: 35px;
     opacity: 0.9;
