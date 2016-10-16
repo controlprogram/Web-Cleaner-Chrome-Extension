@@ -1,4 +1,81 @@
-<div id="wc_pane_root">
+<style>
+	:host {
+	    margin: 0px;
+	    padding: 0px;
+	    color: #FFFFFF;
+	    position: fixed;
+	    z-index: 2147483646;
+	    right: 10px;
+	    top: 10px;
+	    visibility: hidden;
+	    opacity: 0;
+	    transition: opacity .5s 0s, visibility 0s .5s
+	}
+	:host(.wc_pane_opened) {
+	    visibility: visible;
+	    opacity: 1;
+	    transition: visibility 0s 0s, opacity .5s 0s
+	}
+	#wc_pane_background {
+	    width: 150px;
+	}
+	#wc_pane_header {
+	    background-color: #008BEB;
+	    line-height: 35px;
+	    overflow: hidden;
+	    -webkit-transition: max-height 0.8s;
+	    transition: max-height 0.8s, opacity 1s;
+	    font-family: "Lucida Sans Unicode"
+	}
+	#wc_pane_title {
+	    width: 135px;
+	    margin-left: 5px
+	}
+	#wc_pane_close {
+	    float: right;
+	    height: 10px;
+	    padding: 0px 2px 0px 2px;
+	    background-color: #39AEFF;
+	    font-size: 12px
+	}
+	:host(.wc_scanning_complete) #wc_pane_close {
+	    background-color: #AEFF39
+	}
+	#wc_pane_background {
+	    /*width: 35px;*/
+	    opacity: 0.9;
+	    background-color: #0068B0;
+	    -webkit-transition: max-height 0.8s;
+	    transition: max-height 0.8s, opacity 1s
+	}
+	#wc_pane_list {
+	    padding: 10px 0px 10px 5px;
+	    margin: 0px;
+	    text-align: left;
+	    font-size: 12px;
+	    font-family: "Lucida Sans Unicode"
+	}
+	.wc_pane_entry {
+	    width: 140px;
+	    height: 25px;
+	    line-height: 25px;
+	    color: #B0DFFF
+	}
+	.wc_pane_left {
+	    width: 75px
+	}
+	.wc_pane_right {
+	    width: 70px;
+	    float: right;
+	    text-align: right;
+	    overflow: hidden
+	}
+	a.wc_pane_close:link, a.wc_pane_close:active {
+	    text-decoration: none;
+	    color: #FFFFFF
+	}
+</style>
+<content>
 	<div id="wc_pane_header"><div id="wc_pane_title">Image Scanner<div id="wc_pane_close"><a class="wc_pane_close" href="#">x</a></div></div></div>
 	<div id="wc_pane_background">
 		<div id="wc_pane_list">
@@ -7,4 +84,4 @@
 			<div class="wc_pane_entry"><span id="wc_pane_avg_pixels" class="wc_pane_entry">0%</span><span class="wc_pane_right">Avg. Pixels</span></div>
 		</div>
 	</div>
-</div>
+</content>

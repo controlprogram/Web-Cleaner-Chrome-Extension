@@ -1047,12 +1047,14 @@ function insertTemplates() {
 		return;
 	}
 	var root = document.createElement('div');
-	root.innerHTML = templates['pane.html'];
+	root.id = 'wc_pane_root';
+	var shadow = root.createShadowRoot();
+	shadow.innerHTML = templates['pane.html'];
 	pane = {
-		nodes: {},
+		nodes: {root: root},
 	};
-	['root', 'close', 'images', 'blocked', 'analyzed', 'avg_pixels'].forEach(function(name) {
-		pane.nodes[name] = root.querySelector(['#wc_pane', name].filter(Boolean).join('_'));
+	['close', 'images', 'blocked', 'analyzed', 'avg_pixels'].forEach(function(name) {
+		pane.nodes[name] = shadow.querySelector(['#wc_pane', name].filter(Boolean).join('_'));
 	});
 	pane.close = function() {
 		pane.nodes.root.classList.remove('wc_pane_opened');
@@ -1064,6 +1066,6 @@ function insertTemplates() {
 		e.preventDefault();
 		pane.close();
 	}, false);
-	document.children[0].appendChild(pane.nodes.root);
+	document.children[0].appendChild(root);
 	updateStats();
 }
