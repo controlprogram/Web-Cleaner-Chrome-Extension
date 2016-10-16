@@ -85,12 +85,10 @@ function updateStats(adds) {
 			pane.nodes.images.textContent = stats.images.processed.toLocaleString() + '/' + stats.images.total.toLocaleString();
 			pane.nodes.blocked.textContent = stats.images.blocked.toLocaleString();
 			pane.nodes.avg_pixels.textContent = (stats.pixels.total ? Math.round(stats.pixels.skin / stats.pixels.total * 100) + '%/' : '') + stats.pixels.images.toLocaleString();
-			if (document.body) {
-				if (stats.images.processed >= stats.images.total) {
-					document.body.classList.add('wc-scanning-complete');
-				} else {
-					document.body.classList.remove('wc-scanning-complete');
-				}
+			if (stats.images.processed >= stats.images.total) {
+				pane.nodes.root.classList.add('scanning-complete');
+			} else {
+				pane.nodes.root.classList.remove('scanning-complete');
 			}
 		}
 		if (window!=top) {
