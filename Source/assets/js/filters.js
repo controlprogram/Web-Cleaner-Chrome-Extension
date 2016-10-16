@@ -578,7 +578,7 @@ function background_filter(nodes)
 	if (options.image_on != true)
 		return; // If the image filter isn't on, return.
 	// end if
-	
+
 	for (var i = 0; i < nodes.length; i++)
 	{
 		var node = nodes[i];
@@ -588,6 +588,7 @@ function background_filter(nodes)
 
 		if (!data && !src)
 		{
+			node.dataset.webCleanerReady = true;
 			continue;
 		}
 		if (!data)
@@ -607,9 +608,9 @@ function background_filter(nodes)
 			block: false
 		};
 
-		/*if (options.image_blurring) {
+		if (options.image_blurring) {
 			delete node.dataset.webCleanerReady;
-		}*/
+		}
 
 		processTask(node.task);
 	}
