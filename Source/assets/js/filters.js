@@ -588,7 +588,9 @@ function background_filter(nodes)
 
 		if (!data && !src)
 		{
-			node.dataset.webCleanerReady = true;
+			if (options.image_blurring) {
+				node.dataset.webCleanerReady = true;
+			}
 			continue;
 		}
 		if (!data)
@@ -608,9 +610,7 @@ function background_filter(nodes)
 			block: false
 		};
 
-		if (options.image_blurring) {
-			delete node.dataset.webCleanerReady;
-		}
+		delete node.dataset.webCleanerReady;
 
 		processTask(node.task);
 	}
@@ -773,9 +773,7 @@ function image_filter(images)
 			block: block
 		};
 
-		if (options.image_blurring) {
-			delete img.dataset.webCleanerReady;
-		}
+		delete img.dataset.webCleanerReady;
 
 		processTask(img.task);
 		
