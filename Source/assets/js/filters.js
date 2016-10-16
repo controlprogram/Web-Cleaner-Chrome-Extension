@@ -811,6 +811,11 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 		getCanvasFromDataUrl(src, maxPixels, callback);
 	} // end sync if
 
+	else if (src.startsWith('chrome-extension://'))
+	{
+		callback(null);
+	}
+
 	else // load it asynchronously
 	{
 		// Now create an xml request for the image so we can circumvent the cross-origin problem.
@@ -832,17 +837,23 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 					});
 					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
 				} // end if
+				else if (xhr.status == 0)
+				{
+					chrome.extension.sendMessage({"greeting": "request_xhr", url: src}, function(response) {
+						if (response.result) {
+							getCanvasFromDataUrl(response.result, maxPixels, callback);
+						} else {
+							callback(null);
+						}
+					});
+				}
 				else
 				{
 					callback(null);
 				}
 			} // end if
 		};
-		try {
-			xhr.send(); // Send the request.
-		} catch (e) {
-			callback(null);
-		}
+		xhr.send(); // Send the request.
 	} // end async if
 }
 

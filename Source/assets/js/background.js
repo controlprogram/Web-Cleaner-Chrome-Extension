@@ -290,8 +290,85 @@ chrome.extension.onMessage.addListener(
 		chrome.tabs.sendMessage(sender.tab.id, request);
 	}
 	
+	else if (request.greeting == "request_xhr")
+	{console.log(request);
+		// Now create an xml request for the image so we can circumvent the cross-origin problem.
+		var xhr = new XMLHttpRequest();
 
+		xhr.open('GET', request.url) // Use an asynchronous get request on the image url.
+		xhr.responseType = 'blob'; // Used so we can encode the binary into base64
+		xhr.onreadystatechange = function() {
+			// If the request is ready...
+			if (xhr.readyState == 4)
+			{
+				// And we got an OK response...
+				if (xhr.status == 200)
+				{
+					// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
+					var reader = new FileReader();
+					reader.addEventListener("loadend", function() {
+						sendResponse({status: xhr.status, result: reader.result});
+					});
+					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+				} // end if
+				else
+				{
+					sendResponse({status: xhr.status});
+				}
+			} // end if
+		};
+		xhr.send(); // Send the request.
+		return true; // Keep message port open. We'll respond later.
+	}
   });
+
+function getCanvasFromUrl(src, maxPixels, callback) {
+	// If the image src is a DataURL, use it synchronously.
+	if (src.startsWith('data:'))
+	{
+		getCanvasFromDataUrl(src, maxPixels, callback);
+	} // end sync if
+
+	else // load it asynchronously
+	{
+		// Now create an xml request for the image so we can circumvent the cross-origin problem.
+		var xhr = new XMLHttpRequest();
+
+		xhr.open('GET', src) // Use an asynchronous get request on the image url.
+		xhr.responseType = 'blob'; // Used so we can encode the binary into base64
+		xhr.onreadystatechange = function() {
+			// If the request is ready...
+			if (xhr.readyState == 4)
+			{
+				// And we got an OK response...
+				if (xhr.status == 200)
+				{
+					// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
+					var reader = new FileReader();
+					reader.addEventListener("loadend", function() {
+						getCanvasFromDataUrl(reader.result, maxPixels, callback);
+					});
+					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+				} // end if
+				else
+				{
+					callback(null);
+				}
+			} // end if
+		};
+		try {
+			xhr.send(); // Send the request.
+		} catch (e) {
+			chrome.extension.sendMessage({"greeting": "request_xhr", url: src}, function(result) {
+				if (result) {
+					getCanvasFromDataUrl(result, maxPixels, callback);
+				} else {
+					callback(null);
+				}
+			});
+		}
+	} // end async if
+}
 
 chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
     if (info.status && options.image_on && options.image_blurring) {
