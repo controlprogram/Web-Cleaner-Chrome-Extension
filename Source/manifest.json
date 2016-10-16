@@ -8,7 +8,6 @@
          "assets/js/filters.js",
          "assets/js/mutation_summary.js"
       ],
-      "css": [ "assets/css/pane.css" ],
       "matches": [ "<all_urls>" ],
       "run_at": "document_start"
    } ],
