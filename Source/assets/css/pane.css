@@ -6,10 +6,14 @@
     z-index: 2147483646;
     right: 10px;
     top: 10px;
-    display: none
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .5s 0s, visibility 0s .5s
 }
 #wc_pane_root.open {
-    display: block
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s 0s, opacity .5s 0s
 }
 #wc_pane_root #wc_pane_background {
     width: 150px;
@@ -20,7 +24,7 @@
     overflow: hidden;
     -webkit-transition: max-height 0.8s;
     transition: max-height 0.8s, opacity 1s;
-    font-family: Lucida Sans Unicode
+    font-family: "Lucida Sans Unicode"
 }
 #wc_pane_title {
     width: 135px;
@@ -34,7 +38,6 @@
     font-size: 12px
 }
 #wc_pane_background {
-    height: 0px;
     width: 35px;
     opacity: 0.9;
     background-color: #0068B0;
@@ -46,7 +49,7 @@
     margin: 0px;
     text-align: left;
     font-size: 12px;
-    font-family: Lucida Sans Unicode
+    font-family: "Lucida Sans Unicode"
 }
 .wc_pane_entry {
     width: 140px;
