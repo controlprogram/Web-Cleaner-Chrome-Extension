@@ -834,7 +834,11 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 				} // end if
 			} // end if
 		};
-		xhr.send(); // Send the request.
+		try {
+			xhr.send(); // Send the request.
+		} catch (e) {
+			callback(null);
+		}
 	} // end async if
 }
 
