@@ -85,10 +85,12 @@ function updateStats(adds) {
 			pane.nodes.images.textContent = stats.images.processed.toLocaleString() + '/' + stats.images.total.toLocaleString();
 			pane.nodes.blocked.textContent = stats.images.blocked.toLocaleString();
 			pane.nodes.avg_pixels.textContent = (stats.pixels.total ? Math.round(stats.pixels.skin / stats.pixels.total * 100) + '%/' : '') + stats.pixels.images.toLocaleString();
-			if (stats.images.processed >= stats.images.total) {
-				pane.nodes.root.classList.add('wc_scanning_complete');
-			} else {
-				pane.nodes.root.classList.remove('wc_scanning_complete');
+			if (document.body) {
+				if (stats.images.processed >= stats.images.total) {
+					document.body.classList.add('wc-scanning-complete');
+				} else {
+					document.body.classList.remove('wc-scanning-complete');
+				}
 			}
 		}
 		if (window!=top) {
@@ -104,18 +106,11 @@ if (window==top) chrome.runtime.onMessage.addListener(function(request, sender, 
 });
 
 
-if (document.querySelector('#wc_pane_root')) {
-	console.log('already running');
-} else {
-	// Using the 'DOMContentLoaded event means that you might be able to briefly see a flash of the content that will eventually be filtered. If the page takes a long time, you will get a good look at content that should be filtered.
-	// However, directly calling the load_filters funtion results in some text content escaping both the filter and the Mutation observer.
-	// So we do both.
-	load_filters();
-	document.addEventListener('DOMContentLoaded', load_filters);
-
-}
-
-
+// Using the 'DOMContentLoaded event means that you might be able to briefly see a flash of the content that will eventually be filtered. If the page takes a long time, you will get a good look at content that should be filtered.
+// However, directly calling the load_filters funtion results in some text content escaping both the filter and the Mutation observer.
+// So we do both.
+load_filters();
+document.addEventListener('DOMContentLoaded', load_filters);
 
 
 // This function will be called as soon as the DOM is ready for manipulation, this function will request the options object from the background
@@ -1047,20 +1042,19 @@ function insertTemplates() {
 		return;
 	}
 	var root = document.createElement('div');
-	root.id = 'wc_pane_root';
 	var shadow = root.createShadowRoot();
 	shadow.innerHTML = templates['pane.html'];
 	pane = {
 		nodes: {root: root},
 	};
 	['close', 'images', 'blocked', 'analyzed', 'avg_pixels'].forEach(function(name) {
-		pane.nodes[name] = shadow.querySelector(['#wc_pane', name].filter(Boolean).join('_'));
+		pane.nodes[name] = shadow.querySelector('#' + name);
 	});
 	pane.close = function() {
-		pane.nodes.root.classList.remove('wc_pane_opened');
+		pane.nodes.root.classList.remove('opened');
 	};
 	pane.open = function() {
-		pane.nodes.root.classList.add('wc_pane_opened');
+		pane.nodes.root.classList.add('opened');
 	}
 	pane.nodes.close.addEventListener('click', function(e) {
 		e.preventDefault();
