@@ -832,6 +832,10 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 					});
 					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
 				} // end if
+				else
+				{
+					callback(null);
+				}
 			} // end if
 		};
 		try {
