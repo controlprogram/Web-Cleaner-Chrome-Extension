@@ -35,6 +35,7 @@ function default_options()
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
 	var image_scanner = document.getElementById("image_scanner");
+	var image_background_checkbox = document.getElementById("image_background_checkbox");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
 	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox");
 	var save_note = document.getElementById("save_note");
@@ -79,7 +80,7 @@ function default_options()
 
 	image_replacement.children[0].checked = "true";
 
-
+	image_background_checkbox.checked = "true";
 	image_blurring_checkbox.checked = "true";
 	image_two_pass_checkbox.checked = "true";
 }
@@ -111,6 +112,7 @@ function load_options()
 	var scanner_sensitivity = document.getElementById("scanner_sensitivity");
 	var range2 = document.getElementById("range2");
 	var image_replacement = document.getElementById("image_replacement");
+	var image_background_checkbox = document.getElementById("image_background_checkbox");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
 	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox");
 	var save_note = document.getElementById("save_note");
@@ -215,6 +217,13 @@ function load_options()
 	{
 		image_replacement_strategy.checked = true;
 	}
+
+	// Sets the image background checkbox
+	if (localStorage["image_background"] == "true")
+		image_background_checkbox.checked = true;
+	
+	else
+		image_background_checkbox.checked = false;
 
 	// Sets the image blurring checkbox
 	if (localStorage["image_blurring"] == "true")
@@ -473,6 +482,9 @@ function save_and_update_background()
 	var image_replacement = document.querySelector("[name=image_replacement]:checked");
 	image_replacement = image_replacement ? image_replacement.value : "";
 
+	// This is a boolean value. True means the user wants background images analyzed.
+	var image_background_checkbox = document.getElementById("image_background_checkbox").checked;
+
 	// This is a boolean value. True means the user wants to blur images not analyzed yet.
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox").checked;
 
@@ -583,6 +595,9 @@ function save_and_update_background()
 
 	localStorage["image_replacement"] = image_replacement;
 	background.image_replacement = image_replacement;
+
+	localStorage["image_background"] = image_background_checkbox;
+	background.image_background = image_background_checkbox;
 
 	localStorage["image_blurring"] = image_blurring_checkbox;
 	background.image_blurring = image_blurring_checkbox;

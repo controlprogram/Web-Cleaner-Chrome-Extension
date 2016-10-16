@@ -48,6 +48,7 @@ function initialize_options()
 	localStorage["image_blocked_words"] = "sex\nbreast\nboob\npenis\nvagina\ndick\nfuck\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude\nbra \npanties\nrisque\nraunch\nmaxim\nplayboy\nstripper\nprostitute\nlingerie";
 	localStorage["image_whitelisted_websites"]  = "";
 	localStorage["image_scanner"] = true;
+	localStorate["image_background"] = true;
 	localStorage["scanner_sensitivity"] = 50;
 	localStorage["image_replacement"] = "logo";
 	localStorage["image_blurring"] = true;
@@ -179,6 +180,19 @@ function load_variables(options)
 		}
 	}
 	
+	// Sets the background scanner option
+	if (localStorage["image_background"])
+	{
+		if (localStorage["image_background"] == "true")
+		{
+			options.image_background = true;
+		}
+		else
+		{
+			options.image_background = false;
+		}
+	}
+	
 	// Sets the sensitivity of the image scanner
 	if (localStorage["scanner_sensitivity"])
 		options.scanner_sensitivity = localStorage["scanner_sensitivity"];
@@ -243,6 +257,8 @@ options.image_whitelisted_websites = null;
 
 // This is a boolean. True means the image scanner is on.
 options.image_scanner = null;
+
+options.image_background = null;
 
 // This is an integer between 0 and 100. It tells the sensitivity of the image scanner as a percentage.
 options.scanner_sensitivity = null;

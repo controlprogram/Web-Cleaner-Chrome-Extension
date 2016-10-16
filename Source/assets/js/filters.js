@@ -50,6 +50,7 @@ var word_count = 0; // This is a counter variable for the text filter for blocki
 
 var text_observer;
 var image_observer;
+var background_observer;
 var image_cache = {
 	good: new Map(), // stores all good urls as {url: replacementUrl}
 	bad: new Map(), // stores all bad urls as {url: replacementUrl}
@@ -64,7 +65,7 @@ var imageLoadPixel = 30;
 var imageMaxPixel = 30;
 var stats = {
 	pixels: {total: 0, skin: 0, images: 0},
-	images: {total: 0, processed: 0, blocked: 0}
+	images: {total: 0, processed: 0, blocked: 0},
 };
 
 function updateStats(adds) {
@@ -196,36 +197,25 @@ function(response)
  if (options.image_on == true)
  {
   
-		
+		var whitelisted = false;
 		
 		// Check if the webpage is whitelisted.
 		if(options.image_whitelisted_websites != null && options.image_whitelisted_websites != "") // When no whitelisted websites exist, and the options have not been saved yet, options.whitelisted_websites will have a null value, which cannot be split. This handles that eventuality.
 		{
 			var whitelist = new RegExp( '(' + options.image_whitelisted_websites.split('\n').join('|') + ')', 'igm');
 			var website = window.location.hostname;
-			if (!whitelist.test(website)) 
+			if (whitelist.test(website)) 
 			{
-				//window.alert(options.whitelisted_websites.split('\n')); // used for testing.
-				//window.alert(window.location.hostname); // used for testing.
-				//window.alert("Website not whitelisted."); // Used for testing.
-				
-				image_preparation();
-				
-				//window.alert("Called image filter, making image observer."); // used for testing.
-				
-				// This creates a new mutation summary observer. It will call image_changes_filter whenever an 'img' element is added, removed, reparented, or whenever the 'src' attribute of an image element is changed.
-				image_observer = new MutationSummary({
-																						callback: image_changes_preparation,
-																						queries: [{ attribute: "src"}]
-																					}); // Done so we can filter out content created by scripts.
-			
-				//window.alert("Called image observer"); // used for testing.
-			} // end if webpage is whitelisted
-		
-		} // end if there is a whitelist
-		else
+				whitelisted = true;
+			}
+		}
+
+		if (!whitelisted)
 		{
-		
+			//window.alert(options.whitelisted_websites.split('\n')); // used for testing.
+			//window.alert(window.location.hostname); // used for testing.
+			//window.alert("Website not whitelisted."); // Used for testing.
+			
 			image_preparation();
 			
 			//window.alert("Called image filter, making image observer."); // used for testing.
@@ -235,9 +225,19 @@ function(response)
 																					callback: image_changes_preparation,
 																					queries: [{ attribute: "src"}]
 																				}); // Done so we can filter out content created by scripts.
-			
+		
 			//window.alert("Called image observer"); // used for testing.
-		} // end else
+
+			if (options.image_background)
+			{
+				background_preparation();
+				background_observer = new MutationSummary({
+					callback: background_changes_preparation,
+					queries: [{ attribute: "style" }]
+				});
+			}
+		
+		}
 	
  } // end if options.image_on
 
@@ -495,6 +495,18 @@ function image_preparation()
 
 
 
+/* This is the preparation function for the background image filter
+It simply looks through the entire webpage, collecing all elements with a tag of 'div' and puts them in an array.
+It then calls background_filter and passes this array into it.
+*/
+function background_preparation()
+{
+	//window.alert("Inside image_prep function."); // Used for testing.
+	
+	background_filter(document.getElementsByTagName("div")); // This creates an array of all the div nodes and passes it into the background_filter function.
+
+} // end background prep function
+
 /*
 This is the preparation function that parses the summary object from the mutation observer.
 This is the callback function for the image_observer.
@@ -527,6 +539,82 @@ function image_changes_preparation(changes)
 	} // end if
 } // end image changes prep function
 
+
+/*
+This is the preparation function that parses the summary object from the mutation observer.
+This is the callback function for the background_observer.
+First, it parses the summary object and then passes the resulting array into the background_filter function.
+*/
+function background_changes_preparation(changes)
+{
+	//window.alert("Inside background_changes_prep function."); // Used for testing.
+	
+	//This parses the changes object and creates an array of div nodes that have been added or changed.
+	// This array is then passed in as the parameter for the background_filter function.
+	
+	var parameter = changes[0].added.concat(changes[0].valueChanged); // Assign all additions and changes to the parameter array
+	
+	var i = parameter.length - 1; // initialize a counter variable
+	// Loop through the array, removing anything that is not an image. We count down to avoid overunning the array if we delete any nodes.
+	while (i >= 0)
+	{
+		if (parameter[i].nodeName != "DIV")
+		{
+			parameter.splice(i, 1);
+		} // end if
+		i--;
+	} // end while
+	
+	// Check that the parameter length is greater than 0. If so, call the background_filter function.
+	if (parameter.length > 0)
+	{
+		background_filter(parameter);
+	} // end if
+} // end background changes prep function
+
+
+function background_filter(nodes)
+{
+	if (options.image_on != true)
+		return; // If the image filter isn't on, return.
+	// end if
+	
+	for (var i = 0; i < nodes.length; i++)
+	{
+		var node = nodes[i];
+		var data = node.wcData;
+		var src = /^url\("(.*)"\)$/.exec(node.style.backgroundImage);
+		src = src ? src[1].replace(/\\"/g, '"') : "";
+
+		if (!data && !src)
+		{
+			continue;
+		}
+		if (!data)
+		{
+			data = node.wcData = new Map();
+		}
+
+		if (!node.task) {
+			updateStats({images: {total: 1}});
+		}
+		
+		node.task = {
+			tag: node.tagName.toLowerCase(),
+			img: node,
+			originalSrc: node.style.backgroundImage,
+			src: src,
+			block: false
+		};
+
+		/*if (options.image_blurring) {
+			delete node.dataset.webCleanerReady;
+		}*/
+
+		processTask(node.task);
+	}
+
+}
 
 
 /* This function will perform the image filter operations. First, it checks to ensure that the image filter is turned on, if not, it returns.
@@ -677,7 +765,9 @@ function image_filter(images)
 		}
 		
 		img.task = {
+			tag: 'img',
 			img: img,
+			originalSrc: img.src,
 			src: img.src,
 			block: block
 		};
@@ -710,9 +800,13 @@ function processTask(task) {
 
 	// Check if the preconditions have changed.
 	if (
-		src !== img.src || 
-		data.has('replacedTitle') && img.title !== data.get('replacedTitle') ||
-		data.has('replacedAlt') && img.alt !== data.get('replacedAlt')
+		task.tag == 'img' ? (
+			src !== img.src || 
+			data.has('replacedTitle') && img.title !== data.get('replacedTitle') ||
+			data.has('replacedAlt') && img.alt !== data.get('replacedAlt')
+		) : (
+			task.originalSrc !== img.style.backgroundImage
+		)
 	) {
 		// A new task will be scheduled soon.
 		updateStats({images: {total: -1}});
@@ -736,7 +830,19 @@ function processTask(task) {
 			typeof unsure.get(src) === 'string' ||
 			typeof good.get(src) === 'string'
 		) {
-			img.src = bad.get(src) || unsure.get(src) || good.get(src) || '';
+			var replacement = bad.get(src) || unsure.get(src) || good.get(src) || '';
+			if (task.tag == "img")
+			{
+				img.src = replacement;
+
+				// Also remove a possible srcset.
+				// Alternatively we could create a replacement for each version which doesn't make any sense.
+				img.srcset = ""; // remove src
+			}
+			else
+			{
+				img.style.backgroundImage = "url(\"" + replacement.replace(/"/g, "\\\"") + "\")";
+			}
 			finish();
 		} else {
 			// It's necessary to convert the image.
