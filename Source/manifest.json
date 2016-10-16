@@ -2,7 +2,10 @@
    "manifest_version": 2,
    "name": "Web Cleaner",
    "options_page": "assets/html/options.html",
-   "permissions": [ "http://*/", "https://*/" ],
+   "permissions": [
+      "http://*/", "https://*/",
+      "tabs"
+   ],
    "version": "1.0.0",
    "background": {
       "scripts": [ "assets/js/background.js" ]
@@ -24,8 +27,7 @@
       "48": "assets/img/joseph'slogo2(white).png"
    },
    "browser_action": {
-      "default_title": "Web Cleaner",      // optional; shown in tooltip
-      "default_popup": "assets/html/progress.html"        // optional
+      "default_title": "Web Cleaner"
    },
    "web_accessible_resources": [
       "assets/css/blockimg.css",

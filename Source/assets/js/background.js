@@ -397,6 +397,31 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
     }
 });
 
+var progressUrl = null;
+chrome.browserAction.onClicked.addListener(function(activeTab) {
+	var url = "assets/html/progress.html";
+	if (!progressUrl) {
+		chrome.tabs.create({url: url}, function(tab) {
+			progressUrl = tab.url;
+		});
+	} else {
+		chrome.tabs.query({currentWindow: true}, function(tabs) {
+			tabs = (tabs || []).filter(function(tab) {
+				return tab.url == progressUrl;
+			});
+			if (tabs.length) {
+				if (!tabs.some(function(tab) {
+					return tab.active;
+				})) {
+					chrome.tabs.update(tabs[0].id, {active: true});
+				}
+			} else {
+    			chrome.tabs.create({url: url});
+			}
+		});
+	}
+});
+
 function loadTemplates() {
 	chrome.runtime.getPackageDirectoryEntry(function(root) {
 		root.getDirectory("assets/templates/", {create: false}, function(dir) {
