@@ -1,4 +1,9 @@
 {
+   "manifest_version": 2,
+   "name": "Web Cleaner",
+   "options_page": "assets/html/options.html",
+   "permissions": [ "http://*/", "https://*/" ],
+   "version": "1.0.0",
    "background": {
       "scripts": [ "assets/js/background.js" ]
    },
@@ -17,11 +22,10 @@
       "16": "assets/img/joseph'slogo2(white).png",
       "48": "assets/img/joseph'slogo2(white).png"
    },
-   "manifest_version": 2,
-   "name": "Web Cleaner",
-   "options_page": "assets/html/options.html",
-   "permissions": [ "http://*/", "https://*/" ],
-   "version": "1.0.0",
+   "browser_action": {
+      "default_title": "Web Cleaner",      // optional; shown in tooltip
+      "default_popup": "assets/html/progress.html"        // optional
+   },
    "web_accessible_resources": [
       "assets/css/blockimg.css",
       "assets/js/worker.nude.js",
