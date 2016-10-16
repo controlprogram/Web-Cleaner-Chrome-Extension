@@ -153,7 +153,7 @@ function load_variables(options)
 		}
 	}
 	
-	if (localStorage["image_block_words"])
+	if (localStorage["image_block_words"] == "true")
 		options.image_block_words = true;
 	else
 		options.image_block_words = false;
