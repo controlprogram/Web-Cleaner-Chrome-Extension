@@ -291,7 +291,7 @@ chrome.extension.onMessage.addListener(
 	}
 	
 	else if (request.greeting == "request_xhr")
-	{console.log(request);
+	{
 		// Now create an xml request for the image so we can circumvent the cross-origin problem.
 		var xhr = new XMLHttpRequest();
 

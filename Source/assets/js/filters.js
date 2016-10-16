@@ -811,11 +811,6 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 		getCanvasFromDataUrl(src, maxPixels, callback);
 	} // end sync if
 
-	else if (src.startsWith('chrome-extension://'))
-	{
-		callback(null);
-	}
-
 	else // load it asynchronously
 	{
 		// Now create an xml request for the image so we can circumvent the cross-origin problem.

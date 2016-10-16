@@ -9,6 +9,7 @@
    },
    "content_scripts": [ {
       "all_frames": true,
+      "match_about_blank": true,
       "js": [
          "assets/js/filters.js",
          "assets/js/mutation_summary.js"
