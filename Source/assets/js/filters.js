@@ -503,7 +503,7 @@ function background_preparation()
 {
 	//window.alert("Inside image_prep function."); // Used for testing.
 	
-	background_filter(document.getElementsByTagName("div")); // This creates an array of all the div nodes and passes it into the background_filter function.
+	background_filter(document.getElementsByTagName("div,span")); // This creates an array of all the div nodes and passes it into the background_filter function.
 
 } // end background prep function
 
@@ -558,7 +558,7 @@ function background_changes_preparation(changes)
 	// Loop through the array, removing anything that is not an image. We count down to avoid overunning the array if we delete any nodes.
 	while (i >= 0)
 	{
-		if (parameter[i].nodeName != "DIV")
+		if (["DIV", "SPAN"].indexOf(parameter[i].nodeName) < 0)
 		{
 			parameter.splice(i, 1);
 		} // end if
@@ -596,6 +596,76 @@ function background_filter(nodes)
 		if (!data)
 		{
 			data = node.wcData = new Map();
+		}
+
+		var block = false;
+		if (options.image_block_words) {
+			// Otherwise, if the image has a title that matches a blocked word...
+			if (data.has('replacedTitle') && data.get('replacedTitle') === node.title)
+			{
+				block = 'replaced title ' + data.get('originalTitle');
+			}
+			else 
+			{
+				data.set('originalTitle', node.title);
+				if (options.image_block_words && blocked_pat.test(node.title))
+				{
+					node.title = node.title.replace(blocked_pat, function(m) {
+						return '*'.repeat(m.length);
+					});
+					data.set('replacedTitle', node.title);
+					
+					block = 'original title ' + data.get('originalTitle');
+
+				} // end if
+				else
+				{
+					data.delete('replacedTitle');
+				}
+			}
+			
+			
+			// If the image URL has a match with a blocked word... All replacement URLs are not blocked by definition.
+			// Also ignore data urls since they don't contain words.
+			if (!src.startsWith('data:') && !replacements.has(src) && blocked_pat.test(src))
+			{
+			
+				// HAVING A PROBLEM WITH WORD MATCHING IN SRC ATTRIBUTE. PROBLEM SOLVED JANUARY 2013
+				//window.alert("Replacing image step 1."); // used for testing.
+				//window.alert("Image number: " + i); //used for testing.
+				
+				block = 'src ' + src;
+
+			} // end if
+			
+			
+			
+			// If the image name has a match with a blocked word...
+			if (blocked_pat.test(node.name))
+			{
+				//window.alert("Replacing image step 2."); // used for testing.
+				//window.alert("Image number: " + i); //used for testing.
+				
+				block = 'name ' + node.name;
+
+			} // end if
+			
+			
+			// Check if the image is the child of a link. (This is usually the case and is when the image itself is the link)
+			// If the image is a link, and the link address or title contains a blocked word, block the image.
+			if (node.parentNode.nodeName == 'A')
+			{
+
+				if (blocked_pat.test(node.parentNode.href))
+				{
+					block = 'link href ' + node.parentNode.href;
+				} // end if
+				
+				else if (blocked_pat.test(node.parentNode.title))
+				{
+					block = 'link title ' + node.parentNode.title;
+				} // end else if
+			} // end if for parent node
 		}
 
 		if (!node.task) {
