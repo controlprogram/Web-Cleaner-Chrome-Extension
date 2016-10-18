@@ -27,6 +27,7 @@ function default_options()
 	// These variables hold the elements on the page that will have default values.
 	var text_on = document.getElementById("text_active");
 	var image_on = document.getElementById("image_active");
+	var schedule_on = document.getElementById("schedule_active");
 	var blocked_words = document.getElementById("blocked_words");
 	var image_block_words_checkbox = document.getElementById("image_block_words_checkbox");
 	var image_blocked_words = document.getElementById("image_blocked_words");
@@ -59,6 +60,19 @@ function default_options()
 		if (image_on.children[i].value == "true")
 		{
 			image_on.children[i].checked = "true";
+			break;
+		}
+		
+	}
+	
+	
+	// This loop will set the schedule to on.
+	for (var i = 0; i < schedule_on.children.length; i++)
+	{
+		
+		if (schedule_on.children[i].value == "true")
+		{
+			schedule_on.children[i].checked = "true";
 			break;
 		}
 		
@@ -115,6 +129,7 @@ function load_options()
 	var image_background_checkbox = document.getElementById("image_background_checkbox");
 	var image_blurring_checkbox = document.getElementById("image_blurring_checkbox");
 	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox");
+	var schedule_on = document.getElementById("schedule_active");
 	var save_note = document.getElementById("save_note");
 	var saved_note = document.getElementById("saved_note");
 	
@@ -239,6 +254,14 @@ function load_options()
 	else
 		image_two_pass_checkbox.checked = false;
 	
+	
+	// Sets the radio button for the image filter on/off
+	if (localStorage["schedule_on"] == "true")
+		schedule_on.children[0].checked = true;
+	
+	else
+		schedule_on.children[1].checked = true;
+	
 	// Check if there is a saved note and that it is not empty. If so, load the note with the date/time the options were saved.
 	if (localStorage["saved_note"] && localStorage["saved_note"] != "")
 	{
@@ -261,13 +284,14 @@ function load_options()
 
 function load_page()
 {
-	if (localStorage["text_on"] || localStorage["image_on"] || localStorage["save_note"])
+	if (localStorage["text_on"] || localStorage["image_on"] || localStorage["schedule_on"] || localStorage["save_note"])
 		load_options();
 	else
 		default_options();
 
-	toggleImageFilterWrapper();
-	toggleTextFilterWrapper();
+	toggleWrapper('text', 'text_filter');
+	toggleWrapper('image', 'image_filter');
+	toggleWrapper('schedule', 'schedule');
 }
 
 
@@ -490,6 +514,9 @@ function save_and_update_background()
 
 	// This is a boolean value. True means the user wants to two-pass images.
 	var image_two_pass_checkbox = document.getElementById("image_two_pass_checkbox").checked;
+	
+	// This is a boolean. True means the image filter is on.
+	var schedule_on = document.getElementById("schedule_active").children[0].checked;
 
 	var save_note = document.getElementById("save_note").checked;
 
@@ -605,25 +632,19 @@ function save_and_update_background()
 	localStorage["image_two_pass"] = image_two_pass_checkbox;
 	background.image_two_pass = image_two_pass_checkbox;
 
+	// Stores the option for turning the schedule on/off
+	localStorage["schedule_on"] = schedule_on;
+	background.schedule_on = schedule_on;
+
 	localStorage["save_note"] = save_note;
 
 	return true;
 }
 
-function toggleTextFilterWrapper() {
-	var text_on = document.querySelector('[name=text_on]:checked');
-	var wrapper = document.getElementById('text_filter_wrapper');
-	if (text_on.value == "true") {
-		wrapper.classList.remove('hidden');
-	} else {
-		wrapper.classList.add('hidden');
-	}
-}
-
-function toggleImageFilterWrapper() {
-	var text_on = document.querySelector('[name=image_on]:checked');
-	var wrapper = document.getElementById('image_filter_wrapper');
-	if (text_on.value == "true") {
+function toggleWrapper(radioOn, wrapper) {
+	var on = document.querySelector('[name=' + radioOn + '_on]:checked');
+	wrapper = document.getElementById(wrapper + '_wrapper');
+	if (on.value == "true") {
 		wrapper.classList.remove('hidden');
 	} else {
 		wrapper.classList.add('hidden');
@@ -653,9 +674,13 @@ document.addEventListener('DOMContentLoaded', load_page);
 document.getElementById("save_button").children[0].addEventListener('click', save_button);
 
 [].forEach.call(document.getElementsByName('image_on'), function(radio) {
-	radio.addEventListener('change', toggleImageFilterWrapper);
+	radio.addEventListener('change', function() {toggleWrapper('image', 'image_filter');});
 });
 
 [].forEach.call(document.getElementsByName('text_on'), function(radio) {
-	radio.addEventListener('change', toggleTextFilterWrapper);
+	radio.addEventListener('change', function() {toggleWrapper('text', 'text_filter');});
+});
+
+[].forEach.call(document.getElementsByName('schedule_on'), function(radio) {
+	radio.addEventListener('change', function() {toggleWrapper('schedule', 'schedule');});
 });

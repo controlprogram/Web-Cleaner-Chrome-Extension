@@ -53,6 +53,7 @@ function initialize_options()
 	localStorage["image_replacement"] = "logo";
 	localStorage["image_blurring"] = true;
 	localStorage["image_two_pass"] = true;
+	localStorage["schedule_on"] = true;
 	localStorage["save_note"] = true;
 }
 
@@ -209,6 +210,19 @@ function load_variables(options)
 		options.image_two_pass = true;
 	else
 		options.image_two_pass = false;
+	
+	// Sets the schedule option
+	if (localStorage["schedule_on"])
+	{
+		if (localStorage["schedule_on"] == "true")
+		{
+			options.schedule_on = true;
+		}
+		else
+		{
+			options.schedule_on = false;
+		}
+	}
 
 	if (localStorage["save_note"])
 		options.save_note = true;
@@ -271,6 +285,9 @@ options.image_blurring = null;
 
 // This is a string specifying the two-pass strategy.
 options.image_two_pass = null;
+
+// This is a boolean. True means the schedule is on.
+options.schedule_on = null;
 
 options.save_note = null;
 
