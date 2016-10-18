@@ -1,3 +1,5 @@
-img:not([data-web-cleaner-ready]), div[style]:not([data-web-cleaner-ready])  {
+img:not([data-web-cleaner-ready]),
+div[style]:not([data-web-cleaner-ready]),
+p[style]:not([data-web-cleaner-ready]) {
 	filter: blur(15px);
 }
