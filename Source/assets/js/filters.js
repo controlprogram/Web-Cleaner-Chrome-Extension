@@ -503,7 +503,7 @@ function background_preparation()
 {
 	//window.alert("Inside image_prep function."); // Used for testing.
 	
-	background_filter(document.getElementsByTagName("div,span")); // This creates an array of all the div nodes and passes it into the background_filter function.
+	background_filter(document.querySelectorAll("div,span")); // This creates an array of all the div nodes and passes it into the background_filter function.
 
 } // end background prep function
 
@@ -578,6 +578,15 @@ function background_filter(nodes)
 	if (options.image_on != true)
 		return; // If the image filter isn't on, return.
 	// end if
+	
+	var blocked_pat = new RegExp( '(' + options.image_blocked_words.split('\n').join('|') + ')', 'igm');
+
+	var	good = image_cache.good,
+		bad = image_cache.bad,
+		unsure = image_cache.unsure,
+		analyzing = image_cache.analyzing,
+		converting = image_cache.converting,
+		replacements = image_cache.replacements;
 
 	for (var i = 0; i < nodes.length; i++)
 	{
@@ -675,7 +684,7 @@ function background_filter(nodes)
 		node.task = {
 			tag: node.tagName.toLowerCase(),
 			img: node,
-			originalSrc: node.style.backgroundImage,
+			originalSrc: node.getAttribute('style'),
 			src: src,
 			block: false
 		};
@@ -874,7 +883,7 @@ function processTask(task) {
 			data.has('replacedTitle') && img.title !== data.get('replacedTitle') ||
 			data.has('replacedAlt') && img.alt !== data.get('replacedAlt')
 		) : (
-			task.originalSrc !== img.style.backgroundImage
+			task.originalSrc !== img.getAttribute('style')
 		)
 	) {
 		// A new task will be scheduled soon.
