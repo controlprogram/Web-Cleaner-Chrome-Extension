@@ -1,15 +1,17 @@
 Name: Web Cleaner Extension
-Author: Joseph Gray, with contributions from:
+Original-Author: Joseph Gray, with contributions from:
 		Maria Solomond (Logo)
 		Notmasteryet (jpg.js, Base64.js, Deflate.js)
 		Sebastian Markbåge (PNG.js)
 		Jonleighton (base64ArrayBuffer)
 		Google (mutation_summary.js)
 
-This version contains some modifications made by rob204.
-In particular all image file parsing has been replaced
-by native browser functions and pixelation has been added.
+#######################################################
 
-Also Mopar revamped the options page.
+This version contains some modifications from rob204 and Mopar though.
+rob204 did some changes in the image file handling.
+Mopar revamped the options page and added the stats page.
 
-And now it also uses Nude.js (MIT License) by Patrick Wied.
+Following a (probably incomplete) list of things used for the modifications:
+ - Nude.js (MIT License) by Patrick Wied https://www.patrick-wied.at/static/nudejs/
+ - Progress Bar Liquid Bubble (MIT License) by John Mothershed https://codepen.io/smeeckaert/pen/ojNLYj
