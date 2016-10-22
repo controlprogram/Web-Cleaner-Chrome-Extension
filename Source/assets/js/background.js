@@ -497,7 +497,14 @@ stats.addEvent = function(type, time) {
 						return types.indexOf(event.type) >= 0 && from <= event.time && event.time < to;
 					});
 				if (notable.length) {
-					cb(notable);
+					try {
+						cb(notable);
+					} catch (e) {
+						// Remove broken listeners
+						stats.listeners = stats.listeners.filter(function(listener) {
+							return listener.cb !== cb;
+						});
+					}
 				}
 			});
 		}, 0);
