@@ -9,8 +9,12 @@ var lastOrgasm = null, edgesSince, longestStreak, frequentRelapse, relapseDays;
 
 
 $(document).ready(function() {
-	stats.listen(['cummed', 'milked', 'ruined', 'edged'], null, null, updateStuff);
+	stats.listen(['cummed', 'milked', 'ruined', 'edged'], null, null, function() {
+		updateStuff();
+		updateDoughnut();
+	});
 	updateStuff();
+	initDoughnut();
 	$('#question-cpr .c3_col1').click(function() {
 		stats.addEvent('cummed');
 	});
@@ -65,5 +69,4 @@ function updateStuff() {
 	$('#question-cpr .c3_col2 .c_percent').text(milksPercent);
 	//$('#question-cpr .c3_colEnd').width(ruinsPercent);
 	$('#question-cpr .c3_colEnd .c_percent').text(ruinsPercent);
-	updateDoughnut();
 }

@@ -500,6 +500,7 @@ stats.addEvent = function(type, time) {
 					try {
 						cb(notable);
 					} catch (e) {
+						console.error(e);
 						// Remove broken listeners
 						stats.listeners = stats.listeners.filter(function(listener) {
 							return listener.cb !== cb;

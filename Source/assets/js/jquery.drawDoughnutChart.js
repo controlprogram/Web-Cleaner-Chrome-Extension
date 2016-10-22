@@ -63,6 +63,8 @@
           };
       }();
 
+    $this.update = function() {};
+
     settings.beforeDraw.call($this);
 
     var $svg = $('<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"></svg>').appendTo($this),
@@ -189,6 +191,9 @@
       var startRadius = -PI / 2,//-90 degree
           rotateAnimation = 1;
       if (settings.animation && settings.animateRotate) rotateAnimation = animationDecimal;//count up between0~1
+      segmentTotal = data.reduce(function(total, segment) {
+        return total + segment.value;
+      }, 0);
 
       drawDoughnutText(animationDecimal, segmentTotal);
 
@@ -242,6 +247,9 @@
           if (cnt <= 1) {
             requestAnimFrame(arguments.callee);
           } else {
+            $this.update = function() {
+              drawPieSegments(1);
+            };
             settings.afterDrawed.call($this);
           }
       });
