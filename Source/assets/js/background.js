@@ -458,3 +458,89 @@ function loadTemplates() {
 		});
 	});
 }
+
+
+var stats = /*JSON.parse(localStorage.getItem('stats')) ||*/ {
+	events: [],
+	listeners: [],
+	changes: null,
+};
+
+stats.addEvent = function(type, time) {
+	if (!time) {
+		time = Date.now();
+	}
+	var event = {
+		type: type,
+		time: time
+	};
+	stats.events.push(event);
+	stats.events.sort(function(a, b) {
+		return a.time - b.time;
+	});
+	localStorage.setItem('stats', JSON.stringify(stats));
+	if (stats.changes) {
+		stats.changes.push(event);
+	} else {
+		stats.changes = [event];
+		setTimeout(function() {
+			var changes = stats.changes.sort(function(a, b) {
+				return a.time - b.time;
+			}), listeners = stats.listeners.slice();
+			stats.changes = null;
+			listeners.forEach(function(listener) {
+				var types = listener.types,
+					from = listener.from,
+					to = listener.to,
+					cb = listener.cb,
+					notable = changes.filter(function(event) {
+						return types.indexOf(event.type) >= 0 && from <= event.time && event.time < to;
+					});
+				if (notable.length) {
+					cb(notable);
+				}
+			});
+		}, 0);
+	}
+};
+
+stats.countEvents = function(types, from, to) {
+	if (!from) from = -Infinity;
+	if (!to) to = +Infinity;
+	if (!(types instanceof Array)) types = [types];
+	return stats.events.filter(function(event) {
+		return types.indexOf(event.type) >= 0 && from <= event.time && event.time < to;
+	}).length;
+};
+
+stats.getEvents = function(types, from, to) {
+	if (!from) from = -Infinity;
+	if (!to) to = +Infinity;
+	if (!Array.isArray(types)) types = [types];
+	return stats.events.filter(function(event) {
+		return types.indexOf(event.type) >= 0 && from <= event.time && event.time < to;
+	});
+};
+
+stats.listen = function(types, from, to, cb) {
+	if (!from) from = -Infinity;
+	if (!to) to = +Infinity;
+	if (!Array.isArray(types)) types = [types];
+	if (typeof cb === 'function') {
+		stats.listeners.push({
+			types: types,
+			from: from,
+			to: to,
+			cb: cb
+		});
+	}
+};
+
+if (!stats.events.length) {
+	var start = new Date(2016, 7, 31);
+	var end = new Date();
+
+	for (var current = start.getTime(); current < end.getTime(); current += 1*24*60*60*1000*(1 - Math.pow(Math.random(), 2))) { 
+		stats.addEvent(['edged', 'cummed', 'milked', 'ruined'][Math.max(0,Math.floor(Math.random() * 10)-6)], Math.floor(current));
+	}
+}

@@ -1,10 +1,19 @@
-var start = new Date(2016, 7, 31);
-var end = new Date(2016, 11, 31);
-var data = {};
+var data = {}, start = new Date(), end = new Date();
 
-for (var current = start.getTime(); current < end.getTime(); current += 2*24*60*60*1000*(1 - Math.pow(Math.random(), 1))) { 
-	data[Math.round(current / 1000)] = 1;
-}
+start.setMonth(start.getMonth() - 3);
+end.setMonth(end.getMonth() + 3);
+
+stats.getEvents(['cummed', 'milked', 'ruined']).forEach(function(event) {
+	data[Math.floor(event.time / 1000)] = 1;
+});
+
+stats.listen(['cummed', 'milked', 'ruined'], start.getTime(), end.getTime(), function(events) {
+	var data = {};
+	events.forEach(function(event) {
+		data[Math.floor(event.time / 1000)] = 1;
+	});
+	cal.update(data, false, cal.APPEND_ON_UPDATE);
+});
 
 var cal = new CalHeatMap();  
 cal.init({
@@ -31,6 +40,6 @@ cal.init({
 	domainDynamicDimension: true,
 	start: start,
 	end: end,
-	maxDate: new Date(2017, 1),
+	//maxDate: new Date(2017, 1),
 	highlight: ["now", new Date(2017, 0, 18)],
 });  

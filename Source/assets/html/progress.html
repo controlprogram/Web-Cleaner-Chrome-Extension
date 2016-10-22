@@ -6,6 +6,7 @@
 		<script type="text/javascript" src="../js/d3.min.js"></script>
 		<script type="text/javascript" src="../js/cal-heatmap.min.js"></script>
 		<script type="text/javascript" src="../js/jquery.drawDoughnutChart.js"></script>
+		<script type="text/javascript" src="../js/stats.js"></script>
 		<script type="text/javascript" src="../js/progress.js"></script>
 		<link rel="stylesheet" type="text/css" href="../css/cal-heatmap.css">
 		<link rel="stylesheet" type="text/css" href="../css/progress.css">
@@ -32,12 +33,12 @@
                 </ul>         
 				<div id="doughnutChart" class="chart"></div>
 				<div class="reportCommon">
-					<h3><span class="reportCommon_Left">Last Orgasm<br><span class="hlBlue">??/??/??</span></span>
-					<span class="reportCommon_Right">Edges Since<br><span class="hlBlue">1</span></span>
-					<span class="reportCommon_Left">Next Orgasm<br><span class="hlBlue">??/??/??</span></span>
-					<span class="reportCommon_Right">Longest Streak<br><span class="hlBlue">365 Days</span></span>
-					<span class="reportCommon_Left">Frquent Relapse Day<br><span class="hlRed">Monday</span></span>
-					<span class="reportCommon_Right">Mood<br><span class="hlBlue">I can do it!</span></span>
+					<h3><span class="reportCommon_Left">Last Orgasm<br><span class="hlBlue" id="field-last-orgasm">??/??/??</span></span>
+					<span class="reportCommon_Right">Edges Since<br><span class="hlBlue" id="field-edges-since-last-orgasm">1</span></span>
+					<span class="reportCommon_Left">Next Orgasm<br><span class="hlBlue" id="field-next-orgasm">??/??/??</span></span>
+					<span class="reportCommon_Right">Longest Streak<br><span class="hlBlue" id="field-longest-streak">365 Days</span></span>
+					<span class="reportCommon_Left">Frquent Relapse Day<br><span class="hlRed" id="field-frequent-relapse">Monday</span></span>
+					<span class="reportCommon_Right">Mood<br><span class="hlBlue" id="field-mood">I can do it!</span></span>
 					<span class="reportCommon_Left">Sep '16 Rating<br><span class="hlRed">60%</span></span>
 					<span class="reportCommon_Right">Aug '16 Rating<br><span class="hlRed">60%</span></span>
 				</div>
@@ -94,9 +95,22 @@
 					<li><div class="smileyContainer"><div class="bored">&nbsp;</div></div>Bored</li>
 					<li><div class="smileyContainer"><div class="hero">&nbsp;</div></div>I can do it!</li>
 				</ul>
-                <ul style="display: display">		
+                <ul style="display: display" id="question-cpr">		
 					<li class="noSelect"><h3 class="bold">HAVE YOU NEEDED CPR TODAY?</h3></li>
-					<div class="c3"><div class="c3_col1 c_red" style="width: 252px"><div class="c_label">Cummed</div><div class="c_percent" width="67px">55%</div></div><div class="c3_col2 c_brown" style="width: 57px"><div class="c_label">Prostate Milked</div><div class="c_percent">10%</div></div><div class="c3_colEnd c_blue"><div class="c_label">Ruined</div><div class="c_percent">35%</div></div></div>
+					<div class="c3">
+						<div class="c3_col1 c_red" style="width: 252px">
+							<div class="c_label">Cummed</div>
+							<div class="c_percent" width="67px">55%</div>
+						</div>
+						<div class="c3_col2 c_brown" style="width: 57px">
+							<div class="c_label">Prostate Milked</div>
+							<div class="c_percent">10%</div>
+						</div>
+						<div class="c3_colEnd c_blue">
+							<div class="c_label">Ruined</div>
+							<div class="c_percent">35%</div>
+						</div>
+					</div>
                 </ul>
 				<br>
 				<br>

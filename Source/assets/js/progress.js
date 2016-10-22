@@ -1,9 +1,9 @@
-$(function(){
-  $("#doughnutChart").drawDoughnutChart([
-	{ title: "Cummed",		  value : 1,  color: "#D7757B" },
-	{ title: "Prostate Milked", value:  1,   color: "#FEFDD5" },
-	{ title: "Ruined",        value : 1,   color: "#E0F0F3" }
+function updateDoughnut() {
+  $("#doughnutChart").html('').drawDoughnutChart([
+	{ title: "Cummed",		  value : cums.length,  color: "#D7757B" },
+	{ title: "Prostate Milked", value:  milks.length,   color: "#FEFDD5" },
+	{ title: "Ruined",        value : ruins.length,   color: "#E0F0F3" }
   ], {
   	summaryTitle: 'TOTAL'
   });
-});
+}
