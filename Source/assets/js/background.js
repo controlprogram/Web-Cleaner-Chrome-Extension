@@ -416,7 +416,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
 
 var progressUrl = null;
 chrome.browserAction.onClicked.addListener(function(activeTab) {
-	var url = "assets/progress/progress.html";
+	var url = "assets/html/progress.html";
 	if (!progressUrl) {
 		chrome.tabs.create({url: url}, function(tab) {
 			progressUrl = tab.url;
