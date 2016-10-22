@@ -63,7 +63,7 @@ function updateStuff() {
 	$('#question-cpr .c3_col1 .c_percent').text(cumsPercent);
 	$('#question-cpr .c3_col2').width(milksPercent);
 	$('#question-cpr .c3_col2 .c_percent').text(milksPercent);
-	$('#question-cpr .c3_colEnd').width(ruinsPercent);
+	//$('#question-cpr .c3_colEnd').width(ruinsPercent);
 	$('#question-cpr .c3_colEnd .c_percent').text(ruinsPercent);
 	updateDoughnut();
 }
