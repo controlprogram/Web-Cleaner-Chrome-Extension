@@ -260,6 +260,7 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
     overflow: hidden;
     -webkit-transform: all .3s;
     transform: all .3s;
+    transition: width 0.8s;
 }
 .c3_col1:hover,
 .c3_col2:hover,
