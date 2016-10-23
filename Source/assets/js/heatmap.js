@@ -3,7 +3,7 @@ var data = {}, start = new Date(), end = new Date();
 start.setMonth(start.getMonth() - 3);
 end.setMonth(end.getMonth() + 3);
 
-stats.getEvents(['cummed', 'milked', 'ruined']).forEach(function(event) {
+stats.getEvents(['cummed', 'milked', 'ruined'], start.getTime(), end.getTime()).forEach(function(event) {
 	data[Math.floor(event.time / 1000)] = 1;
 });
 

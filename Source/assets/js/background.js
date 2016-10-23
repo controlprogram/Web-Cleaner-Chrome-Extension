@@ -466,13 +466,14 @@ var stats = /*JSON.parse(localStorage.getItem('stats')) ||*/ {
 	changes: null,
 };
 
-stats.addEvent = function(type, time) {
+stats.addEvent = function(type, time, value) {
 	if (!time) {
 		time = Date.now();
 	}
 	var event = {
 		type: type,
-		time: time
+		time: time,
+		value: value
 	};
 	stats.events.push(event);
 	stats.events.sort(function(a, b) {
@@ -545,7 +546,7 @@ stats.listen = function(types, from, to, cb) {
 };
 
 if (!stats.events.length) {
-	var start = new Date(2016, 7, 31);
+	var start = new Date(2015, 7, 31);
 	var end = new Date();
 
 	for (var current = start.getTime(); current < end.getTime(); current += 1*24*60*60*1000*(1 - Math.pow(Math.random(), 2))) { 

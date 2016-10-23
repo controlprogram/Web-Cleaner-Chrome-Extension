@@ -45,7 +45,8 @@
 .container {
     width: 850px;
     background: #fcfcfc;
-    height: 815px;
+    /*height: 815px;*/
+    margin-bottom: 100px;
     border: 0 1px 1px 1px solid #ccc;
     position: absolute;
     left: 50%;
@@ -125,6 +126,7 @@
     border-top: 0.2em solid #4A4A4A;
     margin-right: 0.5em;
     font-size: 200%;
+    cursor: pointer;
 }
 .arrowLeft::before {
 	margin: 100px 0 0 30px;
@@ -165,12 +167,14 @@ h3.bold { font-weight: bold }
     -webkit-user-select: none
 }
 .noSelect { -webkit-user-select: none }
-a.switch {
+.switch {
 	font-size: 18px;
-	color: #1A1A1A
+	color: #1A1A1A;
+    text-decoration: underline;
+    cursor: pointer
 }
 .switchHl {
-	text-decoration: none;
+	font-weight: bold;
 	font-size: 18px;
 	color: #1A1A1A
 }
@@ -192,6 +196,10 @@ a.switch {
     margin-top: 10px;
     text-align: center;
     color: #A3A2A2;
+}
+.reportFeelings .smileyContainer {
+    cursor: pointer;
+    position: relative;
 }
 div.happy,
 div.unhappy,
@@ -303,6 +311,9 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
     font-weight: 500;
     text-align: right;
     color: rgba(225, 225, 225, 0.75)
+}
+#questions {
+    margin-bottom: 30px;
 }
 
 /**
@@ -668,4 +679,22 @@ g path:hover { opacity: .35 }
         -webkit-transform: rotate(360deg);
         transform: rotate(360deg)
     }
+}
+
+
+
+/**
+ * Tickets
+ **/
+
+.ticket-pages {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.ticket-page {
+    margin: 10px 0 0 10px;
+    white-space: normal;
+    display: inline-block;
 }
