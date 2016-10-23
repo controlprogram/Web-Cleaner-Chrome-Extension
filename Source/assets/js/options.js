@@ -265,13 +265,13 @@ function load_options()
 	// Check if there is a saved note and that it is not empty. If so, load the note with the date/time the options were saved.
 	if (localStorage["saved_note"] && localStorage["saved_note"] != "")
 	{
-		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["month"] + "-" + localStorage["day"] + "-" + localStorage["year"] + " at " + localStorage["hour"] + ":" + localStorage["minute"] + " " + localStorage["morning"] + ". With note: " + localStorage["saved_note"];
+		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["code"] + ". With note: " + localStorage["saved_note"];
 	}
 	
 	// Otherwise, if there is a saved date/time, just load that. NOTE: if there is a saved note, there will be a saved date/time
-	else if (localStorage["year"])
+	else if (localStorage["code"])
 	{
-		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["month"] + "-" + localStorage["day"] + "-" + localStorage["year"] + " at " + localStorage["hour"] + ":" + localStorage["minute"] + " " + localStorage["morning"] + ".";
+		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["code"] + ".";
 	}
 
 	if (localStorage["save_note"] == "true")
@@ -310,100 +310,15 @@ function store_date_and_note (date)
 			return false;
 	}
 	
-	var year = String(date.getFullYear());
-	var month = String(date.getMonth() + 1);
-	var day = String(date.getDate());
-	var hour = date.getHours();
-	var minute = date.getMinutes();
-	var AM_or_PM = "AM";
-	
-	// Make sure that the hour has a '0' before single-digit minutes.
-	if (minute < 10)
-	{
-		minute = '0' + minute;
-	}
-	
-	// Convert 24 hour into 12 hour
-	switch (hour)
-	{
-		case 12:
-			AM_or_PM = "PM";
-			break;
-			
-		case 13:
-			hour = 1;
-			AM_or_PM = "PM";
-			break;
-		
-		case 14:
-			hour = 2;
-			AM_or_PM = "PM";
-			break;
-		
-		case 15:
-			hour = 3;
-			AM_or_PM = "PM";
-			break;
-			
-		case 16:
-			hour = 4;
-			AM_or_PM = "PM";
-			break;
-		
-		case 17:
-			hour = 5;
-			AM_or_PM = "PM";
-			break;
-		
-		case 18:
-			hour = 6;
-			AM_or_PM = "PM";
-			break;
-		
-		case 19:
-			hour = 7;
-			AM_or_PM = "PM";
-			break;
-			
-		case 20:
-			hour = 8;
-			AM_or_PM = "PM";
-			break;
-		
-		case 21:
-			hour = 9;
-			AM_or_PM = "PM";
-			break;
-		
-		case 22:
-			hour = 10;
-			AM_or_PM = "PM";
-			break;
-		
-		case 23:
-			hour = 11;
-			AM_or_PM = "PM";
-			break;
-		
-		case 0:
-			hour = 12;
-			break;
-	}
-	
-	hour = String(hour);
+	var code = (Math.random()*0x100000+0x100000).toString(16).slice(-5);
 		
 	// If there is a note, save the note along with the date and time, and update the options page accordingly.
 	if (prompt_choice != "")
 	{
 		localStorage["saved_note"] = prompt_choice;
-		localStorage["year"] = year;
-		localStorage["month"] = month;
-		localStorage["day"] = day;
-		localStorage["hour"] = hour;
-		localStorage["minute"] = minute;
-		localStorage["morning"] = AM_or_PM;
+		localStorage["code"] = code;
 		
-		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + month + "-" + day + "-" + year + " at " + hour + ":" + minute + " " + AM_or_PM + ". With note: " + prompt_choice;
+		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + code + ". With note: " + prompt_choice;
 
 	}
 	
@@ -411,14 +326,9 @@ function store_date_and_note (date)
 	else
 	{
 		localStorage["saved_note"] = "";
-		localStorage["year"] = year;
-		localStorage["month"] = month;
-		localStorage["day"] = day;
-		localStorage["hour"] = hour;
-		localStorage["minute"] = minute;
-		localStorage["morning"] = AM_or_PM;
+		localStorage["code"] = code;
 		
-		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + month + "-" + day + "-" + year + " at " + hour + ":" + minute + " " + AM_or_PM + ". With no note.";
+		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + code + ". With no note.";
 		
 	}
 

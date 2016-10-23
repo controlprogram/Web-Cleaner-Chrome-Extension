@@ -76,7 +76,7 @@ function initQuestions() {
 		var $question = makeQuestion(question);
 		$question.find('[data-answer]').click(function() {
 			var answer = $(this).data('answer');
-			if (!questions[question].after || questions[question].after() !== false) {
+			if (!questions[question].after || questions[question].after(answer) !== false) {
 				stats.addEvent('answered', Date.now(), {question: question, answer: answer});
 				$question.remove();
 				askSomething();

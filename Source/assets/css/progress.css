@@ -45,8 +45,7 @@
 .container {
     width: 850px;
     background: #fcfcfc;
-    /*height: 815px;*/
-    margin-bottom: 100px;
+    height: 865px;
     border: 0 1px 1px 1px solid #ccc;
     position: absolute;
     left: 50%;
