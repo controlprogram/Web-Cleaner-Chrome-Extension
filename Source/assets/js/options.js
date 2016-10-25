@@ -271,7 +271,7 @@ function load_options()
 	// Otherwise, if there is a saved date/time, just load that. NOTE: if there is a saved note, there will be a saved date/time
 	else if (localStorage["code"])
 	{
-		saved_note.innerHTML = "The last time the options were saved was: " + localStorage["code"] + ".";
+		saved_note.innerHTML = "The options were last saved as: " + localStorage["code"] + ".";
 	}
 
 	if (localStorage["save_note"] == "true")
@@ -310,7 +310,7 @@ function store_date_and_note (date)
 			return false;
 	}
 	
-	var code = (Math.random()*0x100000+0x100000).toString(16).slice(-5);
+	var code = (Math.random()*0x100000+0x100000).toString(16).slice(-5).toUpperCase();
 		
 	// If there is a note, save the note along with the date and time, and update the options page accordingly.
 	if (prompt_choice != "")
@@ -318,7 +318,7 @@ function store_date_and_note (date)
 		localStorage["saved_note"] = prompt_choice;
 		localStorage["code"] = code;
 		
-		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + code + ". With note: " + prompt_choice;
+		document.getElementById("saved_note").innerHTML = "The options were last saved as: " + code + ". With note: " + prompt_choice;
 
 	}
 	
@@ -328,7 +328,7 @@ function store_date_and_note (date)
 		localStorage["saved_note"] = "";
 		localStorage["code"] = code;
 		
-		document.getElementById("saved_note").innerHTML = "The last time the options were saved was: " + code + ". With no note.";
+		document.getElementById("saved_note").innerHTML = "The options were last saved as: " + code + ". With no note.";
 		
 	}
 

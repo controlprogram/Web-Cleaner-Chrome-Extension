@@ -48,6 +48,11 @@ var questions = {
 			stats.addEvent(answer);
 		}
 	},
+	'feel': {
+		after: function(answer) {
+			stats.addEvent('feeled', Date.now(), answer);
+		}
+	},
 	'peoply-nearby': {
 		question: 'How many people are near you?',
 		color: 'gray',
@@ -78,6 +83,9 @@ function makeQuestion(id) {
 	if (typeof questions[id] === 'string') {
 		questions[id] = {question: questions[id]};
 	}
+	if (questions[id].html) {
+		return $(questions[id].html);
+	}console.log(id, questions[id]);
 	question = questions[id].question;
 	if (questions[id].answers) {
 		if (Array.isArray(questions[id].answers)) {
@@ -148,6 +156,7 @@ $(document).ready(function() {
 	updateStuff();
 	updateFeels(feels);
 	initDoughnut();
+	initTickets();
 	initBoxes();
 	initQuestions();
 });
@@ -189,5 +198,26 @@ function updateStuff() {
 }
 
 function updateFeels(feels) {
-	$('#field-mood').text(feels.length ? feelings[feels[feels.length - 1].value].title : 'undecided');
+	var summary = {};
+	feels.forEach(function(feel) {
+		summary[feel.value] = (summary[feel.value] || 0) + 1;
+	});
+	$('#field-mood').text(feels.length ? feelings[feels[feels.length - 1].value].title : 'Undecided');
+	$('[data-feel]').each(function() {
+		$(this).text((summary[$(this).data('feel')] || 0).toLocaleString());
+	});
+}
+
+function initTickets() {
+	var pages = document.querySelector('.ticket-pages'), page;
+	for (var i = 0; i < 30; ++i) {
+		if (i % 4 === 0) {
+			page = document.createElement('div');
+			page.className = 'ticket-page';
+			pages.appendChild(page);
+		}
+		var ticket = new Image();
+		ticket.src = drawTicket(i + 1, Math.random() * 360);
+		page.appendChild(ticket);
+	}
 }

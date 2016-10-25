@@ -8,8 +8,10 @@
 		<script type="text/javascript" src="../js/jquery.drawDoughnutChart.js"></script>
 		<script type="text/javascript" src="../js/stats.js"></script>
 		<script type="text/javascript" src="../js/progress.js"></script>
+		<script type="text/javascript" src="../js/intro.js"></script>
 		<link rel="stylesheet" type="text/css" href="../css/cal-heatmap.css">
 		<link rel="stylesheet" type="text/css" href="../css/progress.css">
+		<link rel="stylesheet" type="text/css" href="../css/introjs.css">
 	</head>
 	<body>
 		<div id="windowBar">
@@ -19,26 +21,26 @@
 				<p id="hours">00</p>
 				<p>hours</p>
 				<p id="minutes">00</p>
-				<p>minutes until your next <span style="font-weight: bold; color: #50C46E">milestone.</span></p>
+				<p>minutes until your next <span style="font-weight: bold; color: #50C46E" data-hint="This is a test." data-position="bottom">milestone.</span></p>
 			</div>
 		</div>
-		 <div class="container">
-			<div class="progress"><div class="progress-toplabels"><span class="progress-labels-wrapper"><span style="left: 0%;" class="progress-mslabel progress-firstms">0</span><span style="left: 3.39893%;" class="progress-mslabel">1</span><span style="left: 6.79785%;" class="progress-mslabel">2</span><span style="left: 14.1324%;" class="progress-mslabel">5</span><span style="left: 28.4436%;" class="progress-mslabel">10</span><span style="left: 42.7549%;" class="progress-mslabel">14</span><span style="left: 67.7996%;" class="progress-mslabel">21</span><span style="left: 100%;" class="progress-mslabel progress-lastprog">30</span></span></div><div class="progress-wrapper"><span class="progress-bar"><span class="progress-curr" style="width: 25%;"></span><span class="progress-mss-wrapper"><span class="progress-mss"><span class="progress-ms progress-firstms" style="left: 0%;"></span><span class="progress-ms" style="left: 3.39893%;"></span><span class="progress-ms" style="left: 6.79785%;"></span><span class="progress-ms" style="left: 14.1324%;"></span><span class="progress-ms" style="left: 28.4436%;"></span><span class="progress-ms" style="left: 42.7549%;"></span><span class="progress-ms" style="left: 67.7996%;"></span><span class="progress-ms progress-lastms" style="left: 100%;"></span></span></span></span></div><div class="progress-bottomlabels"><span class="progress-labels-wrapper"><span class="progress-mslabel progress-firstms" style="left: 0%;"></span><span class="progress-mslabel" style="left: 3.39893%;"></span><span class="progress-mslabel" style="left: 6.79785%;"></span><span class="progress-mslabel" style="left: 14.1324%;"></span><span class="progress-mslabel" style="left: 28.4436%;"></span><span class="progress-mslabel" style="left: 42.7549%;"></span><span class="progress-mslabel" style="left: 67.7996%;"></span></span></div></div>
+		<div class="container">
+			<div class="progress"><div class="progress-toplabels"><span class="progress-labels-wrapper"><span style="left: 0%;" class="progress-mslabel progress-firstms">0</span><span style="left: 3.39893%;" class="progress-mslabel">1</span><span style="left: 6.79785%;" class="progress-mslabel">2</span><span style="left: 14.1324%;" class="progress-mslabel">5</span><span style="left: 28.4436%;" class="progress-mslabel">10</span><span style="left: 42.7549%;" class="progress-mslabel">14</span><span style="left: 67.7996%;" class="progress-mslabel">21</span><span style="left: 100%;" class="progress-mslabel progress-lastprog">30</span></span></div><div class="progress-wrapper"><span class="progress-bar"><span class="progress-curr" style="width: 0%;" data-hint="This is a test." data-position="bottom"></span><span class="progress-mss-wrapper"><span class="progress-mss"><span class="progress-ms progress-firstms" style="left: 0%;"></span><span class="progress-ms" style="left: 3.39893%;"></span><span class="progress-ms" style="left: 6.79785%;"></span><span class="progress-ms" style="left: 14.1324%;"></span><span class="progress-ms" style="left: 28.4436%;"></span><span class="progress-ms" style="left: 42.7549%;"></span><span class="progress-ms" style="left: 67.7996%;"></span><span class="progress-ms progress-lastms" style="left: 100%;"></span></span></span></span></div><div class="progress-bottomlabels"><span class="progress-labels-wrapper"><span class="progress-mslabel progress-firstms" style="left: 0%;"></span><span class="progress-mslabel" style="left: 3.39893%;"></span><span class="progress-mslabel" style="left: 6.79785%;"></span><span class="progress-mslabel" style="left: 14.1324%;"></span><span class="progress-mslabel" style="left: 28.4436%;"></span><span class="progress-mslabel" style="left: 42.7549%;"></span><span class="progress-mslabel" style="left: 67.7996%;"></span></span></div></div>
 			<div class="progress" style="display: none"><div class="progress-toplabels"><span class="progress-labels-wrapper"><span style="left: 0%;" class="progress-mslabel progress-firstms">30</span><span style="left: 7.59494%;" class="progress-mslabel">45</span><span style="left: 15.1899%;" class="progress-mslabel">60</span><span style="left: 22.7848%;" class="progress-mslabel">75</span><span style="left: 30.3797%;" class="progress-mslabel">90</span><span style="left: 37.9747%;" class="progress-mslabel">120</span><span style="left: 53.1646%;" class="progress-mslabel">180</span><span style="left: 75.9494%;" class="progress-mslabel progress-lastprog">270</span><span style="left: 100%;" class="progress-mslabel progress-lastprog">365</span></span></div><div class="progress-wrapper"><span class="progress-bar"><span class="progress-curr" style="width: 90%;"></span><span class="progress-mss-wrapper"><span class="progress-mss"><span class="progress-ms progress-firstms" style="left: 0%;"></span><span class="progress-ms" style="left: 7.59494%;"></span><span class="progress-ms" style="left: 15.1899%;"></span><span class="progress-ms" style="left: 22.7848%;"></span><span class="progress-ms" style="left: 30.3797%;"></span><span class="progress-ms" style="left: 37.9747%;"></span><span class="progress-ms" style="left: 53.1646%;"></span><span class="progress-ms" style="left: 75.9494%;"></span><span class="progress-ms progress-lastms" style="left: 100%;"></span></span></span></span></div><div class="progress-bottomlabels"><span class="progress-labels-wrapper"><span class="progress-mslabel progress-firstms" style="left: 0%;"></span><span class="progress-mslabel" style="left: 7.59494%;"></span><span class="progress-mslabel" style="left: 15.1899%;"></span><span class="progress-mslabel" style="left: 22.7848%;"></span><span class="progress-mslabel" style="left: 30.3797%;"></span><span class="progress-mslabel" style="left: 37.9747%;"></span><span class="progress-mslabel" style="left: 53.1646%;"></span><span class="progress-mslabel" style="left: 75.9494%;"></span></span></div></div>
-			<div id="cal-heatmap"></div>
+			<div id="cal-heatmap" data-hint="This is a test." data-position="left"></div>
 			<script type="text/javascript" src="../js/heatmap.js"></script>
             <div class="reportChartHolder">    
 				<ul>
 					<li><h3>Orgasm Statistics</h3></li>
                 </ul>         
-				<div id="doughnutChart" class="chart"></div>
+				<div id="doughnutChart" class="chart" data-hint="This is a test." data-position="right"></div>
 				<div class="reportCommon">
-					<h3><span class="reportCommon_Left">Last Orgasm<br><span class="hlBlue" id="field-last-orgasm">??/??/??</span></span>
-					<span class="reportCommon_Right">Edges Since<br><span class="hlBlue" id="field-edges-since-last-orgasm">1</span></span>
+					<h3><span class="reportCommon_Left">Last Orgasm<br><span class="hlBlue" id="field-last-orgasm"></span></span>
+					<span class="reportCommon_Right">Edges Since<br><span class="hlBlue" id="field-edges-since-last-orgasm"></span></span>
 					<span class="reportCommon_Left">Next Orgasm<br><span class="hlBlue" id="field-next-orgasm">??/??/??</span></span>
-					<span class="reportCommon_Right">Longest Streak<br><span class="hlBlue" id="field-longest-streak">365 Days</span></span>
-					<span class="reportCommon_Left">Frquent Relapse Day<br><span class="hlRed" id="field-frequent-relapse">Monday</span></span>
-					<span class="reportCommon_Right">Mood<br><span class="hlBlue" id="field-mood">I can do it!</span></span>
+					<span class="reportCommon_Right">Longest Streak<br><span class="hlBlue" id="field-longest-streak"></span></span>
+					<span class="reportCommon_Left">Frquent Relapse Day<br><span class="hlRed" id="field-frequent-relapse"></span></span>
+					<span class="reportCommon_Right">Mood<br><span class="hlBlue" id="field-mood"></span></span>
 					<span class="reportCommon_Left">Sep '16 Rating<br><span class="hlRed">60%</span></span>
 					<span class="reportCommon_Right">Aug '16 Rating<br><span class="hlRed">60%</span></span>
 				</div>
@@ -47,7 +49,7 @@
 						<div class="outer">
 							<div class="inner">
 							<div class="percent"><span>00:</span>59</div>
-							<div class="water"></div>
+							<div class="water" data-hint="This is a test." data-position="right"></div>
 							</div>
 						</div>
 					</div>
@@ -55,72 +57,75 @@
             </div>
             <div class="reportHolder">
                 <ul>		
-					<li><h3>*Report for Oct 2016</h3><span style="float: right; margin-left: -145px"><h3><a class="switch" data-box="feels">Mood</a> / <a class="switchHl" data-box="tickets">Tickets</a></h3></li>
+					<li><h3>*Report for Oct 2016</h3><span style="float: right; margin-left: -145px"><h3><a class="switch" data-box="feels">Mood</a> / <a class="switchHl" data-box="tickets" data-hint="This is a test." data-position="left">Tickets</a></h3></li>
                 </ul>
-				<ul class="statsLeft" style="display: none">
-					<li><span><div class="happy">&nbsp;</div></span> <h3>10,000</h3></li>
-					<li><span><div class="unhappy">&nbsp;</div></span> <h3>0</h3></li>
-					<li><span><div class="shocked">&nbsp;</div></span> <h3>0</h3></li>
-				</ul>
-				<ul class="statsRight" style="display: none">
-					<li><span><div class="angry">&nbsp;</div></span> <h3>10,000</h3></li>
-					<li><span><div class="upset">&nbsp;</div></span> <h3>0</h3></li>
-					<li><span><div class="unsure">&nbsp;</div></span> <h3>0</h3></li>
-				</ul>
-				<ul class="statsRight" style="display: none">
-					<li><span><div class="stressed">&nbsp;</div></span> <h3>10,000</h3></li>
-					<li><span><div class="frustrated">&nbsp;</div></span> <h3>0</h3></li>
-					<li><span><div class="turnedOn">&nbsp;</div></span> <h3>0</h3></li>
-				</ul>
-				<ul class="statsRight" style="display: none">
-					<li><span><div class="addicted">&nbsp;</div></span> <h3>10,000</h3></li>
-					<li><span><div class="bored">&nbsp;</div></span> <h3>0</h3></li>
-					<li><span><div class="hero">&nbsp;</div></span> <h3>0</h3></li>
-				</ul>
+                <div id="feels-box">
+					<ul class="statsLeft">
+						<li><span><div class="happy">&nbsp;</div></span> <h3 data-feel="happy">10,000</h3></li>
+						<li><span><div class="unhappy">&nbsp;</div></span> <h3 data-feel="unhappy">0</h3></li>
+						<li><span><div class="shocked">&nbsp;</div></span> <h3 data-feel="shocked">0</h3></li>
+					</ul>
+					<ul class="statsRight">
+						<li><span><div class="angry">&nbsp;</div></span> <h3 data-feel="angry">10,000</h3></li>
+						<li><span><div class="upset">&nbsp;</div></span> <h3 data-feel="upset">0</h3></li>
+						<li><span><div class="unsure">&nbsp;</div></span> <h3 data-feel="unsure">0</h3></li>
+					</ul>
+					<ul class="statsRight">
+						<li><span><div class="stressed">&nbsp;</div></span> <h3 data-feel="stressed">10,000</h3></li>
+						<li><span><div class="frustrated">&nbsp;</div></span> <h3 data-feel="frustrated">0</h3></li>
+						<li><span><div class="turnedOn">&nbsp;</div></span> <h3 data-feel="turnedOn">0</h3></li>
+					</ul>
+					<ul class="statsRight">
+						<li><span><div class="addicted">&nbsp;</div></span> <h3 data-feel="addicted">10,000</h3></li>
+						<li><span><div class="bored">&nbsp;</div></span> <h3 data-feel="bored">0</h3></li>
+						<li><span><div class="hero">&nbsp;</div></span> <h3 data-feel="hero">0</h3></li>
+					</ul>
+				</div>
 				<div id="ticket-box">
 					<div class="arrowLeft"></div>
 					<div class="arrowRight"></div>
 					<div class="ticket-pages">
 						<div class="ticket-page">
 							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
+							<img src="../img/ticket-2.png" />
+							<img src="../img/ticket-5.png" />
+							<img src="../img/ticket-10.png" />
 						</div>
 						<div class="ticket-page">
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
+							<img src="../img/ticket-14.png" />
+							<img src="../img/ticket-21.png" />
+							<img src="../img/ticket-30.png" />
+							<img src="../img/ticket-60.png" />
 						</div>
 						<div class="ticket-page">
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
-							<img src="../img/ticket-1.png" />
+							<img src="../img/ticket-90.png" />
+							<img src="../img/ticket-120.png" />
+							<img src="../img/ticket-180.png" />
+							<img src="../img/ticket-270.png" />
 						</div>
 					</div>
 				</div>
-				<div id="feels-box">
-	                <ul>		
-						<li class="noSelect"><h3>How are you feeling?</h3></li>
-	                </ul>
-					<ul class="reportFeelings">
-						<li><div class="smileyContainer"><div data-feel="happy" class="happy">&nbsp;</div></div>Happy</li>
-						<li><div class="smileyContainer"><div data-feel="unhappy" class="unhappy">&nbsp;</div></div>Unhappy</li>
-						<li><div class="smileyContainer"><div data-feel="shocked" class="shocked">&nbsp;</div></div>Shocked</li>
-						<li><div class="smileyContainer"><div data-feel="angry" class="angry">&nbsp;</div></div>Angry</li>
-						<li><div class="smileyContainer"><div data-feel="upset" class="upset">&nbsp;</div></div>Upset</li>
-						<li><div class="smileyContainer"><div data-feel="unsure" class="unsure">&nbsp;</div></div>Unsure</li>
-						<li><div class="smileyContainer"><div data-feel="stressed" class="stressed">&nbsp;</div></div>Stressed</li>
-						<li><div class="smileyContainer"><div data-feel="frustrated" class="frustrated">&nbsp;</div></div>Frustrated</li>
-						<li><div class="smileyContainer"><div data-feel="turnedOn" class="turnedOn">&nbsp;</div></div>Turned On</li>
-						<li><div class="smileyContainer"><div data-feel="addicted" class="addicted">&nbsp;</div></div>Addicted</li>
-						<li><div class="smileyContainer"><div data-feel="bored" class="bored">&nbsp;</div></div>Bored</li>
-						<li><div class="smileyContainer"><div data-feel="hero" class="hero">&nbsp;</div></div>I can do it!</li>
-					</ul>
+				<div id="questions">
+					<div data-question="feel">
+		                <ul>
+							<li class="noSelect"><h3>How are you feeling?</h3></li>
+		                </ul>
+						<ul class="reportFeelings">
+							<li><div class="smileyContainer"><div data-answer="happy" class="happy">&nbsp;</div></div>Happy</li>
+							<li><div class="smileyContainer"><div data-answer="unhappy" class="unhappy">&nbsp;</div></div>Unhappy</li>
+							<li><div class="smileyContainer"><div data-answer="shocked" class="shocked">&nbsp;</div></div>Shocked</li>
+							<li><div class="smileyContainer"><div data-answer="angry" class="angry">&nbsp;</div></div>Angry</li>
+							<li><div class="smileyContainer"><div data-answer="upset" class="upset">&nbsp;</div></div>Upset</li>
+							<li><div class="smileyContainer"><div data-answer="unsure" class="unsure">&nbsp;</div></div>Unsure</li>
+							<li><div class="smileyContainer"><div data-answer="stressed" class="stressed">&nbsp;</div></div>Stressed</li>
+							<li><div class="smileyContainer"><div data-answer="frustrated" class="frustrated">&nbsp;</div></div>Frustrated</li>
+							<li><div class="smileyContainer"><div data-answer="turnedOn" class="turnedOn">&nbsp;</div></div>Turned On</li>
+							<li><div class="smileyContainer"><div data-answer="addicted" class="addicted">&nbsp;</div></div>Addicted</li>
+							<li><div class="smileyContainer"><div data-answer="bored" class="bored">&nbsp;</div></div>Bored</li>
+							<li><div class="smileyContainer"><div data-answer="hero" class="hero">&nbsp;</div></div>I can do it!</li>
+						</ul>
+					</div>
 				</div>
-				<div id="questions"></div>
             </div>
         </div>
 	</body>

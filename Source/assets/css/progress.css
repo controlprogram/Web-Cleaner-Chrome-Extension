@@ -5,26 +5,22 @@
 #windowBar {
     width: 848px;
     height: 32px;
-    margin: 0;
+    margin: 0 auto;
     position: relative;
-    left: 50%;
-    -webkit-transform: translate(-50%);
-    transform: translate(-50%);
     border-left: 1px solid #FEFEFE;
     border-right: 1px solid #FEFEFE;
-    border-bottom: 1px solid #CCCCCC;
     background: #FAFAFA;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFFFFF), color-stop(50%, #FAFAFA), color-stop(50%, #FAFAFA), color-stop(100%, #FAFAFA));
-    box-shadow: 0px 1px 1px 1px #CCCCCC
+    box-shadow: 0px 0px 0px 1px #CCCCCC
 }
 #countdown {
-	margin-left: 25px
+    margin-left: 25px
 }
 #countdown p {
-	margin: 0 0 20px;
-	padding: 5px;
-	display: inline-block;
-	font-size: 18px
+    margin: 0 0 20px;
+    padding: 5px;
+    display: inline-block;
+    font-size: 18px
 }
 #days { background-color: #6A98AF }
 #hours { background-color: #77ABBF }
@@ -32,7 +28,7 @@
 #days,
 #hours,
 #minutes {
-	color: #FFFFFF
+    color: #FFFFFF
 }
 #cal-heatmap {
     position: relative;
@@ -43,20 +39,17 @@
     transform: translate(-50%)
 }
 .container {
+    padding-top: 1px;
     width: 850px;
     background: #fcfcfc;
     height: 865px;
     border: 0 1px 1px 1px solid #ccc;
-    position: absolute;
-    left: 50%;
-    -webkit-transform: translate(-50%);
-    transform: translate(-50%);
-    display: inline-block;
+    margin: 0 auto;
     box-shadow: 0 1px 0 1px #CCCCCC
 }
 .cal-heatmap-container {
-	margin-bottom: -10px;
-	padding-top: 5px;
+    margin-bottom: -10px;
+    padding-top: 5px;
 }
 .reportChartHolder {
     width: 35%;
@@ -90,31 +83,31 @@
     font-size: 20px
 }
 .reportCommon h3 {
-	margin: 237px 0 0 15px;
-	font-size: 16px;
-	color: #1A1A1A
+    margin: 237px 0 0 15px;
+    font-size: 16px;
+    color: #1A1A1A
 }
 .reportCommon_Left {
-	margin: 4px 0 0 15px;
-	width: 150px;
-	float: left;
+    margin: 4px 0 0 15px;
+    width: 150px;
+    float: left;
 }
 .reportCommon_Right {
-	margin: 4px 0 0 0;
-	display: inline-block;
-	float: left;
+    margin: 4px 0 0 0;
+    display: inline-block;
+    float: left;
 }
 .reportCommon span.hlBlue {
-	font-weight: bold;
-	color: #3F99C0
+    font-weight: bold;
+    color: #3F99C0
 }
 .reportCommon span.hlRed {
-	font-weight: bold;
-	color: #A5444A
+    font-weight: bold;
+    color: #A5444A
 }
 .arrowLeft::before,
 .arrowRight::before {
-	padding: 5px;
+    padding: 5px;
     position: relative;
     top: 3pt;
     content: "";
@@ -128,14 +121,14 @@
     cursor: pointer;
 }
 .arrowLeft::before {
-	margin: 100px 0 0 30px;
+    margin: 100px 0 0 30px;
     transform: rotate(225deg);
-	float: left
+    float: left
 }
 .arrowRight::before {
-	margin: 100px 25px 0 0;
+    margin: 100px 25px 0 0;
     transform: rotate(45deg);
-	float: right
+    float: right
 }
 h3.bold { font-weight: bold }
 .statsLeft,
@@ -167,15 +160,15 @@ h3.bold { font-weight: bold }
 }
 .noSelect { -webkit-user-select: none }
 .switch {
-	font-size: 18px;
-	color: #1A1A1A;
+    font-size: 18px;
+    color: #1A1A1A;
     text-decoration: underline;
     cursor: pointer
 }
 .switchHl {
-	font-weight: bold;
-	font-size: 18px;
-	color: #1A1A1A
+    font-weight: bold;
+    font-size: 18px;
+    color: #1A1A1A
 }
 
 /**
@@ -629,7 +622,7 @@ g path:hover { opacity: .35 }
 }
 .liquidBubble .red .outer {
     box-shadow: 0 0 20px #7A0B0B;
-	background-color: #1A1A1A
+    background-color: #1A1A1A
 }
 .liquidBubble .red .outer .inner .water {
     background: rgba(237, 59, 59, 0.5);
@@ -645,7 +638,7 @@ g path:hover { opacity: .35 }
 }
 .liquidBubble .blue .outer {
     box-shadow: 0 0 20px #0B477A;
-	background-color: #1A1A1A
+    background-color: #1A1A1A
 }
 .liquidBubble .blue .outer .inner .water {
     background: rgba(59, 147, 237, 0.5);
