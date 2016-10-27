@@ -80,6 +80,19 @@ function initQuestions() {
 
 	askSomething();
 	function askSomething() {
+		var now = new Date();
+		// No question from 2am until 6am.
+		if (2 <= now.getHours() && now.getHours() < 6) {
+			return false;
+		}
+
+		var veryRecently = new Date();
+		veryRecently.setHours(veryRecently.getHours() - 1);
+		// Only at most one question per hour.
+		if (stats.getEvents('answered', veryRecently.getTime()).length) {
+			return false;
+		}
+
 		var question = 'cpr';
 		var open = Object.keys(questions);
 		while (!useQuestion(question)) {
@@ -131,9 +144,7 @@ function initQuestions() {
 		}
 	}
 	function useQuestion(question) {
-		var recently = new Date();
-		recently.setHours(recently.getHours() - 6);
-		if (stats.getEvents('answered', recently.getTime()).some(function(e) {return e.value.question === question;})) {
+		if (stats.getEvents('answered', today().getTime()).some(function(e) {return e.value.question === question;})) {
 			return false;
 		}
 		if (questions[question].before && questions[question].before() === false) {

@@ -25,15 +25,22 @@ var feelings = {
 	hero: {title: 'I can do it!'}
 };
 
+function today() {
+	var today = new Date();
+	// Today starts between 2am and 6am.
+	if (today.getHours() < 2) {
+		today.setDate(today.getDate() - 1);
+	}
+	today.setHours(6);
+	today.setMinutes(0);
+	today.setSeconds(0);
+	return today;
+}
+
 var questions = {
 	'cpr': {
 		before: function() {
-			var today = new Date();
-			today.setHours(0);
-			today.setMinutes(0);
-			today.setSeconds(0);
-			today.setMilliseconds(0);
-			return !stats.getEvents(['cummed', 'milked', 'ruined'], today.getTime()).length;
+			return !stats.getEvents(['cummed', 'milked', 'ruined'], today().getTime()).length;
 		},
 		question: 'Have you needed CPR today?',
 		answers: {
@@ -85,7 +92,7 @@ function makeQuestion(id) {
 	}
 	if (questions[id].html) {
 		return $(questions[id].html);
-	}console.log(id, questions[id]);
+	}
 	question = questions[id].question;
 	if (questions[id].answers) {
 		if (Array.isArray(questions[id].answers)) {
@@ -189,6 +196,22 @@ function updateStuff() {
 		});
 
 		frequentRelapse = weekdays[relapseDays.indexOf(Math.max.apply(null, relapseDays))];
+
+		var daysSinceOrgasm = (Date.now() - lastOrgasm.time) / (24 * 60 * 60 * 1000);
+		$('.progress').each(function() {
+			var $labels = $(this).find('.progress-toplabels .progress-mslabel');
+			var $ms = $(this).find('.progress-ms');
+			var $curr = $(this).find('.progress-curr');
+			if ($ms.length && $labels.length && $curr.length) {
+				var minDays = +$labels.first().text() || 0;
+				var minPx = parseFloat($ms.first().css('left')) || 0;
+				var maxDays = +$labels.last().text();
+				var maxPx = parseFloat($ms.last().css('left')) || 100;
+				$curr.css('width', (daysSinceOrgasm - minDays) / (maxDays - minDays) * (maxPx - minPx) + minPx + 'px');
+			}
+		});
+	} else {
+		$('.progress-curr').css('width', '0%');
 	}
 
 	$('#field-last-orgasm').text(lastOrgasm ? new Date(lastOrgasm.time).toDateString() : 'never');

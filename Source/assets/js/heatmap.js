@@ -1,16 +1,18 @@
 var data = {}, start = new Date(), end = new Date();
+var startOfDay = 2*60*60*1000;
 
 start.setMonth(start.getMonth() - 3);
 end.setMonth(end.getMonth() + 3);
 
 stats.getEvents(['cummed', 'milked', 'ruined'], start.getTime(), end.getTime()).forEach(function(event) {
-	data[Math.floor(event.time / 1000)] = 1;
+	// Shift event time to make orgasms between 12am and 2am appear on the previous day.
+	data[Math.floor((event.time - startOfDay) / 1000)] = 1;
 });
 
 stats.listen(['cummed', 'milked', 'ruined'], start.getTime(), end.getTime(), function(events) {
 	var data = {};
 	events.forEach(function(event) {
-		data[Math.floor(event.time / 1000)] = 1;
+		data[Math.floor((event.time - startOfDay) / 1000)] = 1;
 	});
 	cal.update(data, false, cal.APPEND_ON_UPDATE);
 });

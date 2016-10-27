@@ -10,7 +10,7 @@
     border-left: 1px solid #FEFEFE;
     border-right: 1px solid #FEFEFE;
     background: #FAFAFA;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFFFFF), color-stop(50%, #FAFAFA), color-stop(50%, #FAFAFA), color-stop(100%, #FAFAFA));
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFFFFF), color-stop(50%, #FFFFFF), color-stop(50%, #FAFAFA), color-stop(100%, #FAFAFA));
     box-shadow: 0px 0px 0px 1px #CCCCCC
 }
 #countdown {
@@ -42,7 +42,7 @@
     padding-top: 1px;
     width: 850px;
     background: #fcfcfc;
-    height: 865px;
+    height: 815px;
     border: 0 1px 1px 1px solid #ccc;
     margin: 0 auto;
     box-shadow: 0 1px 0 1px #CCCCCC
@@ -50,6 +50,25 @@
 .cal-heatmap-container {
     margin-bottom: -10px;
     padding-top: 5px;
+}
+#calendar-today,
+#calendar-hl {
+	width: 12px;
+	display: block;
+	margin-top: 5px;
+	padding: 3px;
+	background-color: #777777;
+	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+	font-size: 8px;
+	font-weight: bold;
+}
+#calendar-today {
+	border: 2px solid lime;
+	color: lime
+}
+#calendar-hl {
+	border: 2px solid yellow;
+	color: yellow
 }
 .reportChartHolder {
     width: 35%;
@@ -60,7 +79,7 @@
     display: inline-block;
 }
 .reportHolder {
-    height: 90%;
+    height: 68.6%;
     width: 64%;
     float: right;
     margin: -10px 0 0 0;
@@ -142,7 +161,7 @@ h3.bold { font-weight: bold }
     height: 14px;
     border: none;
     top: 5px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 .statsLeft h3,
 .statsRight h3 {
@@ -175,6 +194,9 @@ h3.bold { font-weight: bold }
  * Questions
  **/
 
+#feels-box {
+	margin-bottom: 94px
+}
 .reportFeelings {
     width: 550px;
     display: inline-block;
@@ -303,6 +325,42 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
     font-weight: 500;
     text-align: right;
     color: rgba(225, 225, 225, 0.75)
+}
+#buttons {
+	margin-top: 5px;
+	margin-left: 95px
+}
+.button,
+.button-disabled {
+	width: 61px;
+	margin-top: 5px;
+	margin-left: 5px;
+	padding: 6px 12px;
+	-webkit-user-select: none;
+	text-align: center;
+	font-size: 13px;
+	font-weight: bold;
+	text-decoration: none;
+	display: inline-block
+
+}
+.button {
+	cursor: pointer;
+	color: #4C6A4C;
+	border: 1px solid #7FB27F;
+	background: #CBDFCB;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #DAE8DA), color-stop(50%, #DAE8DA), color-stop(50%, #CBDFCB), color-stop(100%, #CBDFCB))
+}
+.button-disabled {
+	cursor: not-allowed;
+	color: #B7B7B7;
+	border: 1px solid #B7B7B7;
+	background: #FAFAFA;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFFFFF), color-stop(50%, #FFFFFF), color-stop(50%, #FAFAFA), color-stop(100%, #FAFAFA))
+}
+.button:active {
+	position:relative;
+	top:1px;
 }
 #questions {
     margin-bottom: 30px;
@@ -495,8 +553,12 @@ g path:hover { opacity: .35 }
  * Liquid Bubble
  **/
 
+#porn-timer {
+	margin-top: 5px;
+	display: block
+}
 .liquidBubble {
-    margin: 15px 0 0 -25px
+    margin: -60px 0 0 -40px
 }
 .liquidBubble .green .outer,
 .liquidBubble .red .outer,
@@ -672,8 +734,6 @@ g path:hover { opacity: .35 }
         transform: rotate(360deg)
     }
 }
-
-
 
 /**
  * Tickets
