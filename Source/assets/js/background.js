@@ -48,7 +48,7 @@ function initialize_options()
 	localStorage["image_blocked_words"] = "sex\nbreast\nboob\npenis\nvagina\ndick\nfuck\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude\nbra \npanties\nrisque\nraunch\nmaxim\nplayboy\nstripper\nprostitute\nlingerie";
 	localStorage["image_whitelisted_websites"]  = "";
 	localStorage["image_scanner"] = true;
-	localStorate["image_background"] = true;
+	localStorage["image_background"] = true;
 	localStorage["scanner_sensitivity"] = 50;
 	localStorage["image_replacement"] = "logo";
 	localStorage["image_blurring"] = true;
