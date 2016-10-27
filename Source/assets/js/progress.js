@@ -1,4 +1,5 @@
 var doughnut, boxes;
+var startOfDay = 2*60*60*1000;
 
 function initDoughnut() {
   doughnut = $("#doughnutChart").drawDoughnutChart([

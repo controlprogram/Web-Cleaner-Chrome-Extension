@@ -46,13 +46,16 @@ var questions = {
 		answers: {
 			cummed: 'Cummed',
 			milked: 'Prostate Milked',
-			ruined: 'Ruined'
+			ruined: 'Ruined',
+			no: 'No'
 		},
 		values: function() {
-			return [cums.length, milks.length, ruins.length];
+			return [cums.length, milks.length, ruins.length, 0];
 		},
 		after: function(answer) {
-			stats.addEvent(answer);
+			if (answer !== 'no') {
+				stats.addEvent(answer);
+			}
 		}
 	},
 	'feel': {
@@ -176,6 +179,7 @@ function updateStuff() {
 
 	if (orgasms.length) {
 		lastOrgasm = orgasms[orgasms.length - 1];
+		var timeSinceLastOrgasm = Date.now() - lastOrgasm.time;
 		edgesSince = stats.getEvents('edged', lastOrgasm.time);
 		longestStreak = 0;
 
@@ -195,29 +199,76 @@ function updateStuff() {
 			relapseDays[new Date(event.time).getDay()]++;
 		});
 
+		if (longestStreak < timeSinceLastOrgasm) {
+			longestStreak = timeSinceLastOrgasm;
+		}
+		var longestStreakDays = Math.floor(longestStreak / (24*60*60*1000));
+
 		frequentRelapse = weekdays[relapseDays.indexOf(Math.max.apply(null, relapseDays))];
 
-		var daysSinceOrgasm = (Date.now() - lastOrgasm.time) / (24 * 60 * 60 * 1000);
+		var daysSinceOrgasm = timeSinceLastOrgasm / (24 * 60 * 60 * 1000);
 		$('.progress').each(function() {
 			var $labels = $(this).find('.progress-toplabels .progress-mslabel');
-			var $ms = $(this).find('.progress-ms');
+			var $mss = $(this).find('.progress-ms');
 			var $curr = $(this).find('.progress-curr');
-			if ($ms.length && $labels.length && $curr.length) {
+			if ($mss.length && $labels.length && $curr.length) {
+
+				var currLeft = $curr.offset().left;
 				var minDays = +$labels.first().text() || 0;
-				var minPx = parseFloat($ms.first().css('left')) || 0;
+				var minPx = $mss.first().offset().left - currLeft;
 				var maxDays = +$labels.last().text();
-				var maxPx = parseFloat($ms.last().css('left')) || 100;
-				$curr.css('width', (daysSinceOrgasm - minDays) / (maxDays - minDays) * (maxPx - minPx) + minPx + 'px');
+				var maxPx = $mss.last().offset().left - currLeft;
+				$curr.width((daysSinceOrgasm - minDays) / (maxDays - minDays) * (maxPx - minPx) + minPx);
+
+				$labels.each(function(i) {
+					var $label = $(this);
+					var $ms = $mss.eq(i);
+					var day = +$label.text();
+					var left = (day - minDays) / (maxDays - minDays) * (maxPx - minPx);// + minPx;
+					$ms.css('left', left);
+					$label.css('left', left);
+				});
 			}
 		});
 	} else {
 		$('.progress-curr').css('width', '0%');
 	}
 
-	$('#field-last-orgasm').text(lastOrgasm ? new Date(lastOrgasm.time).toDateString() : 'never');
+	$('#field-last-orgasm').text(lastOrgasm ? formatDateShort(new Date(lastOrgasm.time - startOfDay)) : 'never');
+	$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(timeSinceLastOrgasm) + ' ago' : 'ever');
 	$('#field-edges-since-last-orgasm').text(lastOrgasm ? edgesSince.length : '-');
-	$('#field-longest-streak').text(orgasms.length >= 2 ? Math.floor(longestStreak / (24*60*60*1000)) + ' Days' : '-');
+	$('#field-longest-streak').text(lastOrgasm ? longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days' : '-');
+	$('#field-longest-streak').attr('title', lastOrgasm ? formatTimespan(longestStreak) : '');
 	$('#field-frequent-relapse').text(lastOrgasm ? frequentRelapse : '-');
+}
+
+function formatDateShort(d) {
+    return [d.getMonth() + 1, d.getDate(), String(d.getFullYear()).slice(-2)].join('/');
+}
+
+function formatTimespan(ms) {
+	var parts = [];
+	if (ms < 0) {
+		ms = 0;
+	}
+	var seconds = Math.floor(ms / 1000);
+	var minutes = Math.floor(seconds / 60);
+	seconds -= minutes * 60;
+	parts.push(seconds === 1 ? '1 second' : seconds + ' seconds');
+	if (minutes) {
+		var hours = Math.floor(minutes / 60);
+		minutes -= hours * 60;
+		parts.push(minutes === 1 ? '1 minute' : minutes + ' minutes');
+		if (hours) {
+			var days = Math.floor(hours / 24);
+			hours -= days * 24;
+			parts.push(hours === 1 ? '1 hour' : hours + ' hours');
+			if (days) {
+				parts.push(days === 1 ? '1 day' : days + ' days');
+			}
+		}
+	}
+	return parts.reverse().join(', ');
 }
 
 function updateFeels(feels) {

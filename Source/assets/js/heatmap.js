@@ -1,5 +1,5 @@
 var data = {}, start = new Date(), end = new Date();
-var startOfDay = 2*60*60*1000;
+
 
 start.setMonth(start.getMonth() - 3);
 end.setMonth(end.getMonth() + 3);
