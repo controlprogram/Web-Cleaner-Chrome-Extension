@@ -166,7 +166,6 @@ $(document).ready(function() {
 	updateStuff();
 	updateFeels(feels);
 	initDoughnut();
-	initTickets();
 	initBoxes();
 	initQuestions();
 });
@@ -280,18 +279,4 @@ function updateFeels(feels) {
 	$('[data-feel]').each(function() {
 		$(this).text((summary[$(this).data('feel')] || 0).toLocaleString());
 	});
-}
-
-function initTickets() {
-	var pages = document.querySelector('.ticket-pages'), page;
-	for (var i = 0; i < 30; ++i) {
-		if (i % 4 === 0) {
-			page = document.createElement('div');
-			page.className = 'ticket-page';
-			pages.appendChild(page);
-		}
-		var ticket = new Image();
-		ticket.src = drawTicket(i + 1, Math.random() * 360);
-		page.appendChild(ticket);
-	}
 }

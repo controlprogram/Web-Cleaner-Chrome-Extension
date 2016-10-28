@@ -45,9 +45,9 @@
 					<span class="reportCommon_Right">Aug '16 Rating<br><span class="hlRed">60%</span></span>
 				</div>
 				<div id="buttons">
-					<div class="button" data-hint="If you orgasm with or without permission, you must report it." data-position="top">Report CPR</div>
-					<div class="button">I Edged</div>
-					<div class="button-disabled">Play Time (??:??)</div>
+					<div class="button" data-role="report-cpr" data-hint="If you orgasm with or without permission, you must report it." data-position="top">Report CPR</div>
+					<div class="button" data-role="report-edge">I Edged</div>
+					<div class="button-disabled" data-role="play">Play Time (??:??)</div>
 				</div>
 				<div class="liquidBubble">
 					<div class="blue">
@@ -139,7 +139,7 @@
 				</div>
             </div>
         </div>
-		<div id="modalBackground" style="display: display">
+		<div id="modalBackground">
 			<div id="modal">
 				<div class="windowBar" id="modal-windowBar">
 					<p>Edges</p>
@@ -148,8 +148,8 @@
 					<div id="modalContent">
 						<input type="text" class="fillin_blank" maxlength="3" size="1" placeholder="0" required>
 						<br>
-						<div class="button">Add Edges</div>
-						<div class="button">Cancel</div>
+						<div class="button" data-role="add-edges">Add Edges</div>
+						<div class="button" data-role="cancel">Cancel</div>
 					</div>
 				</div>
 			</div>
