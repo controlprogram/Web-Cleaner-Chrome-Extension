@@ -27,7 +27,8 @@
       "48": "assets/img/joseph'slogo2(white).png"
    },
    "browser_action": {
-      "default_title": "Web Cleaner"
+      "default_title": "Web Cleaner",
+      "default_popup": "assets/popup/popup.html"
    },
    "web_accessible_resources": [
       "assets/css/blockimg.css",

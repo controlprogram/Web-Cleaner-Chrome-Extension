@@ -163,6 +163,15 @@ $(document).ready(function() {
 	stats.listen(['feeled'], startPeriod.getTime(), endPeriod.getTime(), function(feels) {
 		updateFeels(feels);
 	});
+	$('#field-last-orgasm').mouseenter(function() {
+		lastOrgasmInterval = setInterval(updateLastOrgasm, 1000);
+	}).mouseleave(function() {
+		clearInterval(lastOrgasmInterval);
+	});
+	var lastOrgasmInterval;
+	function updateLastOrgasm() {
+		$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(Date.now() - lastOrgasm.time) + ' ago' : 'ever');
+	}
 	updateStuff();
 	updateFeels(feels);
 	initDoughnut();
@@ -219,18 +228,36 @@ function updateStuff() {
 				var maxPx = $mss.last().offset().left - currLeft;
 				$curr.width((daysSinceOrgasm - minDays) / (maxDays - minDays) * (maxPx - minPx) + minPx);
 
+				var d = -1;
 				$labels.each(function(i) {
 					var $label = $(this);
 					var $ms = $mss.eq(i);
 					var day = +$label.text();
+					if (d < 0 && daysSinceOrgasm < day) {
+						d = day - daysSinceOrgasm;
+					}
 					var left = (day - minDays) / (maxDays - minDays) * (maxPx - minPx);// + minPx;
 					$ms.css('left', left);
 					$label.css('left', left);
 				});
+				if ($(this).is(':visible')) {
+					if (d < 0) {
+						$('#countdown').hide();
+					} else {
+						$('#days').text(('000' + Math.floor(d)).slice(-3));
+						d = (d % 1) * 24;
+						$('#hours').text(('00' + Math.floor(d)).slice(-2));
+						d = (d % 1) * 60;
+						$('#minutes').text(('00' + Math.floor(d)).slice(-2));
+						$('#countdown').show();
+						scheduleUpdate((60 - new Date().getSeconds()) * 1000);
+					}
+				}
 			}
 		});
 	} else {
 		$('.progress-curr').css('width', '0%');
+		$('#countdown').hide();		
 	}
 
 	$('#field-last-orgasm').text(lastOrgasm ? formatDateShort(new Date(lastOrgasm.time - startOfDay)) : 'never');
@@ -279,4 +306,24 @@ function updateFeels(feels) {
 	$('[data-feel]').each(function() {
 		$(this).text((summary[$(this).data('feel')] || 0).toLocaleString());
 	});
+}
+
+var updateTimer;
+function scheduleUpdate(when) {
+	if (!updateTimer) {
+		updateTimer = {
+			time: Date.now() + when,
+			timeout: setTimeout(run, when)
+		};
+	} else {
+		if (Date.now() + when < updateTimer.time) {
+			clearTimeout(updateTimer.timeout);
+			updateTimer.time = Date.now() + when;
+			updateTimer.timeout = setTimeout(run, when);
+		}
+	}
+	function run() {
+		updateTimer = null;
+		updateStuff();
+	}
 }

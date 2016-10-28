@@ -414,8 +414,14 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
     }
 });
 
-var progressUrl = null;
 chrome.browserAction.onClicked.addListener(function(activeTab) {
+	openProgress();
+});
+
+
+
+var progressUrl = null;
+function openProgress() {
 	var url = "assets/html/progress.html";
 	if (!progressUrl) {
 		chrome.tabs.create({url: url}, function(tab) {
@@ -437,7 +443,7 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
 			}
 		});
 	}
-});
+}
 
 function loadTemplates() {
 	chrome.runtime.getPackageDirectoryEntry(function(root) {
