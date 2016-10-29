@@ -559,3 +559,7 @@ if (!stats.events.length) {
 		stats.addEvent(['edged', 'cummed', 'milked', 'ruined'][Math.max(0,Math.floor(Math.random() * 10)-6)], Math.floor(current));
 	}
 }
+
+if (!stats.getEvents('installed').length) {
+	stats.addEvent('installed');
+}

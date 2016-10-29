@@ -6,6 +6,7 @@
 		<script type="text/javascript" src="../js/d3.min.js"></script>
 		<script type="text/javascript" src="../js/cal-heatmap.min.js"></script>
 		<script type="text/javascript" src="../js/jquery.drawDoughnutChart.js"></script>
+		<script type="text/javascript" src="../js/milestones.js"></script>
 		<script type="text/javascript" src="../js/stats.js"></script>
 		<script type="text/javascript" src="../js/progress.js"></script>
 		<script type="text/javascript" src="../js/intro.js"></script>
@@ -25,8 +26,37 @@
 			</div>
 		</div>
 		<div class="container" id="mainContainer">
-			<div class="progress"><div class="progress-toplabels"><span class="progress-labels-wrapper"><span style="left: 0%;" class="progress-mslabel progress-firstms">0</span><span style="left: 3.39893%;" class="progress-mslabel">1</span><span style="left: 6.79785%;" class="progress-mslabel">2</span><span style="left: 14.1324%;" class="progress-mslabel">5</span><span style="left: 28.4436%;" class="progress-mslabel">10</span><span style="left: 42.7549%;" class="progress-mslabel">14</span><span style="left: 67.7996%;" class="progress-mslabel">21</span><span style="left: 100%;" class="progress-mslabel progress-lastprog">30</span></span></div><div class="progress-wrapper"><span class="progress-bar"><span class="progress-curr" style="width: 0%;" data-hint="As you abstain from porn and orgasms for a select period of time, you will be rewarded on good behavior such as permission to cum, or the ability to look at porn. This may occur at each milestone or after completing a session up to a maximum of 31 days, whichever is set in your extension settings. You can track your session progress here." data-position="bottom"></span><span class="progress-mss-wrapper"><span class="progress-mss"><span class="progress-ms progress-firstms" style="left: 0%;"></span><span class="progress-ms" style="left: 3.39893%;"></span><span class="progress-ms" style="left: 6.79785%;"></span><span class="progress-ms" style="left: 14.1324%;"></span><span class="progress-ms" style="left: 28.4436%;"></span><span class="progress-ms" style="left: 42.7549%;"></span><span class="progress-ms" style="left: 67.7996%;"></span><span class="progress-ms progress-lastms" style="left: 100%;"></span></span></span></span></div><div class="progress-bottomlabels"><span class="progress-labels-wrapper"><span class="progress-mslabel progress-firstms" style="left: 0%;"></span><span class="progress-mslabel" style="left: 3.39893%;"></span><span class="progress-mslabel" style="left: 6.79785%;"></span><span class="progress-mslabel" style="left: 14.1324%;"></span><span class="progress-mslabel" style="left: 28.4436%;"></span><span class="progress-mslabel" style="left: 42.7549%;"></span><span class="progress-mslabel" style="left: 67.7996%;"></span></span></div></div>
-			<div class="progress" style="display: none"><div class="progress-toplabels"><span class="progress-labels-wrapper"><span style="left: 0%;" class="progress-mslabel progress-firstms">31</span><span style="left: 7.59494%;" class="progress-mslabel">45</span><span style="left: 15.1899%;" class="progress-mslabel">60</span><span style="left: 22.7848%;" class="progress-mslabel">75</span><span style="left: 30.3797%;" class="progress-mslabel">90</span><span style="left: 37.9747%;" class="progress-mslabel">120</span><span style="left: 53.1646%;" class="progress-mslabel">180</span><span style="left: 75.9494%;" class="progress-mslabel progress-lastprog">270</span><span style="left: 100%;" class="progress-mslabel progress-lastprog">365</span></span></div><div class="progress-wrapper"><span class="progress-bar"><span class="progress-curr" style="width: 90%;"></span><span class="progress-mss-wrapper"><span class="progress-mss"><span class="progress-ms progress-firstms" style="left: 0%;"></span><span class="progress-ms" style="left: 7.59494%;"></span><span class="progress-ms" style="left: 15.1899%;"></span><span class="progress-ms" style="left: 22.7848%;"></span><span class="progress-ms" style="left: 30.3797%;"></span><span class="progress-ms" style="left: 37.9747%;"></span><span class="progress-ms" style="left: 53.1646%;"></span><span class="progress-ms" style="left: 75.9494%;"></span><span class="progress-ms progress-lastms" style="left: 100%;"></span></span></span></span></div><div class="progress-bottomlabels"><span class="progress-labels-wrapper"><span class="progress-mslabel progress-firstms" style="left: 0%;"></span><span class="progress-mslabel" style="left: 7.59494%;"></span><span class="progress-mslabel" style="left: 15.1899%;"></span><span class="progress-mslabel" style="left: 22.7848%;"></span><span class="progress-mslabel" style="left: 30.3797%;"></span><span class="progress-mslabel" style="left: 37.9747%;"></span><span class="progress-mslabel" style="left: 53.1646%;"></span><span class="progress-mslabel" style="left: 75.9494%;"></span></span></div></div>
+			<div class="progress">
+				<div class="progress-toplabels">
+					<span class="progress-labels-wrapper">
+						<span style="left: 0%;" class="progress-mslabel progress-firstms">0</span>
+						<span style="left: 3.39893%;" class="progress-mslabel">1</span>
+						<span style="left: 6.79785%;" class="progress-mslabel">2</span>
+						<span style="left: 14.1324%;" class="progress-mslabel">5</span>
+						<span style="left: 28.4436%;" class="progress-mslabel">10</span>
+						<span style="left: 42.7549%;" class="progress-mslabel">14</span>
+						<span style="left: 67.7996%;" class="progress-mslabel">21</span>
+						<span style="left: 100%;" class="progress-mslabel progress-lastms">30</span>
+					</span>
+				</div>
+				<div class="progress-wrapper">
+					<span class="progress-bar">
+						<span class="progress-curr" style="width: 0%;" data-hint="As you abstain from porn and orgasms for a select period of time, you will be rewarded on good behavior such as permission to cum, or the ability to look at porn. This may occur at each milestone or after completing a session up to a maximum of 31 days, whichever is set in your extension settings. You can track your session progress here." data-position="bottom"></span>
+						<span class="progress-mss-wrapper">
+							<span class="progress-mss">
+								<span class="progress-ms progress-firstms" style="left: 0%;"></span>
+								<span class="progress-ms" style="left: 3.39893%;"></span>
+								<span class="progress-ms" style="left: 6.79785%;"></span>
+								<span class="progress-ms" style="left: 14.1324%;"></span>
+								<span class="progress-ms" style="left: 28.4436%;"></span>
+								<span class="progress-ms" style="left: 42.7549%;"></span>
+								<span class="progress-ms" style="left: 67.7996%;"></span>
+								<span class="progress-ms progress-lastms" style="left: 100%;"></span>
+							</span>
+						</span>
+					</span>
+				</div>
+			</div>
 			<div id="cal-heatmap" data-hint="This is a color coded calendar for tracking your orgasms over a 6 month period.<span id=calendar-today>01</span>The current day is highlighted to help you easily track the number of orgasms you had.<span id=calendar-hl>01</span> Your next milestone or orgasm date is also highlighted to help you hold out for longer." data-position="left"></div>
 			<script type="text/javascript" src="../js/heatmap.js"></script>
             <div class="reportChartHolder">    

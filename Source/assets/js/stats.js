@@ -9,6 +9,7 @@ var cums = orgasms.filter(orgasm => orgasm.type === 'cummed');
 var milks = orgasms.filter(orgasm => orgasm.type === 'milked');
 var ruins = orgasms.filter(orgasm => orgasm.type === 'ruined');
 var lastOrgasm = null, edgesSince, longestStreak, frequentRelapse, relapseDays;
+var installDate = stats.getEvents('installed')[0].time;
 
 var feelings = {
 	happy: {title: 'Happy'},
@@ -172,6 +173,7 @@ $(document).ready(function() {
 	function updateLastOrgasm() {
 		$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(Date.now() - lastOrgasm.time) + ' ago' : 'ever');
 	}
+	milestones.init();
 	updateStuff();
 	updateFeels(feels);
 	initDoughnut();
@@ -213,51 +215,6 @@ function updateStuff() {
 		var longestStreakDays = Math.floor(longestStreak / (24*60*60*1000));
 
 		frequentRelapse = weekdays[relapseDays.indexOf(Math.max.apply(null, relapseDays))];
-
-		var daysSinceOrgasm = timeSinceLastOrgasm / (24 * 60 * 60 * 1000);
-		$('.progress').each(function() {
-			var $labels = $(this).find('.progress-toplabels .progress-mslabel');
-			var $mss = $(this).find('.progress-ms');
-			var $curr = $(this).find('.progress-curr');
-			if ($mss.length && $labels.length && $curr.length) {
-
-				var currLeft = $curr.offset().left;
-				var minDays = +$labels.first().text() || 0;
-				var minPx = $mss.first().offset().left - currLeft;
-				var maxDays = +$labels.last().text();
-				var maxPx = $mss.last().offset().left - currLeft;
-				$curr.width((daysSinceOrgasm - minDays) / (maxDays - minDays) * (maxPx - minPx) + minPx);
-
-				var d = -1;
-				$labels.each(function(i) {
-					var $label = $(this);
-					var $ms = $mss.eq(i);
-					var day = +$label.text();
-					if (d < 0 && daysSinceOrgasm < day) {
-						d = day - daysSinceOrgasm;
-					}
-					var left = (day - minDays) / (maxDays - minDays) * (maxPx - minPx);// + minPx;
-					$ms.css('left', left);
-					$label.css('left', left);
-				});
-				if ($(this).is(':visible')) {
-					if (d < 0) {
-						$('#countdown').hide();
-					} else {
-						$('#days').text(('000' + Math.floor(d)).slice(-3));
-						d = (d % 1) * 24;
-						$('#hours').text(('00' + Math.floor(d)).slice(-2));
-						d = (d % 1) * 60;
-						$('#minutes').text(('00' + Math.floor(d)).slice(-2));
-						$('#countdown').show();
-						scheduleUpdate((60 - new Date().getSeconds()) * 1000);
-					}
-				}
-			}
-		});
-	} else {
-		$('.progress-curr').css('width', '0%');
-		$('#countdown').hide();		
 	}
 
 	$('#field-last-orgasm').text(lastOrgasm ? formatDateShort(new Date(lastOrgasm.time - startOfDay)) : 'never');
@@ -266,6 +223,8 @@ function updateStuff() {
 	$('#field-longest-streak').text(lastOrgasm ? longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days' : '-');
 	$('#field-longest-streak').attr('title', lastOrgasm ? formatTimespan(longestStreak) : '');
 	$('#field-frequent-relapse').text(lastOrgasm ? frequentRelapse : '-');
+
+	milestones.update();
 }
 
 function formatDateShort(d) {
