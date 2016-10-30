@@ -1,41 +1,10 @@
-function notifyMilestone(stage, i) {
-	if (typeof webkitNotifications !== 'undefined') {
-		// Note: There's no need to call webkitNotifications.checkPermission().
-		// Extensions that declare the notifications permission are always
-		// allowed create notifications.
-
-		// Create a simple text notification:
-		var notification = webkitNotifications.createNotification(
-		  '../img/silk/award_star_gold_1.png',  // icon url - can be relative
-		  'Hello!',  // notification title
-		  'Lorem ipsum...'  // notification body text
-		);
-
-		// Or create an HTML notification:
-		var notification = webkitNotifications.createHTMLNotification(
-		  '../popup/popup.html'  // html url - can be relative
-		);
-
-		// Then show the notification.
-		notification.show();
-	} else {
-
-		chrome.notifications.create({
-		  type: "basic",
-		  title: "Milestone Reached",
-		  message: "Congratulations! You didn't orgasm for " + milestones.name(stage, i) + ". Keep up the good work!",
-		  iconUrl: "../img/silk/award_star_gold_1.png",
-		  eventTime: Date.now()
-		}, function(){});
-	}
-}
 
 var milestones = (function(s) {
 	var s = [
-		{ unit: 'second',  values: [30] },
-		{ unit: 'minute',  values: [1, 5, 15, 30, 45] },
-		{ unit: 'hour',  values: [1, 4, 8, 16] },
-		{ unit: 'day',   values: [1, 2, 5, 10, 14, 21] },
+		{ unit: 'second',  values: [30, 60] },
+		{ unit: 'minute',  values: [2, 5, 15, 30, 45] },
+		{ unit: 'hour',  values: [1, 4, 8, 16, 24, 36] },
+		{ unit: 'day',   values: [2, 5, 10, 14, 21] },
 		{ unit: 'day',   values: [30, 45, 60, 75, 90, 120, 180, 270] },
 		{ unit: 'month', values: [12, 18, 24, 48, 87] },
 		{ unit: 'year',  values: [10, 15, 20, 30, 40, 50, 75] },
@@ -46,31 +15,70 @@ var milestones = (function(s) {
 	var props = {milli: 'Milliseconds', second: 'Seconds', minute: 'Minutes', hour: 'Hours', day: 'Date', month: 'Month', year: 'FullYear'};
 	var currentStage; // index
 	var nextMilestone; // timestamp
+	var installDate = stats.getEvents('installed')[0].time;
+	var lastOrgasm = stats.getEvents(['cummed', 'milked', 'ruined']).pop();
+	var listeners = new Map();
+	var reset = true;
+	stats.listen(['cummed', 'milked', 'ruined'], function(events) {
+		lastOrgasm = events.pop();
+		reset = true;
+		milestones.update();
+	});
 	return {
-		init: function() {
-			/*updateMilestone();
-			initProgressBar(currentStage);
-			updateProgressBar(currentStage);
-			updateCountdown();*/
+		startNotify: function() {
+			milestones.listen('milestone', notify);
+		},
+		stopNotify: function() {
+			milestones.unlisten('milestone', notify);
 		},
 		update: function() {
-			var stage = currentStage;
 			updateMilestone();
-			if (stage !== currentStage) {
-				initProgressBar(currentStage);
-			}
-			updateProgressBar(currentStage);
-			updateCountdown();
-			if (['second'].indexOf(s[currentStage].unit) >= 0) {
-				// update every second
-				scheduleUpdate(1000);
-			} else if (['minute'].indexOf(s[currentStage].unit) >= 0) {
-				// update every 10 seconds
-				scheduleUpdate(10000);
-			} else {
-				// update every full minute
-				scheduleUpdate((60 - new Date().getSeconds()) * 1000);
-			}
+			schedule();
+		},
+		getCurrentStage: function() {
+			updateMilestone();
+			var stage = currentStage;
+			return {
+				unit: s[stage].unit,
+				getInfo: function() {
+					var values = s[stage].values.slice();
+					//if (stage === 0) {
+						values.unshift(0);
+					//}
+					if (stage + 1 < s.length) {
+						values.push(convertUnit(s[stage + 1].values[0], s[stage + 1].unit, s[stage].unit));
+						if (!(values[values.length - 2] < values[values.length - 1])) {
+							console.error('error converting s[' + (stage+1) + '].values[0] (' + s[stage + 1].values[0] + ') from ' + s[stage+1].unit + 's to ' + s[stage].unit + 's -> ' + values[values.length - 1]);
+						}
+					}
+					var mss = values.map(function(value) {
+						return {
+							value: value,
+							unit: s[stage].unit,
+							time: fromUnit(value, s[stage].unit)
+						};
+					});
+					mss.unit = s[stage].unit;
+					return mss;
+				}
+			};
+		},
+		getNextMilestoneTime: function() {
+			updateMilestone();
+			return nextMilestone;
+		},
+		getLast: function() {
+			updateMilestone();
+			var ms = getNextMilestone();
+			ms.i -= 1;
+			return ms.i < 0 ? null : {
+				stage: ms.stage,
+				i: ms.i,
+				value: s[ms.stage].values[ms.i],
+				unit: s[ms.stage].unit,
+				time: getMilestone(ms.stage, ms.i),
+				name: this.name(ms.stage, ms.i)
+			};
 		},
 		name: function(stage, i) {
 			while (s[stage].values.length <= i) {
@@ -78,20 +86,103 @@ var milestones = (function(s) {
 				stage += 1;
 			}
 			return s[stage].values[i] + ' ' + s[stage].unit + (s[stage].values[i] === 1 ? '' : 's');
+		},
+		listen: function(names, listener) {
+			if (!Array.isArray(names)) {
+				names = [names];
+			}
+			names.forEach(function(name) {
+				if (!listeners.has(name)) {
+					listeners.set(name, [listener]);
+					if (['stage', 'milestone'].indexOf(name) >= 0) {
+						schedule();
+					}
+				} else if (listeners.get(name).indexOf(listener) < 0) {
+					listeners.get(name).push(listener);
+				}
+			});
+		},
+		unlisten: function(names, listener) {
+			if (!Array.isArray(names)) {
+				names = [names];
+			}
+			names.forEach(function(name) {
+				if (listeners.has(name)) {
+					var index = listeners.get(name).indexOf(listener);
+					if (index >= 0) {
+						listeners.get(name).splice(index, 1);
+						if (!listeners.get(name).length) {
+							listeners.delete(name);
+							if (['stage', 'milestone'].indexOf(name) >= 0) {
+								schedule();
+							}
+						}
+					}
+				}
+			});
 		}
 	};
+	var timeout;
+	function schedule() {
+		if (timeout) {
+			clearTimeout(timeout);
+			timeout = null;
+		}
+		if (listeners.has('stage') || listeners.has('milestone')) {
+			updateMilestone();
+			timeout = setTimeout(function() {
+				timeout = null;
+				milestones.update();
+			}, nextMilestone - Date.now());
+		}
+	}
+	function trigger(name, value) {
+		if (listeners.has(name)) {
+			listeners.get(name).slice().forEach(function(listener) {
+				try {
+					listener(value);
+				} catch (e) {
+					console.error(e);
+					milestones.unlisten(name, listener);
+				}
+			});
+		}
+	}
+	function notify() {
+		var ms = getNextMilestone();
+		chrome.notifications.create({
+			type: "basic",
+			title: "Milestone Reached",
+			message: "Congratulations! You didn't orgasm for " + milestones.name(ms.stage, ms.i - 1) + ". Keep up the good work!",
+			iconUrl: "assets/img/joseph'slogo2(transparent).png",
+			eventTime: Date.now()
+		}, function(){});
+	}
 	function updateMilestone() {
 		var ms = getNextMilestone();
 		var timestamp = getMilestone(ms.stage, ms.i).getTime();
+		var newStage, newMilestone;
 		if (timestamp > nextMilestone) {
-			// reached a new ms
-			notifyMilestone(ms.stage, ms.i - 1);
+			newMilestone = true;
 			if (ms.i === 1) {
-				// reached new stage
+				newStage = true;
 			}
 		}
 		currentStage = ms.stage;
 		nextMilestone = timestamp;
+		if (reset) {
+			reset = false;
+			trigger('reset');
+		} else {
+			if (newStage) trigger('stage');
+			if (newMilestone) {
+				trigger('milestone');
+				stats.addEvent('milestone', null, {
+					stage: ms.stage,
+					index: ms.i - 1
+				});
+			}
+		}
 	}
 	function getNextMilestone() {
 		var now = Date.now();
@@ -120,95 +211,6 @@ var milestones = (function(s) {
 		add(d, s[stage].unit, s[stage].values[i]);
 		return d;
 	}
-	function updateProgressBar(stage) {
-		var values = [];
-		if (!stage) {
-			values.push(lastOrgasm ? lastOrgasm.time : installDate);
-		}
-		s[stage].values.forEach(function(value, i) {
-			values.push(getMilestone(stage, i).getTime());
-		});
-		if (stage + 1 < s.length) {
-			values.push(getMilestone(stage + 1, 0));
-		}
-		var minValue = values[0], maxValue = values[values.length - 1];
-		$('.progress').each(function() {
-			var $mss = $(this).find('.progress-wrapper > .progress-bar > .progress-mss-wrapper > .progress-mss > .progress-ms');
-			var $curr = $(this).find('.progress-wrapper > .progress-bar > .progress-curr');
-			if ($mss.length && $curr.length) {
-				var currLeft = $curr.offset().left;
-				var $firstMs = $mss.first();
-				var $lastMs = $mss.last();
-
-				var minPx = $firstMs.offset().left - currLeft;
-				var maxPx = $lastMs.offset().left - currLeft;
-
-				$curr.width((Date.now() - minValue) / (maxValue - minValue) * (maxPx - minPx) + minPx);
-			}
-		});
-	}
-	function initProgressBar(stage) {
-		var labels, values = [];
-		if (!stage) {
-			values.push(lastOrgasm ? lastOrgasm.time : installDate);
-		}
-		s[stage].values.forEach(function(value, i) {
-			values.push(getMilestone(stage, i).getTime());
-		});
-		if (stage + 1 < s.length) {
-			values.push(getMilestone(stage + 1, 0));
-		}
-		labels = values.map(function(value) {
-			return toUnit(value, s[stage].unit);
-		});
-		var minValue = values[0], maxValue = values[values.length - 1];
-		$('.progress').each(function() {
-			var $labels = $(this).find('.progress-toplabels > .progress-labels-wrapper > .progress-mslabel');
-			var $mss = $(this).find('.progress-wrapper > .progress-bar > .progress-mss-wrapper > .progress-mss > .progress-ms');
-			var $curr = $(this).find('.progress-wrapper > .progress-bar > .progress-curr');
-			if ($mss.length && $labels.length && $curr.length) {
-				var currLeft = $curr.offset().left;
-				var $firstLabel = $labels.first();
-				var $lastLabel = $labels.last();
-				var $firstMs = $mss.first();
-				var $lastMs = $mss.last();
-
-				var minPx = $firstMs.offset().left - currLeft;
-				var maxPx = $lastMs.offset().left - currLeft;
-
-				$curr.width((Date.now() - minValue) / (maxValue - minValue) * (maxPx - minPx) + minPx);
-
-				while (values.length > $labels.length) {
-					var $label = $('<span class="progress-mslabel"></span>');
-					$lastLabel.before($label);
-					$labels = $labels.add($label);
-				}
-				while (values.length < $labels.length) {
-					var $label = $labels.eq(-2);
-					$label.remove();
-					$labels = $labels.not($label);
-				}
-				while (values.length > $mss.length) {
-					var $ms = $('<span class="progress-ms"></span>');
-					$lastMs.before($ms);
-					$mss = $mss.add($ms);
-				}
-				while (values.length < $mss.length) {
-					var $ms = $mss.eq(-2);
-					$ms.remove();
-					$mss = $mss.not($ms);
-				}
-				$labels.each(function(i) {
-					var $label = $(this);
-					var $ms = $mss.eq(i);
-					var left = (values[i] - minValue) / (maxValue - minValue) * (maxPx - minPx);// + minPx;
-					$label.text(labels[i]);
-					$ms.css('left', left);
-					$label.css('left', left);
-				});
-			}
-		});
-	}
 	function convertUnit(value, from, to) {
 		if (from === to) {
 			return value;
@@ -218,7 +220,8 @@ var milestones = (function(s) {
 	function fromUnit(value, from) {
 		var basis = lastOrgasm ? lastOrgasm.time : installDate;
 		var d = new Date(basis);
-		return add(d, from, value).getTime();
+		add(d, from, value);
+		return d.getTime();
 	}
 	function toUnit(value, to) {
 		var basis = lastOrgasm ? lastOrgasm.time : installDate;
@@ -231,29 +234,15 @@ var milestones = (function(s) {
 		}
 		return result;
 	}
-	function updateCountdown() {
-		var d = nextMilestone - Date.now();
-		var seconds = Math.round(d / 1000);
-
-		// Round to full minutes
-		if (seconds % 60 >= 30) {
-			seconds += 60 - (seconds % 60);
-		}
-
-		var minutes = Math.floor(seconds / 60);
-		var hours = Math.floor(minutes / 60);
-		var days = Math.floor(hours / 24);
-		$('#days').text(days < 100 ? ('00' + days).slice(-3) : days);
-		$('#hours').text(('0' + (hours % 24)).slice(-2));
-		$('#minutes').text(('0' + (minutes % 60)).slice(-2));
-	}
-	function get(date, unit) {
-		return Date.prototype['get' + props[unit]].call(date);
-	}
-	function set(date, unit, value) {
-		Date.prototype['set' + props[unit]].call(date, value);
-	}
 	function add(date, unit, value) {
 		set(date, unit, get(date, unit) + value);
+		function get(date, unit) {
+			return Date.prototype['getUTC' + props[unit]].call(date);
+		}
+		function set(date, unit, value) {
+			Date.prototype['setUTC' + props[unit]].call(date, value);
+		}
 	}
 }());
+
+milestones.startNotify();
