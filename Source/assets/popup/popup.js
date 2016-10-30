@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		stats.unlisten(['milestone', 'cummed', 'milked', 'ruined'], displayEvents);
 	});
 
-	displayEvents(stats.getEvents(['milestone', 'cummed', 'milked', 'ruined'], Date.now() - 60*1000));
+	displayEvents(stats.getEvents(['milestone', 'cummed', 'milked', 'ruined'], Date.now() - 60*60*1000));
 
 	function displayEvents(events) {
 		events.forEach(function(e) {

@@ -775,13 +775,14 @@ g path:hover { opacity: .35 }
 	margin-top: -82.5px
 }
 .modal-windowBar {
-	width: 183px;
+	width: 185px;
     height: 32px;
     margin: 0 auto;
     position: relative;
 	color: #A3A2A2
 }
 .modal-windowBar p {
+	display: inline-block;
     margin: 0 0 20px;
     padding: 5px;
     font-size: 18px;
@@ -800,6 +801,7 @@ g path:hover { opacity: .35 }
     margin: 5px auto
 }
 .fillin_blank {
+	margin-top: 5px;
     border-width: 0px 0px 2px 0px;
     border-color: #8BADE4;
     background-color: #FCFCFC;

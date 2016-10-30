@@ -8,17 +8,15 @@ body, html {
 	background-color: #6AAB60
 }
 #title {
-	/*width: 226px;*/
 	height: 15px;
-	padding: 2px 0 2px 2em;
+	padding: 4px 0 2px 2em;
 	font-weight: 700;
 	background-color: #6AAB60
 }
 #vertical-bars {
-	width: 246px;
-	/*height: 75.688px;*/
+	width: 316px;
 	padding: 0;
-	background: #535353 url("background_vertical_large.png") repeat scroll 0 0;
+	background: #535353 url("background_vertical.png") repeat scroll 0 0;
 	margin: 3px 6px
 }
 #horizontal-bars {
@@ -28,7 +26,7 @@ body, html {
 	background: transparent url("background_horizontal.png") repeat scroll 0 0
 }
 #container {
-	width: 96.75%;
+	width: 97.35%;
 	height: 100%;
 	padding: 6px 0 6px 8px;
 	line-height: 21px;
@@ -51,7 +49,6 @@ img {
 .button,
 .button-disabled {
 	float: right;
-	/*width: 61px;*/
 	margin: 2px;
 	padding: 3px;
 	-webkit-user-select: none;
@@ -59,8 +56,6 @@ img {
 	font-size: 13px;
 	font-weight: bold;
 	text-decoration: none;
-	/*display: inline-block*/
-
 }
 .button {
 	cursor: pointer;
