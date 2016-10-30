@@ -80,3 +80,6 @@ img {
 	position:relative;
 	top:1px;
 }
+.duration {
+	text-transform: capitalize;
+}

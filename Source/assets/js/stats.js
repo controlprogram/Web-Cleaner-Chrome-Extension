@@ -173,7 +173,6 @@ $(document).ready(function() {
 	function updateLastOrgasm() {
 		$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(Date.now() - lastOrgasm.time) + ' ago' : 'ever');
 	}
-	milestones.init();
 	updateStuff();
 	updateFeels(feels);
 	initDoughnut();
@@ -223,8 +222,6 @@ function updateStuff() {
 	$('#field-longest-streak').text(lastOrgasm ? longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days' : '-');
 	$('#field-longest-streak').attr('title', lastOrgasm ? formatTimespan(longestStreak) : '');
 	$('#field-frequent-relapse').text(lastOrgasm ? frequentRelapse : '-');
-
-	milestones.update();
 }
 
 function formatDateShort(d) {

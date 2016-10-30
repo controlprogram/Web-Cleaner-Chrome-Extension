@@ -380,7 +380,7 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
     margin-left: -3px;
     border: 3px solid #737576;
     box-sizing: content-box;
-    background-color: #373A3C
+    background-color: black
 }
 .progress-bar {
     height: 100%;
@@ -769,35 +769,35 @@ g path:hover { opacity: .35 }
 	z-index: 11;
     background: rgba(0,0,0,.8)
 }
-#modal {
+.modal {
 	position: relative;
 	top: 50%;
 	margin-top: -82.5px
 }
-#modal-windowBar {
+.modal-windowBar {
 	width: 183px;
     height: 32px;
     margin: 0 auto;
     position: relative;
 	color: #A3A2A2
 }
-#modal-windowBar p {
+.modal-windowBar p {
     margin: 0 0 20px;
     padding: 5px;
-    display: inline-block;
     font-size: 18px;
 	border-right: 1px solid #CCCCCC
 }
-#modalContainer {
+.modalContainer {
+    padding: 1px;
 	width: 185px;
-    height: 132px;
 	text-align: center
 }
-#modalContent {
-	height: 100px;
-	position: relative;
-	top: 50%;
-	margin-top: -50px
+.modalContent {
+	position: relative
+}
+.modalContent .button, .modalContent .button-disabled {
+    display: block;
+    margin: 5px auto
 }
 .fillin_blank {
     border-width: 0px 0px 2px 0px;

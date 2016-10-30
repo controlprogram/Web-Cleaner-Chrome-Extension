@@ -6,7 +6,7 @@
 		<script type="text/javascript" src="../js/d3.min.js"></script>
 		<script type="text/javascript" src="../js/cal-heatmap.min.js"></script>
 		<script type="text/javascript" src="../js/jquery.drawDoughnutChart.js"></script>
-		<script type="text/javascript" src="../js/milestones.js"></script>
+		<script type="text/javascript" src="../js/progress-milestones.js"></script>
 		<script type="text/javascript" src="../js/stats.js"></script>
 		<script type="text/javascript" src="../js/progress.js"></script>
 		<script type="text/javascript" src="../js/intro.js"></script>
@@ -170,16 +170,29 @@
             </div>
         </div>
 		<div id="modalBackground">
-			<div id="modal">
-				<div class="windowBar" id="modal-windowBar">
+			<div class="modal" data-form="edges">
+				<div class="windowBar modal-windowBar">
 					<p>Edges</p>
 				</div>
-				<div class="container" id="modalContainer">
-					<div id="modalContent">
-						<input type="text" class="fillin_blank" maxlength="3" size="1" placeholder="0" required>
+				<div class="container modalContainer">
+					<div class="modalContent">
+						<input class="fillin_blank" data-role="amount" type="text" maxlength="3" size="1" placeholder="0" required>
 						<br>
-						<div class="button" data-role="add-edges">Add Edges</div>
-						<div class="button" data-role="cancel">Cancel</div>
+						<div class="button" data-role="add-edges" data-type="submit">Add Edges</div>
+						<div class="button" data-role="cancel-modal">Cancel</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal" data-form='cpr'>
+				<div class="windowBar modal-windowBar">
+					<p>Confess CPR</p>
+				</div>
+				<div class="container modalContainer">
+					<div class="modalContent">
+						<div class="button" data-role="answer" data-answer="cummed">I Cummed</div>
+						<div class="button" data-role="answer" data-answer="milked">I Milked</div>
+						<div class="button" data-role="answer" data-answer="ruined">I Ruined</div>
+						<div class="button" data-role="cancel-modal">Cancel</div>
 					</div>
 				</div>
 			</div>

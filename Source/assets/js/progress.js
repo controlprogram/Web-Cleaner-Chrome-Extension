@@ -11,27 +11,6 @@ function initDoughnut() {
   });
 }
 
-$(document).on('click', '.button[data-role]', function() {({
-	'report-cpr': function() {
-
-	},
-	'report-edge': function() {
-		showModal();
-	},
-	'add-edges': function() {
-		processModal();
-	},
-	'cancel': function() {
-		hideModal();
-	}
-}[$(this).data('role')] || function(){}).apply(this, arguments);});
-
-$(document).on('keypress', '#modalBackground input', function (e) {
-	if (e.which == 13) {
-		processModal();
-	}
-});
-
 function updateDoughnut() {
 	doughnut.update();
 }
@@ -176,24 +155,56 @@ function initQuestions() {
 	}
 }
 
-function showModal() {
-	if (!$('#modalBackground').is(':visible')) {
-		$('#modalBackground input').val('');
-		$('#modalBackground').show();
-	}
-	$('#modalBackground input').focus();
-}
 
-function processModal() {
-	var amount = +$('#modalBackground input').val();
-	if (!amount || amount < 0 || amount % 1) {
-		alert('Please enter a valid amount.');
-	} else {
-		for (var i = 0; i < amount; ++i) {
-			stats.addEvent('edged');
+$(document).on('click', '.button[data-role]', function() {({
+	'report-cpr': function() {
+		showModal('cpr')
+	},
+	'report-edge': function() {
+		showModal('edges');
+	},
+	'add-edges': function() {
+		var amount = +$('#modalBackground > .modal[data-form="edges"] input[data-role="amount"]').val();
+		if (!amount || amount < 0 || amount % 1) {
+			alert('Please enter a valid amount.');
+		} else {
+			for (var i = 0; i < amount; ++i) {
+				stats.addEvent('edged');
+			}
+			hideModal();
 		}
+	},
+	'answer': function() {
+		var form = $(this).closest('.modal[data-form]').data('form');
+		if (form === 'cpr') {
+			stats.addEvent($(this).data('answer'));
+			hideModal();
+		}
+	},
+	'cancel-modal': function() {
 		hideModal();
 	}
+}[$(this).data('role')] || function(){}).apply(this, arguments);});
+
+$(document).on('keypress', '#modalBackground input', function(e) {
+	if (e.which == 13) {
+		$(e.target).parent().find('[data-type="submit"]').eq(0).click();
+	}
+});
+
+function showModal(form) {
+	var $form = $('#modalBackground > .modal[data-form="' + form + '"]');
+	if (!$form.is(':visible')) {
+		$('#modalBackground > .modal').not($form).hide();
+		$form.show();
+		if (form === 'edges') {
+			$form.find('input[data-role="amount"]').val('');
+			setTimeout(function() {
+				$form.find('input[data-role="amount"]').focus();
+			}, 1);
+		}
+	}
+	$('#modalBackground').show();
 }
 
 function hideModal() {

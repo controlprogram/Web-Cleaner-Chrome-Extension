@@ -4,11 +4,12 @@
    "options_page": "assets/html/options.html",
    "permissions": [
       "http://*/", "https://*/",
-      "tabs"
+      "tabs",
+      "notifications"
    ],
    "version": "1.0.0",
    "background": {
-      "scripts": [ "assets/js/background.js" ]
+      "scripts": [ "assets/js/background.js", "assets/js/milestones.js" ]
    },
    "content_scripts": [ {
       "all_frames": true,

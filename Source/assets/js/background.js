@@ -481,6 +481,7 @@ stats.addEvent = function(type, time, value) {
 		time: time,
 		value: value
 	};
+	console.log(type, time, value);
 	stats.events.push(event);
 	stats.events.sort(function(a, b) {
 		return a.time - b.time;
@@ -538,6 +539,13 @@ stats.getEvents = function(types, from, to) {
 };
 
 stats.listen = function(types, from, to, cb) {
+	if (typeof from === 'function') {
+		cb = from;
+		from = to = 0;
+	} else if (typeof to === 'function') {
+		cb = to;
+		to = 0;
+	}
 	if (!from) from = -Infinity;
 	if (!to) to = +Infinity;
 	if (!Array.isArray(types)) types = [types];
@@ -547,6 +555,25 @@ stats.listen = function(types, from, to, cb) {
 			from: from,
 			to: to,
 			cb: cb
+		});
+	}
+};
+
+stats.unlisten = function(types, cb) {
+	if (!Array.isArray(types)) types = [types];
+	if (typeof cb === 'function') {
+		var remove = [];
+		stats.listeners.map(function(l) {
+			if (l.cb === cb) {
+				l.types = l.types.filter(function(t) {
+					return types.indexOf(t) < 0;
+				});
+				if (!l.types.length) {
+					return l;
+				}
+			}
+		}).filter(Boolean).forEach(function(l) {
+			stats.listeners.splice(stats.listeners.indexOf(l), 1);
 		});
 	}
 };
@@ -563,3 +590,5 @@ if (!stats.events.length) {
 if (!stats.getEvents('installed').length) {
 	stats.addEvent('installed');
 }
+
+openProgress();
