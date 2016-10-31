@@ -133,19 +133,27 @@ $(document).ready(function() {
 	}
 	function updateCountdown() {
 		var d = milestones.getNextMilestoneTime() - Date.now();
-		var seconds = Math.round(d / 1000);
+		var hours, minutes, seconds = Math.round(d / 1000);
 
-		// Round to full minutes
-		if (seconds % 60 >= 30) {
-			seconds += 60 - (seconds % 60);
+		if (seconds > 60) {
+			$('#seconds').next().addBack().hide();
+			minutes = Math.round(seconds / 60);
+		} else {
+			$('#seconds').text(('0' + (seconds % 60)).slice(-2));
+			$('#seconds').next().text(seconds === 1 ? 'second' : 'seconds');
+			$('#seconds').next().addBack().show();
+			minutes = Math.floor(seconds / 60);
 		}
-
-		var minutes = Math.floor(seconds / 60);
-		var hours = Math.floor(minutes / 60);
-		var days = Math.floor(hours / 24);
-		$('#days').text(days < 100 ? ('00' + days).slice(-3) : days);
-		$('#hours').text(('0' + (hours % 24)).slice(-2));
 		$('#minutes').text(('0' + (minutes % 60)).slice(-2));
+		$('#minutes').next().text(minutes === 1 ? 'minute' : 'minutes');
+
+		hours = Math.floor(minutes / 60);
+		$('#hours').text(('0' + (hours % 24)).slice(-2));
+		$('#hours').next().text(hours === 1 ? 'hour' : 'hours');
+
+		days = Math.floor(hours / 24);
+		$('#days').text(days < 100 ? ('00' + days).slice(-3) : days);
+		$('#days').next().text(days === 1 ? 'day' : 'days');
 	}
 
 });

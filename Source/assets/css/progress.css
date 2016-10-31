@@ -24,12 +24,17 @@
     display: inline-block;
     font-size: 18px
 }
+#countdown > p:last-child {
+    padding-left: 0;
+}
 #days { background-color: #6A98AF }
 #hours { background-color: #77ABBF }
 #minutes { background-color: #53C6D6 }
+#seconds { background-color: #68D5E4 }
 #days,
 #hours,
-#minutes {
+#minutes,
+#seconds {
     color: #FFFFFF
 }
 #cal-heatmap {
