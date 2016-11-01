@@ -62,6 +62,7 @@ function initBoxes() {
 	}
 }
 
+var currentQuestion;
 function initQuestions() {
 	$('#questions > [data-question]').each(function() {
 		var question = $(this).data('question');
@@ -109,11 +110,16 @@ function initQuestions() {
 			if (!questions[question].after || questions[question].after(answer) !== false) {
 				stats.addEvent('answered', Date.now(), {question: question, answer: answer});
 				$question.remove();
+				currentQuestion = null;
 				askSomething();
 			}
 		});
 		$('#questions').append($question);
 		if (questions[question].answers) updatePercent();
+
+		currentQuestion = {
+			update: updatePercent
+		};
 
 		return true;
 
@@ -140,7 +146,7 @@ function initQuestions() {
 			answers.forEach(function(answer, i, all) {
 				var $div = $answerDivs.filter('[data-answer="' + answer + '"]');
 				if (i < all.length - 1) $div.width(cssPercents[i] + '%');
-				if (percents) $div.find('.c_percent').text(percents[i] + '%');
+				$div.find('.c_percent').text(percents && percents[i] ? percents[i] + '%' : '');
 			});
 		}
 	}

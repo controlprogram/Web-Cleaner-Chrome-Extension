@@ -4,21 +4,54 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.getElementById('button-more').addEventListener('click', function() {
 		chrome.extension.getBackgroundPage().openProgress();
 	}, false);
+	document.getElementById('button-reset').addEventListener('click', function() {
+		stats.dbg.reset();
+	}, false);
+	document.getElementById('button-fake').addEventListener('click', function() {
+		stats.dbg.fake();
+	}, false);
 
-	stats.listen(['milestone', 'cummed', 'milked', 'ruined'], displayEvents);
+	stats.listen(['installed', 'milestone', 'cummed', 'milked', 'ruined'], displayEvents);
 	addEventListener('unload', function() {
-		stats.unlisten(['milestone', 'cummed', 'milked', 'ruined'], displayEvents);
+		stats.unlisten(['installed', 'milestone', 'cummed', 'milked', 'ruined'], displayEvents);
 	});
 
-	displayEvents(stats.getEvents(['milestone', 'cummed', 'milked', 'ruined'], Date.now() - 60*60*1000));
+	displayEvents(stats.getEvents(['milestone', 'cummed', 'milked', 'ruined']));
 
 	function displayEvents(events) {
+		var installed, orgasm, milestone;
 		events.forEach(function(e) {
 			if (e.type === 'milestone') {
-				$('#container').append($('<div><div class="inline"><img src="../img/silk/award_star_bronze_2.png" align="top" /> <span class="duration">' + milestones.name(e.value.stage, e.value.index) + '</span> Achieved</div><div class="time inline"><span class="time">' + formatTime(e.time) + '</span></div></div>'));
+				milestone = e;
+			} else if (e.type === 'installed') {
+				installed = e;
 			} else {
-				$('#container').append($('<div><div class="inline"><img src="../img/silk/lock_break.png" align="top" /> You ' + e.type + '</div><div class="time inline"><span class="time">' + formatTime(e.time) + '</span></div></div>'));
+				orgasm = e;
 			}
+		});
+		[installed, orgasm, milestone].filter(Boolean).sort(function(a, b) {
+			return a.time - b.time;
+		}).forEach(function(e) {
+			if (e.type === 'installed') {
+				$('#container').find('[data-type]').remove();
+				return;
+			}
+			var $item = $('<div><div class="inline"><img align="top" /> <span></span></div><div class="time inline"></span></div></div>')
+			var type, $img = $item.find('img'), $msg = $item.find('span').first(), $time = $item.find('.time');
+			if (e.type === 'milestone') {
+				type = 'milestone';
+				$img.attr('src', '../img/silk/award_star_bronze_2.png');
+				$msg.text(milestones.name(e.value.stage, e.value.index) + ' Achieved');
+			} else {
+				type = 'orgasm';
+				$img.attr('src', '../img/silk/lock_break.png');
+				$msg.text('You ' + e.type);
+			}
+			var d = new Date(e.time);
+			$time.attr('title', d.toDateString()).text(formatTime(d));
+			$('#container').find('[data-type="' + type + '"]').remove();
+			$item.attr('data-type', type);
+			$('#container').append($item);
 		});
 	}
 
@@ -40,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 		function formatTime(d) {
-			d = new Date(d);
 			var hours = d.getHours();
 			var minutes = d.getMinutes();
 			var ampm = 'AM';
@@ -51,6 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (hours === 0) {
 				hours = 12;
 			}
-			return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ' ' + ampm;
+			var time = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ' ' + ampm;
+			var now = new Date();
+			if (Math.abs(now.getTime() - d.getTime()) >= 12*60*60*1000 || d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) {
+				time = 'Sun, Mon,Tue,Wed,Thu,Fri,Sat'.split(',')[d.getDay()] + ' @ ' + time;
+			}
+			return time;
 		}
 }, false);

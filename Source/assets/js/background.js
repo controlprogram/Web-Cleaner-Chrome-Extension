@@ -466,31 +466,44 @@ function loadTemplates() {
 }
 
 
-var stats = /*JSON.parse(localStorage.getItem('stats')) ||*/ {
+var stats = {
 	events: [],
 	listeners: [],
 	changes: null,
+	dbg: {}
 };
 
+try {
+	stats.events = JSON.parse(localStorage.getItem('events')) || [];
+} catch (e) {}
+
 stats.addEvent = function(type, time, value) {
-	if (!time) {
-		time = Date.now();
-	}
-	var event = {
-		type: type,
-		time: time,
-		value: value
-	};
 	console.log(type, time, value);
-	stats.events.push(event);
+	stats.addEvents([{type: type, time: time, value: value}]);
+};
+
+stats.addEvents = function(events) {
+	var now = Date.now();
+	events = events.map(function(e) {
+		return {
+			type: e.type,
+			time: e.time || now,
+			value: e.value
+		};
+	});
+	events.forEach(function(e) {
+		stats.events.push(e);
+	});
 	stats.events.sort(function(a, b) {
 		return a.time - b.time;
 	});
-	localStorage.setItem('stats', JSON.stringify(stats));
+	localStorage.setItem('events', JSON.stringify(stats.events));
 	if (stats.changes) {
-		stats.changes.push(event);
-	} else {
-		stats.changes = [event];
+		events.forEach(function(e) {
+			stats.changes.push(e);
+		});
+	} else if (stats.listeners.length) {
+		stats.changes = events;
 		setTimeout(function() {
 			var changes = stats.changes.sort(function(a, b) {
 				return a.time - b.time;
@@ -578,14 +591,60 @@ stats.unlisten = function(types, cb) {
 	}
 };
 
-if (!stats.events.length) {
+stats.dbg.fake = function() {
 	var start = new Date(2015, 7, 31);
 	var end = new Date();
-
+	var lastType, lastTime;
+	// remove all milestones and installation
+	var events = stats.events.filter(function(e) {
+		return e.type !== 'milestone' && e.type !== 'installed';
+	});
+	// add some events
 	for (var current = start.getTime(); current < end.getTime(); current += 1*24*60*60*1000*(1 - Math.pow(Math.random(), 2))) { 
-		stats.addEvent(['edged', 'cummed', 'milked', 'ruined'][Math.max(0,Math.floor(Math.random() * 10)-6)], Math.floor(current));
+		var time = Math.floor(current);
+		if (Math.random() < 0.5) {
+			type = ['edged', 'cummed', 'milked', 'ruined'][Math.max(0,Math.floor(Math.random() * 10)-6)];
+			value = undefined;
+		} else {
+			type = 'feeled';
+			value = ['happy','unhappy','shocked','angry','upset','unsure','stressed','frustrated','turnedOn','addicted','bored','hero'][Math.floor(Math.random() * 12)];
+		}
+		events.push({type: type, time: time, value: value});
 	}
-}
+	// add a reasonable installation
+	events.push({type: 'installed', time: events.reduce(function(minTime, e) {
+		return e.time < minTime ? e.time : minTime;
+	}, Date.now()) - 1000 - Math.random() * 24*60*60*1000});
+	// add the milestones
+	events.filter(function(e) {
+		return ['installed', 'cummed', 'milked', 'ruined'].indexOf(e.type) >= 0;
+	}).sort(function(a, b) {
+		return a.time - b.time;
+	}).forEach(function(e, i, a) {
+		var until;
+		if (i + 1 === a.length) {
+			until = Date.now();
+		} else {
+			until = a[i + 1].time;
+		}
+		milestones.getMilestones(e.time).filter(function(ms) {
+			return ms.time < until;
+		}).forEach(function(ms) {
+			events.push({type: 'milestone', time: ms.time, value: {stage: ms.stage, index: ms.index}});
+		});
+	});
+	// resort everything
+	events.sort(function(a, b) {
+		return a.time - b.time;
+	});
+	stats.events = [];
+	stats.addEvents(events);
+};
+
+stats.dbg.reset = function() {
+	stats.events.length = 0;
+	stats.addEvent('installed');
+};
 
 if (!stats.getEvents('installed').length) {
 	stats.addEvent('installed');

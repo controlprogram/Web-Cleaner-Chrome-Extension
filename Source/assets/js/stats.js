@@ -156,13 +156,21 @@ var feels = stats.getEvents('feeled', startPeriod.getTime(), endPeriod.getTime()
 $(document).ready(function() {
 	stats.listen(['cummed', 'milked', 'ruined'], startPeriod.getTime(), endPeriod.getTime(), function() {
 		updateStuff();
+		updateDoughnut();
 	});
 	stats.listen(['edged'], startPeriod.getTime(), endPeriod.getTime(), function() {
 		updateStuff();
-		updateDoughnut();
 	});
 	stats.listen(['feeled'], startPeriod.getTime(), endPeriod.getTime(), function(feels) {
 		updateFeels(feels);
+	});
+	stats.listen(['installed'], function(events) {
+		lastOrgasm = null;
+		installDate = events.pop().time;
+		feels = stats.getEvents('feeled', startPeriod.getTime(), endPeriod.getTime());
+		updateFeels(feels);
+		updateStuff();
+		updateDoughnut();
 	});
 	$('#field-last-orgasm').mouseenter(function() {
 		lastOrgasmInterval = setInterval(updateLastOrgasm, 1000);
@@ -222,6 +230,9 @@ function updateStuff() {
 	$('#field-longest-streak').text(lastOrgasm ? longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days' : '-');
 	$('#field-longest-streak').attr('title', lastOrgasm ? formatTimespan(longestStreak) : '');
 	$('#field-frequent-relapse').text(lastOrgasm ? frequentRelapse : '-');
+	if (currentQuestion) {
+		currentQuestion.update();
+	}
 }
 
 function formatDateShort(d) {

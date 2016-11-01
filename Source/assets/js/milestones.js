@@ -24,6 +24,12 @@ var milestones = (function(s) {
 		reset = true;
 		milestones.update();
 	});
+	stats.listen('installed', function(events) {
+		lastOrgasm = stats.getEvents(['cummed', 'milked', 'ruined']).pop();
+		installDate = events.pop().time;
+		reset = true;
+		milestones.update();
+	});
 	return {
 		startNotify: function() {
 			milestones.listen('milestone', notify);
@@ -34,6 +40,22 @@ var milestones = (function(s) {
 		update: function() {
 			updateMilestone();
 			schedule();
+		},
+		getMilestones: function(basis) {
+			var mss = [];
+			s.forEach(function(stageInfo, stage) {
+				stageInfo.values.forEach(function(value, i) {
+					mss.push({
+						stage: stage,
+						index: i,
+						value: value,
+						unit: stageInfo.unit,
+						name: milestones.name(stage, i),
+						time: fromUnit(value, stageInfo.unit, basis)
+					});
+				});
+			});
+			return mss;
 		},
 		getCurrentStage: function() {
 			updateMilestone();
@@ -167,6 +189,8 @@ var milestones = (function(s) {
 			if (ms.i === 1) {
 				newStage = true;
 			}
+		} else if (timestamp < nextMilestone) {
+			reset = true;
 		}
 		currentStage = ms.stage;
 		nextMilestone = timestamp;
@@ -217,14 +241,22 @@ var milestones = (function(s) {
 		}
 		return toUnit(fromUnit(value, from), to);
 	}
-	function fromUnit(value, from) {
-		var basis = lastOrgasm ? lastOrgasm.time : installDate;
+	function fromUnit(value, from, basis) {
+		if (typeof basis === 'object' && basis !== null) {
+			basis = basis.getTime();
+		} else if (typeof basis !== 'number') {
+			basis = lastOrgasm ? lastOrgasm.time : installDate;
+		}
 		var d = new Date(basis);
 		add(d, from, value);
 		return d.getTime();
 	}
-	function toUnit(value, to) {
-		var basis = lastOrgasm ? lastOrgasm.time : installDate;
+	function toUnit(value, to, basis) {
+		if (typeof basis === 'object' && basis !== null) {
+			basis = basis.getTime();
+		} else if (typeof basis !== 'number') {
+			basis = lastOrgasm ? lastOrgasm.time : installDate;
+		}
 		var d = new Date(value);
 		var result = 0;
 		while (d.getTime() > basis) {

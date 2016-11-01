@@ -21,6 +21,10 @@
 		data[Math.floor((event.time - startOfDay) / 1000)] = 1;
 	});
 
+	stats.listen('installed', function() {
+		cal.update({});
+	});
+
 	stats.listen(['cummed', 'milked', 'ruined'], start.getTime(), end.getTime(), function(events) {
 		var data = {};
 		events.forEach(function(event) {
