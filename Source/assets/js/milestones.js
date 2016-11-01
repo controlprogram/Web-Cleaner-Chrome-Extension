@@ -6,7 +6,7 @@ var milestones = (function(s) {
 		{ unit: 'hour',  values: [1, 4, 8, 16, 24, 36] },
 		{ unit: 'day',   values: [2, 5, 10, 14, 21] },
 		{ unit: 'day',   values: [30, 45, 60, 75, 90, 120, 180, 270] },
-		{ unit: 'month', values: [12, 18, 24, 48, 87] },
+		{ unit: 'month', values: [12, 18, 24, 48, 84] },
 		{ unit: 'year',  values: [10, 15, 20, 30, 40, 50, 75] },
 		{ unit: 'year',  values: [100] },
 		{ unit: 'year',  values: [200, 500] },
@@ -40,6 +40,9 @@ var milestones = (function(s) {
 		update: function() {
 			updateMilestone();
 			schedule();
+		},
+		getBasis: function() {
+			return lastOrgasm ? lastOrgasm.time : installDate;
 		},
 		getMilestones: function(basis) {
 			var mss = [];
@@ -98,7 +101,7 @@ var milestones = (function(s) {
 				i: ms.i,
 				value: s[ms.stage].values[ms.i],
 				unit: s[ms.stage].unit,
-				time: getMilestone(ms.stage, ms.i).getTime(),
+				time: getMilestoneTime(ms.stage, ms.i),
 				name: this.name(ms.stage, ms.i)
 			};
 		},
@@ -142,6 +145,12 @@ var milestones = (function(s) {
 					}
 				}
 			});
+		},
+		time: {
+			add: add,
+			fromUnit: fromUnit,
+			toUnit: toUnit,
+			convertUnit: convertUnit
 		}
 	};
 	var timeout;
@@ -185,7 +194,7 @@ var milestones = (function(s) {
 	}
 	function updateMilestone() {
 		var ms = getNextMilestone();
-		var timestamp = getMilestone(ms.stage, ms.i).getTime();
+		var timestamp = getMilestoneTime(ms.stage, ms.i);
 		var newStage, newMilestone, lastMilestone = nextMilestone;
 		if (timestamp > nextMilestone) {
 			newMilestone = true;
@@ -213,29 +222,38 @@ var milestones = (function(s) {
 	function getNextMilestone() {
 		var now = Date.now();
 		for (var stage = 0; stage < s.length; ++stage) {
-			if (now < getMilestone(stage, s[stage].values.length).getTime()) {
+			if (now < getMilestoneTime(stage, s[stage].values.length)) {
 				break;
 			}
 		}
-		for (var i = 0; i <= s[stage].values.length; ++i) {
-			if (now < getMilestone(stage, i).getTime()) {
-				break;
+		if (s.length <= stage) {
+			stage = s.length - 1;
+			i = s[stage].values.length - 1;
+		} else {
+			for (var i = 0; i <= s[stage].values.length; ++i) {
+				if (now < getMilestoneTime(stage, i)) {
+					break;
+				}
 			}
 		}
 		return {stage: stage, i: i};
 	}
-	function getMilestone(stage, i) {
+	function getMilestoneTime(stage, i) {
 		while (stage < s.length && s[stage].values.length <= i) {
 			i -= s[stage].values.length;
 			stage += 1;
 		}
 		if (s.length <= stage) {
 			stage = s.length - 1;
-			i = s[stage].length - 1;
+			i = s[stage].values.length - 1;
 		}
-		var d = new Date(lastOrgasm ? lastOrgasm.time : installDate);
-		add(d, s[stage].unit, s[stage].values[i]);
-		return d;
+		if (Number.isFinite(s[stage].values[i])) {
+			var d = new Date(lastOrgasm ? lastOrgasm.time : installDate);
+			add(d, s[stage].unit, s[stage].values[i]);
+			return d.getTime();
+		} else {
+			return s[stage].values[i];
+		}
 	}
 	function convertUnit(value, from, to) {
 		if (from === to) {
@@ -244,6 +262,9 @@ var milestones = (function(s) {
 		return toUnit(fromUnit(value, from), to);
 	}
 	function fromUnit(value, from, basis) {
+		if (!Number.isFinite(value)) {
+			return value;
+		}
 		if (typeof basis === 'object' && basis !== null) {
 			basis = basis.getTime();
 		} else if (typeof basis !== 'number') {

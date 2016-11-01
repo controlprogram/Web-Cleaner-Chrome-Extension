@@ -133,6 +133,7 @@ $(document).ready(function() {
 	}
 	function updateCountdown() {
 		var d = milestones.getNextMilestoneTime() - Date.now();
+		var finite = Number.isFinite(d);
 		var hours, minutes, seconds = Math.round(d / 1000);
 
 		if (seconds > 60) {
@@ -144,15 +145,16 @@ $(document).ready(function() {
 			$('#seconds').next().addBack().show();
 			minutes = Math.floor(seconds / 60);
 		}
-		$('#minutes').text(('0' + (minutes % 60)).slice(-2));
-		$('#minutes').next().text(minutes === 1 ? 'minute' : 'minutes');
-
 		hours = Math.floor(minutes / 60);
-		$('#hours').text(('0' + (hours % 24)).slice(-2));
-		$('#hours').next().text(hours === 1 ? 'hour' : 'hours');
-
 		days = Math.floor(hours / 24);
-		$('#days').text(days < 100 ? ('00' + days).slice(-3) : days);
+		minutes %= 60;
+		hours %= 24;
+
+		$('#minutes').text(finite ? ('0' + minutes).slice(-2) : '∞');
+		$('#minutes').next().text(minutes === 1 ? 'minute' : 'minutes');
+		$('#hours').text(finite ? ('0' + hours).slice(-2) : '∞');
+		$('#hours').next().text(hours === 1 ? 'hour' : 'hours');
+		$('#days').text(days < 100 ? ('00' + days).slice(-3) : finite ? days : '∞');
 		$('#days').next().text(days === 1 ? 'day' : 'days');
 	}
 

@@ -640,10 +640,28 @@ stats.dbg.fake = function() {
 	stats.events = [];
 	stats.addEvents(events);
 };
-stats.dbg.ffw = function() {
+stats.dbg.ffw = function(unit, value) {
+	var basis;
+	if (unit) {
+		basis = Date.now();
+	} else {
+		basis = milestones.getBasis();
+		var ms = milestones.getCurrentStage().getInfo().filter(function(e) {
+			return e.time > Date.now();
+		})[0];
+		if (!ms || !Number.isFinite(ms.value)) {
+			return;
+		}
+		unit = ms.unit;
+		value = ms.value;
+	}
+	var newBasis = new Date();
+	milestones.time.add(newBasis, unit, -value);
+	newBasis = newBasis.getTime();
+	var d = basis - newBasis;
 	var events = stats.events;
 	events.forEach(function(e) {
-		e.time -= 24*60*60*1000;
+		e.time -= d;
 	});
 	stats.events = [];
 	stats.addEvents(events);

@@ -7,8 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.getElementById('button-reset').addEventListener('click', function() {
 		stats.dbg.reset();
 	}, false);
-	document.getElementById('button-ffw').addEventListener('click', function() {
+	document.getElementById('button-ffwms').addEventListener('click', function() {
 		stats.dbg.ffw();
+	}, false);
+	document.getElementById('button-ffwday').addEventListener('click', function() {
+		stats.dbg.ffw('day', 1);
 	}, false);
 	document.getElementById('button-fake').addEventListener('click', function() {
 		stats.dbg.fake();
