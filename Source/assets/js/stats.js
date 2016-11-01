@@ -38,121 +38,6 @@ function today() {
 	return today;
 }
 
-var questions = {
-	'cpr': {
-		before: function() {
-			return !stats.getEvents(['cummed', 'milked', 'ruined'], today().getTime()).length;
-		},
-		question: 'Have you needed CPR today?',
-		answers: {
-			cummed: 'Cummed',
-			milked: 'Prostate Milked',
-			ruined: 'Ruined',
-			no: 'No'
-		},
-		values: function() {
-			return [cums.length, milks.length, ruins.length, 0];
-		},
-		after: function(answer) {
-			if (answer !== 'no') {
-				stats.addEvent(answer);
-			}
-		}
-	},
-	'feel': {
-		after: function(answer) {
-			stats.addEvent('feeled', Date.now(), answer);
-		}
-	},
-	'peoply-nearby': {
-		question: 'How many people are near you?',
-		color: 'gray',
-		answers: {
-			0: '0',
-			1: '1-2',
-			3: '3-5',
-			6: '6+'
-		}
-	},
-	'watched-porn': 'Have you looked at porn recently?',
-	'touched': 'Have you touched yourself recently?',
-	'masturbated': 'Have you masturbated recently?',
-	'desperate': 'Are you desperate to cum?',
-	'slept-well': {
-		question: 'How well did you sleep?',
-		color: 'purple',
-		answers: {
-			ok: 'OK',
-			great: 'Great',
-			poorly: 'Poorly'
-		}
-	}
-};
-
-function makeQuestion(id) {
-	var question, answers;
-	if (typeof questions[id] === 'string') {
-		questions[id] = {question: questions[id]};
-	}
-	if (questions[id].html) {
-		return $(questions[id].html);
-	}
-	question = questions[id].question;
-	if (questions[id].answers) {
-		if (Array.isArray(questions[id].answers)) {
-			answers = {};
-			questions[id].answers.forEach(answer => answers[answer.toLowerCase()]);
-			questions[id].answers = answers;
-		} else {
-			answers = questions[id].answers;
-		}
-	}
-	if (!answers) {
-		questions[id].answers = {yes: 'Yes', no: 'No'};
-		answers = questions[id].answers;
-	}
-	Object.keys(answers).forEach(function(answer) {
-		if (typeof answers[answer] === 'string') {
-			answers[answer] = {text: answers[answer]};
-		}
-	});
-	if (!questions[id].color) {
-		Object.keys(answers).forEach(function(answer, i, all) {
-			if (i === 0) {
-				answers[answer].color = answers[answer].color || 'red';
-			} else if (i === 1) {
-				if (all.length < 3) {
-					answers[answer].color = answers[answer].color || 'blue';
-				} else {
-					answers[answer].color = answers[answer].color || 'brown';
-				}
-			} else if (i === 2) {
-				answers[answer].color = answers[answer].color || 'blue';
-			} else {
-				answers[answer].color = answers[answer].color || 'green';
-			}
-		});
-	} else {
-		Object.keys(answers).forEach(function(answer, i, all) {
-			answers[answer].color = answers[answer].color || questions[id].color + ['Light', 'Medium', 'Dark', 'DarkRoast'][i];
-		});
-	}
-	var c = 'c3'; // 'c' + Object.keys(answers).length
-	return $('<ul>').attr('data-question', id).append(
-		$('<li>').addClass('noSelect').append(
-			$('<h3>').addClass('bold').text(question.toUpperCase())
-		),
-		$('<div>').addClass('c3').append(
-			Object.keys(answers).map(function(answer, i, all) {
-				return $('<div>').attr('data-answer', answer).addClass('c3_col' + (i + 1 === all.length ? 'End' : i + 1)).addClass('c_' + answers[answer].color).append(
-					$('<div>').addClass('c_label').text(answers[answer].text),
-					$('<div>').addClass('c_percent')
-				);
-			})
-		)
-	);
-}
-
 var feels = stats.getEvents('feeled', startPeriod.getTime(), endPeriod.getTime());
 
 $(document).ready(function() {
@@ -174,15 +59,31 @@ $(document).ready(function() {
 		updateStuff();
 		updateDoughnut();
 	});
+
+	var lastOrgasmInterval;
+	function updateLastOrgasm() {
+		$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(Date.now() - lastAnythingTime) + ' ago' : 'ever');
+	}
 	$('#field-last-orgasm').mouseenter(function() {
 		lastOrgasmInterval = setInterval(updateLastOrgasm, 1000);
 	}).mouseleave(function() {
 		clearInterval(lastOrgasmInterval);
 	});
-	var lastOrgasmInterval;
-	function updateLastOrgasm() {
-		$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(Date.now() - lastOrgasm.time) + ' ago' : 'ever');
+
+	var longestStreakInterval;
+	function updateLongestStreak() {
+		var timeSinceLastAnything = Date.now() - lastAnythingTime;
+		if (longestStreak < timeSinceLastAnything) {
+			longestStreak = timeSinceLastAnything;
+		}
+		$('#field-longest-streak').attr('title', formatTimespan(longestStreak));
 	}
+	$('#field-longest-streak').mouseenter(function() {
+		longestStreakInterval = setInterval(updateLongestStreak, 1000);
+	}).mouseleave(function() {
+		clearInterval(longestStreakInterval);
+	});
+
 	updateStuff();
 	updateFeels(feels);
 	initDoughnut();
@@ -190,47 +91,49 @@ $(document).ready(function() {
 	initQuestions();
 });
 
+var lastAnythingTime;
 function updateStuff() {
 	orgasms = stats.getEvents(['cummed', 'milked', 'ruined'], startPeriod.getTime(), endPeriod.getTime());
 	cums = orgasms.filter(orgasm => orgasm.type === 'cummed');
 	milks = orgasms.filter(orgasm => orgasm.type === 'milked');
 	ruins = orgasms.filter(orgasm => orgasm.type === 'ruined');
 
-	if (orgasms.length) {
-		lastOrgasm = orgasms[orgasms.length - 1];
-		var timeSinceLastOrgasm = Date.now() - lastOrgasm.time;
-		edgesSince = stats.getEvents('edged', lastOrgasm.time);
-		longestStreak = 0;
+	lastOrgasm = orgasms[orgasms.length - 1];
+	lastAnythingTime = (lastOrgasm && lastOrgasm.time) || installDate;
+	var timeSinceLastAnything = Date.now() - lastAnythingTime;
+	longestStreak = 0;
 
-		orgasms.forEach(function(a, b) {
-			if (b.time - a.time > longestStreak) {
-				longestStreak = b.time - a.time;
-			}
-			return b;
-		});
-		var relapseDays = weekdays.map(function() { return 0; });
-		orgasms.forEach(function(event, i) {
-			var streak = i && (event.time - orgasms[i - 1].time);
-			if (streak > longestStreak) {
-				longestStreak = streak;
-			}
-
-			relapseDays[new Date(event.time).getDay()]++;
-		});
-
-		if (longestStreak < timeSinceLastOrgasm) {
-			longestStreak = timeSinceLastOrgasm;
+	/* Wtf is this code?
+	orgasms.forEach(function(a, b) {
+		if (b.time - a.time > longestStreak) {
+			longestStreak = b.time - a.time;
 		}
-		var longestStreakDays = Math.floor(longestStreak / (24*60*60*1000));
+		return b;
+	});*/
+	var relapseDays = weekdays.map(function() { return 0; });
+	orgasms.forEach(function(event, i) {
+		var streak = i && (event.time - orgasms[i - 1].time);
+		if (streak > longestStreak) {
+			longestStreak = streak;
+		}
 
-		frequentRelapse = weekdays[relapseDays.indexOf(Math.max.apply(null, relapseDays))];
+		relapseDays[new Date(event.time).getDay()]++;
+	});
+
+	if (longestStreak < timeSinceLastAnything) {
+		longestStreak = timeSinceLastAnything;
 	}
+	var longestStreakDays = Math.floor(longestStreak / (24*60*60*1000));
+
+	frequentRelapse = weekdays[relapseDays.indexOf(Math.max.apply(null, relapseDays))];
+
+	edgesSince = stats.getEvents('edged', lastOrgasm && lastOrgasm.time);
 
 	$('#field-last-orgasm').text(lastOrgasm ? formatDateShort(new Date(lastOrgasm.time - startOfDay)) : 'never');
-	$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(timeSinceLastOrgasm) + ' ago' : 'ever');
-	$('#field-edges-since-last-orgasm').text(lastOrgasm ? edgesSince.length : '-');
-	$('#field-longest-streak').text(lastOrgasm ? longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days' : '-');
-	$('#field-longest-streak').attr('title', lastOrgasm ? formatTimespan(longestStreak) : '');
+	$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(timeSinceLastAnything) + ' ago' : 'ever');
+	$('#field-edges-since-last-orgasm').text(edgesSince.length);
+	$('#field-longest-streak').text(longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days');
+	$('#field-longest-streak').attr('title', formatTimespan(longestStreak));
 	$('#field-frequent-relapse').text(lastOrgasm ? frequentRelapse : '-');
 	if (currentQuestion) {
 		currentQuestion.update();

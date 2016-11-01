@@ -98,7 +98,7 @@ var milestones = (function(s) {
 				i: ms.i,
 				value: s[ms.stage].values[ms.i],
 				unit: s[ms.stage].unit,
-				time: getMilestone(ms.stage, ms.i),
+				time: getMilestone(ms.stage, ms.i).getTime(),
 				name: this.name(ms.stage, ms.i)
 			};
 		},
@@ -158,11 +158,14 @@ var milestones = (function(s) {
 			}, nextMilestone - Date.now());
 		}
 	}
-	function trigger(name, value) {
+	function trigger(name, time, value) {
 		if (listeners.has(name)) {
+			if (!time) {
+				time = Date.now();
+			}
 			listeners.get(name).slice().forEach(function(listener) {
 				try {
-					listener(value);
+					listener({type: name, time: time, value: value});
 				} catch (e) {
 					console.error(e);
 					milestones.unlisten(name, listener);
@@ -183,7 +186,7 @@ var milestones = (function(s) {
 	function updateMilestone() {
 		var ms = getNextMilestone();
 		var timestamp = getMilestone(ms.stage, ms.i).getTime();
-		var newStage, newMilestone;
+		var newStage, newMilestone, lastMilestone = nextMilestone;
 		if (timestamp > nextMilestone) {
 			newMilestone = true;
 			if (ms.i === 1) {
@@ -198,10 +201,9 @@ var milestones = (function(s) {
 			reset = false;
 			trigger('reset');
 		} else {
-			if (newStage) trigger('stage');
+			if (newStage) trigger('stage', lastMilestone);
 			if (newMilestone) {
-				trigger('milestone');
-				stats.addEvent('milestone', null, {
+				trigger('milestone', lastMilestone, {
 					stage: ms.stage,
 					index: ms.i - 1
 				});

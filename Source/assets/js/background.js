@@ -595,9 +595,9 @@ stats.dbg.fake = function() {
 	var start = new Date(2015, 7, 31);
 	var end = new Date();
 	var lastType, lastTime;
-	// remove all milestones and installation
+	// remove installation
 	var events = stats.events.filter(function(e) {
-		return e.type !== 'milestone' && e.type !== 'installed';
+		return e.type !== 'installed';
 	});
 	// add some events
 	for (var current = start.getTime(); current < end.getTime(); current += 1*24*60*60*1000*(1 - Math.pow(Math.random(), 2))) { 
@@ -616,7 +616,7 @@ stats.dbg.fake = function() {
 		return e.time < minTime ? e.time : minTime;
 	}, Date.now()) - 1000 - Math.random() * 24*60*60*1000});
 	// add the milestones
-	events.filter(function(e) {
+	/*events.filter(function(e) {
 		return ['installed', 'cummed', 'milked', 'ruined'].indexOf(e.type) >= 0;
 	}).sort(function(a, b) {
 		return a.time - b.time;
@@ -632,7 +632,7 @@ stats.dbg.fake = function() {
 		}).forEach(function(ms) {
 			events.push({type: 'milestone', time: ms.time, value: {stage: ms.stage, index: ms.index}});
 		});
-	});
+	});*/
 	// resort everything
 	events.sort(function(a, b) {
 		return a.time - b.time;

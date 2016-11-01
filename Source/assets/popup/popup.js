@@ -11,12 +11,43 @@ document.addEventListener('DOMContentLoaded', function() {
 		stats.dbg.fake();
 	}, false);
 
-	stats.listen(['installed', 'milestone', 'cummed', 'milked', 'ruined'], displayEvents);
-	addEventListener('unload', function() {
-		stats.unlisten(['installed', 'milestone', 'cummed', 'milked', 'ruined'], displayEvents);
-	});
+	initEvents();
 
-	displayEvents(stats.getEvents(['milestone', 'cummed', 'milked', 'ruined']));
+	function initEvents() {
+		stats.listen(['installed', 'cummed', 'milked', 'ruined'], displayEvents);
+		milestones.listen('milestone', onMilestone);
+		addEventListener('unload', function() {
+			stats.unlisten(['installed', 'cummed', 'milked', 'ruined'], displayEvents);
+			milestones.unlisten('milestone', onMilestone);
+		});
+		var events = stats.getEvents(['installed', 'cummed', 'milked', 'ruined']);
+		// 1) Milestone events are not logged anymore.
+		// 2) milestones.getLast() only returns the last achieved milestone if it was after the last CPR.
+		// -> So to display the actual last milestone we have to do some work until we get a better API.
+		var until = Date.now();
+		searchForLastMilestone: for (var i = events.length - 1; 0 <= i; --i) {
+			var mss = milestones.getMilestones(events[i].time);
+			for (var j = mss.length - 1; 0 <= j; --j) {
+				if (mss[j].time <= until) {
+					events.splice(i + 1, 0, {
+						type: 'milestone',
+						time: mss[j].time,
+						value: {
+							stage: mss[j].stage,
+							index: mss[j].index
+						}
+					});
+					break searchForLastMilestone;
+				}
+			}
+			until = events[i].time;
+		}
+		displayEvents(events);
+	}
+
+	function onMilestone(e) {
+		displayEvents([e])
+	}
 
 	function displayEvents(events) {
 		var installed, orgasm, milestone;
