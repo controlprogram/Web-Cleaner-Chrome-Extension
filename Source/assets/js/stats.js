@@ -126,8 +126,10 @@ function makeQuestion(id) {
 				} else {
 					answers[answer].color = answers[answer].color || 'brown';
 				}
-			} else {
+			} else if (i === 2) {
 				answers[answer].color = answers[answer].color || 'blue';
+			} else {
+				answers[answer].color = answers[answer].color || 'green';
 			}
 		});
 	} else {
