@@ -7,19 +7,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.getElementById('button-reset').addEventListener('click', function() {
 		stats.dbg.reset();
 	}, false);
+	document.getElementById('button-ffw').addEventListener('click', function() {
+		stats.dbg.ffw();
+	}, false);
 	document.getElementById('button-fake').addEventListener('click', function() {
 		stats.dbg.fake();
 	}, false);
 
+	stats.listen(['installed', 'cummed', 'milked', 'ruined'], onStats);
+	milestones.listen('milestone', onMilestone);
+	addEventListener('unload', function() {
+		stats.unlisten(['installed', 'cummed', 'milked', 'ruined'], onStats);
+		milestones.unlisten('milestone', onMilestone);
+	});
+
 	initEvents();
 
 	function initEvents() {
-		stats.listen(['installed', 'cummed', 'milked', 'ruined'], displayEvents);
-		milestones.listen('milestone', onMilestone);
-		addEventListener('unload', function() {
-			stats.unlisten(['installed', 'cummed', 'milked', 'ruined'], displayEvents);
-			milestones.unlisten('milestone', onMilestone);
-		});
 		var events = stats.getEvents(['installed', 'cummed', 'milked', 'ruined']);
 		// 1) Milestone events are not logged anymore.
 		// 2) milestones.getLast() only returns the last achieved milestone if it was after the last CPR.
@@ -45,6 +49,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		displayEvents(events);
 	}
 
+	function onStats(events) {
+		if (events.some(function(e) {
+			return e.type === 'installed';
+		})) {
+			initEvents();
+		} else {
+			displayEvents(events);
+		}
+	}
+
 	function onMilestone(e) {
 		displayEvents([e])
 	}
@@ -60,6 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
 				orgasm = e;
 			}
 		});
+		if (installed && !milestone) {
+			milestones.getLast();
+		}
 		[installed, orgasm, milestone].filter(Boolean).sort(function(a, b) {
 			return a.time - b.time;
 		}).forEach(function(e) {

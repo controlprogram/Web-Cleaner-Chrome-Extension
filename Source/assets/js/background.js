@@ -640,7 +640,14 @@ stats.dbg.fake = function() {
 	stats.events = [];
 	stats.addEvents(events);
 };
-
+stats.dbg.ffw = function() {
+	var events = stats.events;
+	events.forEach(function(e) {
+		e.time -= 24*60*60*1000;
+	});
+	stats.events = [];
+	stats.addEvents(events);
+};
 stats.dbg.reset = function() {
 	stats.events.length = 0;
 	stats.addEvent('installed');

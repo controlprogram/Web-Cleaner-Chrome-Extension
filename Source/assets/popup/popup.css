@@ -64,6 +64,13 @@ img {
 	background: #CBDFCB;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #DAE8DA), color-stop(50%, #DAE8DA), color-stop(50%, #CBDFCB), color-stop(100%, #CBDFCB))
 }
+.button.dbg {
+	cursor: pointer;
+	color: #4C6A4C;
+	border: 1px solid #7FB27F;
+	background: #CBDFCB;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #a77da9), color-stop(50%, #DAE8DA), color-stop(50%, #CBDFCB), color-stop(100%, #a77da9))
+}
 .button-disabled {
 	cursor: not-allowed;
 	color: #B7B7B7;
