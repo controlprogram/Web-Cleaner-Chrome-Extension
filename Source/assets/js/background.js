@@ -65,7 +65,11 @@ function loadOptions() {
 	return new Promise(function(resolve, reject) {
 		var crypt = localStorage.getItem('options');
 		if (crypt) {
-			decrypt(crypt).then(unpack).catch(function() {
+			var encoded = new Uint8Array(crypt.length / 2); //new TextEncoder('utf8').encode(data);
+			for (var i = 0; i < encoded.length; ++i) {
+				encoded[i] = parseInt(crypt.slice(i * 2, i * 2 + 2), 16);
+			}
+			decrypt(encoded).then(unpack).catch(function() {
 				parse({});
 			});
 		} else {
@@ -104,40 +108,69 @@ function loadOptions() {
 	});
 }
 
+function importOptions(encoded) {
+	return new Promise(function(resolve, reject) {
+		decrypt(encoded).then(function(data) {
+			var stringData = new TextDecoder('utf8').decode(data);
+			data = JSON.parse(stringData);
+			if (Date.now() - data.date > 24*60*60*1000) {
+				reject('File is too old.');
+				return;
+			}
+		    var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
+			for (var i = 0; i < encoded.length; ++i) {
+				decoded += ('0' + encoded[i].toString(16)).slice(-2);
+			}
+			localStorage.setItem('options', decoded);
+			resolve();
+		}).catch(function() {
+			reject('Cannot read file.');
+		});
+		
+	});
+}
+
 function storeOptions(values) {
 	return new Promise(function(resolve, reject) {
 		loadOptions().then(function(old) {
 			var data = {}, changed = false;
-			options.forEach(function(option) {
-				var value = values[option.name];
-				if (typeof value === 'undefined') {
-					value = option.default;
-				} else if (option.type === 'boolean') {
-					value = !!value;
-				} else if (option.type === 'string') {
-					value = String(value);
-				} else if (option.type === 'integer') {
-					value = value % 1;
-				} else if (option.type === 'number') {
-					value = +value;
-				}
-				data[option.name] = value;
-				if (value !== old[option.name]) {
-					changed = true;
-				}
-			});
-			if (!changed) {
-				resolve();
-				return;
+			if (!values) {
+				data = old;
+			} else {
+				options.forEach(function(option) {
+					var value = values[option.name];
+					if (typeof value === 'undefined') {
+						value = option.default;
+					} else if (option.type === 'boolean') {
+						value = !!value;
+					} else if (option.type === 'string') {
+						value = String(value);
+					} else if (option.type === 'integer') {
+						value = value % 1;
+					} else if (option.type === 'number') {
+						value = +value;
+					}
+					data[option.name] = value;
+					if (value !== old[option.name]) {
+						changed = true;
+					}
+				});
 			}
-			data.code = ('0000'+Math.floor(Math.random()*Math.pow(36, 5)).toString(36)).slice(-5).toUpperCase();
+			if (changed) {
+				data.code = ('0000'+Math.floor(Math.random()*Math.pow(36, 5)).toString(36)).slice(-5).toUpperCase();
+			}
+			var code = data.code;
 			var stringData = JSON.stringify({
 				date: Date.now(),
 				options: data
 			});
-			encrypt(new TextEncoder('utf8').encode(stringData)).then(function(data) {
-				localStorage.setItem('options', data);
-				resolve();
+			encrypt(new TextEncoder('utf8').encode(stringData)).then(function(encrypted) {
+			    var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
+				for (var i = 0; i < encrypted.length; ++i) {
+					decoded += ('0' + encrypted[i].toString(16)).slice(-2);
+				}
+				localStorage.setItem('options', decoded);
+				resolve({code: code, data: encrypted});
 			}).catch(function(err) {
 				reject(err);
 			});
@@ -145,7 +178,7 @@ function storeOptions(values) {
 	});
 }
 
-function encrypt(data) {
+function encrypt(encoded) {
 	return new Promise(function(resolve, reject) {
 		crypto.subtle.importKey(
 		    "jwk", //can be "jwk" or "raw"
@@ -179,16 +212,11 @@ function encrypt(data) {
 			        tagLength: 128, //can be 32, 64, 96, 104, 112, 120 or 128 (default)
 			    },
 			    key, //from generateKey or importKey above
-			    data //ArrayBuffer of data you want to encrypt
+			    encoded //ArrayBuffer of data you want to encrypt
 			)
 			.then(function(encrypted){
 			    //returns an ArrayBuffer containing the encrypted data
-			    encrypted = new Uint8Array(encrypted);
-			    var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
-				for (var i = 0; i < encrypted.length; ++i) {
-					decoded += ('0' + encrypted[i].toString(16)).slice(-2);
-				}
-				resolve(decoded);
+				resolve(new Uint8Array(encrypted));
 			})
 			.catch(function(err){
 		    	reject(err);
@@ -200,11 +228,7 @@ function encrypt(data) {
 	});
 }
 
-function decrypt(data) {
-	var encoded = new Uint8Array(data.length / 2); //new TextEncoder('utf8').encode(data);
-	for (var i = 0; i < encoded.length; ++i) {
-		encoded[i] = parseInt(data.slice(i * 2, i * 2 + 2), 16);
-	}
+function decrypt(encoded) {
 	return new Promise(function(resolve, reject) {
 		crypto.subtle.importKey(
 		    "jwk", //can be "jwk" or "raw"

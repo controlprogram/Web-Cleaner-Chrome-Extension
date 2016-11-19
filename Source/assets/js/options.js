@@ -11,7 +11,7 @@ This is the script file for the options page. It handles loading the options fro
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+	   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -167,6 +167,36 @@ function save_button()
 	save_and_update_background();
 }
 
+function inport(e) {
+	e.preventDefault();
+	var file = document.createElement('input');
+	file.type = 'file';
+	file.accept = '.wcs';
+	file.addEventListener('change', function() {
+		var fr = new FileReader();
+		fr.addEventListener('load', function(data) {
+			chrome.extension.getBackgroundPage().importOptions(new Uint8Array(fr.result)).then(function() {
+				document.getElementById('password').value = password = '';
+				load_page();
+			}).catch(function(err) {
+				alert(err);
+			});
+		});
+		fr.readAsArrayBuffer(file.files[0]);
+	});
+	file.click();
+}
+
+function esport(e) {
+	chrome.extension.getBackgroundPage().storeOptions().then(function(result) {
+		var a = document.getElementById("export");
+		var blob = new Blob([result.data], {type: "octet/stream"});
+		var url = URL.createObjectURL(blob);
+		a.href = url;
+		a.download = result.code + '.wcs';
+	});
+}
+
 // These are the event handlers for the options page.
 
 // This event is when the slider bar is changed. It will update the html value of the number that shows the value of the slider bar.
@@ -177,6 +207,8 @@ document.addEventListener('DOMContentLoaded', load_page);
 
 // This event handles what happens when the save button is clicked.
 document.getElementById("save_button").addEventListener('click', save_button);
+document.getElementById("import").addEventListener('click', inport);
+document.getElementById("export").addEventListener('mousedown', esport);
 
 document.getElementById("password").addEventListener('keyup', function() {
 	password = document.getElementById("password").value;
