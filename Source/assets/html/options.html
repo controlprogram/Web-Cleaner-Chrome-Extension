@@ -20,11 +20,11 @@
 			<!-- 
 				 # SAVED NOTE #
 								-->
-			<div id="saved_note_outer"><span id="saved_note"></span></div>
+			<div id="saved_note_outer"><div style="float:right;margin:-4px 5px 0 0;"><label for="password">Password:</label> <input type="text" id="password" name="password"></div><span id="saved_note"></span></div>
 			
 			<!-- Ensures the container div wraps around the two floating divs -->
 			<div class="clear"></div>
-			
+			<div id="settings_stuff" style="display:none;">
 			<!-- 
 				 # IMAGE FILTER #
 								  -->
@@ -43,12 +43,12 @@
 				<div id="image_scanner_box">
 					<!-- The checkbox form that indicates if the image scanner is on or off. -->
 					<form id="image_scanner">
-						<input type="checkbox" name="image_scanner_on" value="true"> Scan Images for at least...
+						<input type="checkbox" id="image_scanner_checkbox" value="true"> Scan Images for at least...
 					</form><!-- '#image_scanner' form -->
 					
 					<!-- The range form for adjusting the image scanner sensitivity. -->
-					<form class="inline" id="scanner_sensitivity">
-						<input class="range" type="range" min="0" max="100" step="1">
+					<form class="inline">
+						<input id="scanner_sensitivity" class="range" type="range" min="0" max="100" step="1">
 						<span id="range2"></span>
 					</form><!-- '#scanner_sensitivity' form -->
 				</div><!-- '#image_scanner_box' div -->
@@ -234,20 +234,20 @@
 				</div>
 			
 			</div><!-- 'schedule_wrapper' div -->
-			
 			<!-- 
 				 # SAVE SETTINGS #
 								   -->
 			<div id="buttons" style="float: right;">
 
 				<!-- The button form for saving Web-Cleaner settings. -->
-				<form id="save_button">
+				<form>
 					<!-- 
 						 # WITH NOTE #
 									   -->
-					<input type="button" value="Save"> <input type="checkbox" id="save_note"> with note.
+					<input id="save_button" type="button" value="Save">
 				</form><!-- '#save_button' form -->
 			</div><!-- '#buttons' div -->
+			</div>
 		</div><!-- '#container' div -->
 		<script src="../js/options.js"></script>
 		<script src="../js/schedule.js" type="text/javascript"></script>

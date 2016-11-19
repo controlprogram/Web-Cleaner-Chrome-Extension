@@ -29,267 +29,236 @@ Date Modified: 2/2/2013
 // If the background page can access see what other processes are running, then it will be able to tell when the browser just started?
 
 
-// This initializes localStorage when the extension is installed.
+var cryptoIV = new Uint8Array([29, 246, 115, 171, 134, 193, 217, 183, 167, 103, 197, 86]);
+var cryptoKey = 'Y0zt37HgOx-BY7SQjYVmrqhPkO44Ii2Jcb9yydUDPfE';
 
-function initialize_options()
-{
-	if (localStorage.getItem("install_date"))
-		return;
-	
-	localStorage["install_date"] = new Date().getTime();
-	localStorage["text_on"] = true;
-	localStorage["blocked_words"] = "sex\nbreast\nboob\npenis\ndick\nvagina\nfuck\ndamn\nhell\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude";
-	localStorage["whitelisted_websites"] = "";
-	localStorage["replace_sentence"] = false;
-	localStorage["block_paragraph"] = false;
-	localStorage["block_webpage"] = false;
-	localStorage["image_on"] = true;
-	localStorage["image_block_words"] = true;
-	localStorage["image_blocked_words"] = "sex\nbreast\nboob\npenis\nvagina\ndick\nfuck\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude\nbra \npanties\nrisque\nraunch\nmaxim\nplayboy\nstripper\nprostitute\nlingerie";
-	localStorage["image_whitelisted_websites"]  = "";
-	localStorage["image_scanner"] = true;
-	localStorage["image_background"] = true;
-	localStorage["scanner_sensitivity"] = 50;
-	localStorage["image_replacement"] = "logo";
-	localStorage["image_blurring"] = true;
-	localStorage["image_two_pass"] = true;
-	localStorage["schedule_on"] = true;
-	localStorage["save_note"] = true;
+// This initializes localStorage when the extension is installed.
+var options = [
+	{name: "password", type: 'string', default: ''},
+	{name: "code", type: 'string', default: ''},
+	{name: "install_date", type: 'integer', default: new Date().getTime()},
+	{name: "text_on", type: 'boolean', default: true},
+	{name: "blocked_words", type: 'string', default: "sex\nbreast\nboob\npenis\ndick\nvagina\nfuck\ndamn\nhell\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude"},
+	{name: "whitelisted_websites", type: 'string', default: ""},
+	{name: "replace_sentence", type: 'boolean', default: false},
+	{name: "block_paragraph", type: 'boolean', default: false},
+	{name: "block_webpage", type: 'boolean', default: false},
+	{name: "image_on", type: 'boolean', default: true},
+	{name: "image_block_words", type: 'boolean', default: true},
+	{name: "image_blocked_words", type: 'string', default: "sex\nbreast\nboob\npenis\nvagina\ndick\nfuck\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude\nbra \npanties\nrisque\nraunch\nmaxim\nplayboy\nstripper\nprostitute\nlingerie"},
+	{name: "image_whitelisted_websites", type: 'string', default: ""},
+	{name: "image_scanner", type: 'boolean', default: true},
+	{name: "image_background", type: 'boolean', default: true},
+	{name: "scanner_sensitivity", type: 'integer', default: 50},
+	{name: "image_replacement", type: 'string', default: "logo"},
+	{name: "image_blurring", type: 'boolean', default: true},
+	{name: "image_two_pass", type: 'boolean', default: true},
+	{name: "schedule_on", type: 'boolean', default: true},
+	//{name: "save_note", type: 'boolean', default: true}
+], optionsByName = {};
+
+options.forEach(function(option) {
+	optionsByName[option.name] = option;
+});
+
+function loadOptions() {
+	return new Promise(function(resolve, reject) {
+		var crypt = localStorage.getItem('options');
+		if (crypt) {
+			decrypt(crypt).then(unpack).catch(function() {
+				parse({});
+			});
+		} else {
+			parse({});
+		}
+		function unpack(data) {
+			try {
+				//data = new TextDecoder('utf8').decode(data);
+				//data = LZW.decompress(data);
+				var stringData = new TextDecoder('utf8').decode(data);
+				data = JSON.parse(stringData).options;
+			} catch (e) {
+				data = {};
+			}
+			parse(data)
+		}
+		function parse(data) {
+			var values = {};
+			options.forEach(function(option) {
+				var value = data[option.name];
+				if (typeof value === 'undefined') {
+					value = option.default;
+				} else if (option.type === 'boolean') {
+					value = !!value;
+				} else if (option.type === 'string') {
+					value = String(value);
+				} else if (option.type === 'integer') {
+					value = value % 1;
+				} else if (option.type === 'number') {
+					value = +value;
+				}
+				values[option.name] = value;
+			});
+			resolve(values);
+		}
+	});
 }
 
-initialize_options();
+function storeOptions(values) {
+	return new Promise(function(resolve, reject) {
+		loadOptions().then(function(old) {
+			var data = {}, changed = false;
+			options.forEach(function(option) {
+				var value = values[option.name];
+				if (typeof value === 'undefined') {
+					value = option.default;
+				} else if (option.type === 'boolean') {
+					value = !!value;
+				} else if (option.type === 'string') {
+					value = String(value);
+				} else if (option.type === 'integer') {
+					value = value % 1;
+				} else if (option.type === 'number') {
+					value = +value;
+				}
+				data[option.name] = value;
+				if (value !== old[option.name]) {
+					changed = true;
+				}
+			});
+			if (!changed) {
+				resolve();
+				return;
+			}
+			data.code = ('0000'+Math.floor(Math.random()*Math.pow(36, 5)).toString(36)).slice(-5).toUpperCase();
+			var stringData = JSON.stringify({
+				date: Date.now(),
+				options: data
+			});
+			encrypt(new TextEncoder('utf8').encode(stringData)).then(function(data) {
+				localStorage.setItem('options', data);
+				resolve();
+			}).catch(function(err) {
+				reject(err);
+			});
+		});
+	});
+}
+
+function encrypt(data) {
+	return new Promise(function(resolve, reject) {
+		crypto.subtle.importKey(
+		    "jwk", //can be "jwk" or "raw"
+		    {   //this is an example jwk key, "raw" would be an ArrayBuffer
+		        kty: "oct",
+		        k: cryptoKey,
+		        alg: "A256GCM",
+		        ext: true,
+		    },
+		    {   //this is the algorithm options
+		        name: "AES-GCM",
+		    },
+		    false, //whether the key is extractable (i.e. can be used in exportKey)
+		    ["encrypt", "decrypt"] //can "encrypt", "decrypt", "wrapKey", or "unwrapKey"
+		)
+		.then(function(key){
+		    //returns the symmetric key
+			crypto.subtle.encrypt(
+			    {
+			        name: "AES-GCM",
+
+			        //Don't re-use initialization vectors!
+			        //Always generate a new iv every time your encrypt!
+			        //Recommended to use 12 bytes length
+			        iv: cryptoIV,
+
+			        //Additional authentication data (optional)
+			        /*additionalData: ArrayBuffer,*/
+
+			        //Tag length (optional)
+			        tagLength: 128, //can be 32, 64, 96, 104, 112, 120 or 128 (default)
+			    },
+			    key, //from generateKey or importKey above
+			    data //ArrayBuffer of data you want to encrypt
+			)
+			.then(function(encrypted){
+			    //returns an ArrayBuffer containing the encrypted data
+			    encrypted = new Uint8Array(encrypted);
+			    var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
+				for (var i = 0; i < encrypted.length; ++i) {
+					decoded += ('0' + encrypted[i].toString(16)).slice(-2);
+				}
+				resolve(decoded);
+			})
+			.catch(function(err){
+		    	reject(err);
+			});
+		})
+		.catch(function(err){
+		    reject(err);
+		});
+	});
+}
+
+function decrypt(data) {
+	var encoded = new Uint8Array(data.length / 2); //new TextEncoder('utf8').encode(data);
+	for (var i = 0; i < encoded.length; ++i) {
+		encoded[i] = parseInt(data.slice(i * 2, i * 2 + 2), 16);
+	}
+	return new Promise(function(resolve, reject) {
+		crypto.subtle.importKey(
+		    "jwk", //can be "jwk" or "raw"
+		    {   //this is an example jwk key, "raw" would be an ArrayBuffer
+		        kty: "oct",
+		        k: cryptoKey,
+		        alg: "A256GCM",
+		        ext: true,
+		    },
+		    {   //this is the algorithm options
+		        name: "AES-GCM",
+		    },
+		    false, //whether the key is extractable (i.e. can be used in exportKey)
+		    ["encrypt", "decrypt"] //can "encrypt", "decrypt", "wrapKey", or "unwrapKey"
+		)
+		.then(function(key){
+		    //returns the symmetric key
+			crypto.subtle.decrypt(
+			    {
+			        name: "AES-GCM",
+
+			        //Don't re-use initialization vectors!
+			        //Always generate a new iv every time your encrypt!
+			        //Recommended to use 12 bytes length
+			        iv: cryptoIV,
+
+			        //Additional authentication data (optional)
+			        /*additionalData: Uint8Array,*/
+
+			        //Tag length (optional)
+			        tagLength: 128, //can be 32, 64, 96, 104, 112, 120 or 128 (default)
+			    },
+			    key, //from generateKey or importKey above
+			    encoded //ArrayBuffer of data you want to encrypt
+			)
+			.then(function(decrypted){
+			    //returns an ArrayBuffer containing the encrypted data
+				resolve(new Uint8Array(decrypted));
+			})
+			.catch(function(err){
+		    	reject(err);
+			});
+		})
+		.catch(function(err){
+		    reject(err);
+		});
+	});
+}
+
 loadTemplates();
 
 // Will need to load the variables upon the first check from the content script. This will be done by checking to see if text_on is null. If it is, the background script will execute a function that will
 // load the options from localStorage. If text_on is not null, that means the options have already been loaded and they will be used.
 
-
-/*
-This funtion takes in the options object which is declared below. It then reads in the options in localStorage and sets the options in the options object accordingly.
-*/
-function load_variables(options)
-{
-	
-	// All the following are in if statements to ensure that the option actually exists in localStorage. For example, if someone never turned on the block paragraph option, then that option wouldn't exist in localStorage
-	// and would throw an error if we tried to read from it. We then need another if statement for all the boolean values so that we get a boolean value and not the string that is returned by localStorage.
-	
-	// Sets the text filter option
-	if (localStorage["text_on"])
-	{
-		if (localStorage["text_on"] == "true")
-		{
-			options.text_on = true;
-		}
-		else
-		{
-			options.text_on = false;
-		}
-	}
-	
-	// Sets the blocked words list
-	if (localStorage["blocked_words"])
-		options.blocked_words = localStorage["blocked_words"];
-	
-	// Sets the whitelisted websites list
-	if (localStorage["whitelisted_websites"])
-		options.whitelisted_websites = localStorage["whitelisted_websites"];
-	
-	// Sets the replace sentence options
-	if (localStorage["replace_sentence"])
-	{
-		if (localStorage["replace_sentence"] == "true")
-		{
-			options.replace_sentence = true;
-		}
-		else
-		{
-			options.replace_sentence = false;
-		}
-	}
-		
-	// Sets the block paragraph option
-	if (localStorage["block_paragraph"])
-	{
-		if (localStorage["block_paragraph"] == "true")
-		{
-			options.block_paragraph = true;
-		}
-		else
-		{
-			options.block_paragraph = false;
-		}
-	}
-	
-	// Sets the block webpage option
-	if (localStorage["block_webpage"])
-	{
-		if (localStorage["block_webpage"] == "true")
-		{
-			options.block_webpage = true;
-		}
-		else
-		{
-			options.block_webpage = false;
-		}
-	}
-	
-	
-	// Sets the threshold for blocking a paragraph
-	if (localStorage["num_to_block_paragraph"])
-		options.num_for_paragraph = localStorage["num_to_block_paragraph"];
-	
-	// Sets the threshold for blocking a webpage
-	if (localStorage["num_to_block_webpage"])
-		options.num_for_webpage = localStorage["num_to_block_webpage"];
-	
-	// Sets the image filter option
-	if (localStorage["image_on"])
-	{
-		if (localStorage["image_on"] == "true")
-		{
-			options.image_on = true;
-		}
-		else
-		{
-			options.image_on = false;
-		}
-	}
-	
-	if (localStorage["image_block_words"] == "true")
-		options.image_block_words = true;
-	else
-		options.image_block_words = false;
-
-	// Sets the list of words to block images on
-	if (localStorage["image_blocked_words"])
-		options.image_blocked_words = localStorage["image_blocked_words"];
-	
-	// Sets the whitelisted websites for the image filter
-	if (localStorage["image_whitelisted_websites"])
-		options.image_whitelisted_websites = localStorage["image_whitelisted_websites"];
-	
-	// Sets the image scanner option
-	if (localStorage["image_scanner"])
-	{
-		if (localStorage["image_scanner"] == "true")
-		{
-			options.image_scanner = true;
-		}
-		else
-		{
-			options.image_scanner = false;
-		}
-	}
-	
-	// Sets the background scanner option
-	if (localStorage["image_background"])
-	{
-		if (localStorage["image_background"] == "true")
-		{
-			options.image_background = true;
-		}
-		else
-		{
-			options.image_background = false;
-		}
-	}
-	
-	// Sets the sensitivity of the image scanner
-	if (localStorage["scanner_sensitivity"])
-		options.scanner_sensitivity = localStorage["scanner_sensitivity"];
-
-	if (localStorage["image_replacement"])
-		options.image_replacement = localStorage["image_replacement"];
-
-	if (localStorage["image_blurring"])
-		options.image_blurring = true;
-	else
-		options.image_blurring = false;
-
-	if (localStorage["image_two_pass"])
-		options.image_two_pass = true;
-	else
-		options.image_two_pass = false;
-	
-	// Sets the schedule option
-	if (localStorage["schedule_on"])
-	{
-		if (localStorage["schedule_on"] == "true")
-		{
-			options.schedule_on = true;
-		}
-		else
-		{
-			options.schedule_on = false;
-		}
-	}
-
-	if (localStorage["save_note"])
-		options.save_note = true;
-	else
-		options.save_note = false;
-
-}
-
-// This is an object that holds all the options available for the user to set.
-var options = new Object();
-
-// This is a boolean value that tells if the text filter is on/off.
-options.text_on = null;
-
-// This is a string value that holds all the blocked words.
-options.blocked_words = null;
-
-// This is a string value that holds all the whitelisted websites.
-options.whitelisted_websites = null;
-
-// This is a boolean value. It is true if the user wants to replace the entire sentence containing a blocked word, and false otherwise.
-options.replace_sentence = null;
-
-// This is a boolean value. True means the user wants to block a paragraph after a specified number of blocked words.
-options.block_paragraph = null;
-
-// This is a boolean value. True means the user wants to block the webpage after a specified number of blocked words.
-options.block_webpage = null;
-
-// This is an integer. It gives the threshold for blocking a paragraph. If the user did not give a number, this will have the value NaN.
-options.num_for_paragraph = null;
-
-// This is an integer. It gives the threshold for blocking a webpage.
-options.num_for_webpage = null;
-
-// This is a boolean. True means the image filter is on.
-options.image_on = null;
-
-options.image_block_words = null;
-
-// This is a string. It contains all the words used to block images.
-options.image_blocked_words = null;
-
-// This is a string. It contains the list of whitelisted websites.
-options.image_whitelisted_websites = null;
-
-// This is a boolean. True means the image scanner is on.
-options.image_scanner = null;
-
-options.image_background = null;
-
-// This is an integer between 0 and 100. It tells the sensitivity of the image scanner as a percentage.
-options.scanner_sensitivity = null;
-
-// This is a string specifying the replacement strategy.
-options.image_replacement = null;
-
-// This is a string specifying the replacement strategy.
-options.image_blurring = null;
-
-// This is a string specifying the two-pass strategy.
-options.image_two_pass = null;
-
-// This is a boolean. True means the schedule is on.
-options.schedule_on = null;
-
-options.save_note = null;
 
 var templates = new Object();
 
@@ -299,22 +268,25 @@ chrome.extension.onMessage.addListener(
 
     if (request.greeting == "request_options")
 	{
-		//window.alert("Get options message recieved."); // used for testing.
-		if (options.text_on == null)
-		{
-			//window.alert("Loading variables from localStorage."); // used for testing.  Test Case 002
-			
-			load_variables(options);
-			
-			// line below used for testing in Test Cases 002
-			//window.alert("Options object after variable load: " + "\ntext_on " + options.text_on + "\n" + "blocked_words " + options.blocked_words + "\n" + "whitelisted_websites " + options.whitelisted_websites + '\n' + "replace_sentence " + options.replace_sentence + '\n' + "block_paragraph " + options.block_paragraph + '\n' + "block_webpage " + options.block_webpage + '\n' + "num_paragraph " + options.num_for_paragraph + '\n'+ "num_webpage " + options.num_for_webpage + '\n' + "image_on " + options.image_on + '\n' + "image_blocked_words " + options.image_blocked_words + '\n' + "image_whitelist " + options.image_whitelisted_websites + '\n'+ "image_scanner " + options.image_scanner + '\n' + "scanner_sensitivity " + options.scanner_sensitivity);  //Used for testing.
-			
-		}
 		
 		//window.alert("No need for loading options object."); // Used for testing. Test Case 002. same for line below
 		//window.alert("Options object: " + "\ntext_on " + options.text_on + "\n" + "blocked_words " + options.blocked_words + "\n" + "whitelisted_websites " + options.whitelisted_websites + '\n' + "replace_sentence " + options.replace_sentence + '\n' + "block_paragraph " + options.block_paragraph + '\n' + "block_webpage " + options.block_webpage + '\n' + "num_paragraph " + options.num_for_paragraph + '\n'+ "num_webpage " + options.num_for_webpage + '\n' + "image_on " + options.image_on + '\n' + "image_blocked_words " + options.image_blocked_words + '\n' + "image_whitelist " + options.image_whitelisted_websites + '\n'+ "image_scanner " + options.image_scanner + '\n' + "scanner_sensitivity " + options.scanner_sensitivity);  //Used for testing.
+		loadOptions().then(function(values) {
+			sendResponse({farewell: values});
+		}).catch(function(err) {
+			console.log(err);
+		});
+		return true;
+	}
 
-		sendResponse({farewell: options, templates: templates});
+	else if (request.greeting == "store_options")
+	{
+		storeOptions(request.values).then(function(values) {
+			sendResponse({farewell: 'success'});
+		}).catch(function(err) {
+			console.log(err);
+		});
+		return true;
 	}
 
 	else if (request.greeting == "update_stats")
@@ -404,7 +376,7 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
-    if (info.status && options.image_on && options.image_blurring) {
+    if (info.status && optionsByName['image_on'].value && optionsByName['image_blurring'].value) {
         chrome.tabs.insertCSS(tabId, {
             file: "assets/css/blockimg.css",
             runAt: "document_start",
