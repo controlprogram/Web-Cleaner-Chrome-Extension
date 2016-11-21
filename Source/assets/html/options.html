@@ -8,9 +8,10 @@
 -->
 <html lang="en">
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8" />
 		<title>Options</title>
-		<link rel="stylesheet" href="..\css\options.css">
+		<link rel="stylesheet" href="../css/pikaday.css" />
+		<link rel="stylesheet" href="../css/options.css" />
 	</head>
 	<body>
 		<div id="logo">
@@ -21,10 +22,10 @@
 				 # SAVED NOTE #
 								-->
 			<div id="saved_note_outer">
-				<div style="float:right;margin:-4px 5px 0 0;"><label for="password">Password:</label> <input type="text" id="password" name="password"></div>
 				<span id="saved_note"></span>
 				<a id="import" href="#">Import</a>
 				<a id="export" href="#">Export</a>
+				<a id="password" href="#">Change Password</a>
 			</div>
 			
 			<!-- Ensures the container div wraps around the two floating divs -->
@@ -254,7 +255,48 @@
 			</div><!-- '#buttons' div -->
 			</div>
 		</div><!-- '#container' div -->
+		<div id="modalBackground">
+			<div class="modal" data-form="login">
+				<div class="windowBar modal-windowBar">
+					<p>Password Protected</p>
+				</div>
+				<div class="container modalContainer">
+					<div class="modalContent">
+						<span data-role="code"></span><br />
+						<label for="password">Password:</label> <input name="password" type="text" data-type="text" data-role="password" />
+					</div>
+				</div>
+			</div>
+			<div class="modal" data-form="password">
+				<div class="windowBar modal-windowBar">
+					<p>Change Password</p>
+				</div>
+				<div class="container modalContainer">
+					<div class="modalContent">
+						<input type="text" data-type="text" data-role="password" />
+						<br />
+						<input type="button" data-role="submit" value="Save" />
+					</div>
+				</div>
+			</div>
+			<div class="modal" data-form="export">
+				<div class="windowBar modal-windowBar">
+					<p>Export Settings</p>
+				</div>
+				<div class="container modalContainer">
+					<div class="modalContent">
+						<label for="expiry-date">Expiration date:</label>
+						<input name="expiry-date" type="text" data-type="date" data-role="expiry-date" />
+						<br>
+						<label for="link">Link:</label> <span data-role="link"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/jquery-3.1.1.min.js"></script>
+		<script src="../js/pikaday.js"></script>
+		<script src="../js/pikaday.jquery.js"></script>
 		<script src="../js/options.js"></script>
-		<script src="../js/schedule.js" type="text/javascript"></script>
+		<script src="../js/schedule.js"></script>
 	</body>
 </html>

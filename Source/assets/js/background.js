@@ -42,7 +42,9 @@ var options = [
 	{name: "whitelisted_websites", type: 'string', default: ""},
 	{name: "replace_sentence", type: 'boolean', default: false},
 	{name: "block_paragraph", type: 'boolean', default: false},
+	{name: "num_for_paragraph", type: 'integer', default: 3},
 	{name: "block_webpage", type: 'boolean', default: false},
+	{name: "num_for_webpage", type: 'integer', default: 10},
 	{name: "image_on", type: 'boolean', default: true},
 	{name: "image_block_words", type: 'boolean', default: true},
 	{name: "image_blocked_words", type: 'string', default: "sex\nbreast\nboob\npenis\nvagina\ndick\nfuck\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude\nbra \npanties\nrisque\nraunch\nmaxim\nplayboy\nstripper\nprostitute\nlingerie"},
@@ -61,14 +63,28 @@ options.forEach(function(option) {
 	optionsByName[option.name] = option;
 });
 
+var stringCoder = {
+	decode: function(array) {
+		var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
+		for (var i = 0; i < array.length; ++i) {
+			decoded += ('0' + array[i].toString(16)).slice(-2);
+		}
+		return decoded;
+	},
+	encode: function(string) {
+		var encoded = new Uint8Array(string.length / 2); //new TextEncoder('utf8').encode(data);
+		for (var i = 0; i < encoded.length; ++i) {
+			encoded[i] = parseInt(string.slice(i * 2, i * 2 + 2), 16);
+		}
+		return encoded;
+	}
+};
+
 function loadOptions() {
 	return new Promise(function(resolve, reject) {
 		var crypt = localStorage.getItem('options');
 		if (crypt) {
-			var encoded = new Uint8Array(crypt.length / 2); //new TextEncoder('utf8').encode(data);
-			for (var i = 0; i < encoded.length; ++i) {
-				encoded[i] = parseInt(crypt.slice(i * 2, i * 2 + 2), 16);
-			}
+			var encoded = stringCoder.encode(crypt);
 			decrypt(encoded).then(unpack).catch(function() {
 				parse({});
 			});
@@ -97,7 +113,7 @@ function loadOptions() {
 				} else if (option.type === 'string') {
 					value = String(value);
 				} else if (option.type === 'integer') {
-					value = value % 1;
+					value = Math.round(value);
 				} else if (option.type === 'number') {
 					value = +value;
 				}
@@ -113,14 +129,11 @@ function importOptions(encoded) {
 		decrypt(encoded).then(function(data) {
 			var stringData = new TextDecoder('utf8').decode(data);
 			data = JSON.parse(stringData);
-			if (Date.now() - data.date > 24*60*60*1000) {
-				reject('File is too old.');
+			if (!(Date.now() < data.expiryDate)) {
+				reject('File is expired.');
 				return;
 			}
-		    var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
-			for (var i = 0; i < encoded.length; ++i) {
-				decoded += ('0' + encoded[i].toString(16)).slice(-2);
-			}
+		    var decoded = stringCoder.decode(encoded)
 			localStorage.setItem('options', decoded);
 			resolve();
 		}).catch(function() {
@@ -130,7 +143,7 @@ function importOptions(encoded) {
 	});
 }
 
-function storeOptions(values) {
+function storeOptions(values, expiryDate) {
 	return new Promise(function(resolve, reject) {
 		loadOptions().then(function(old) {
 			var data = {}, changed = false;
@@ -146,7 +159,7 @@ function storeOptions(values) {
 					} else if (option.type === 'string') {
 						value = String(value);
 					} else if (option.type === 'integer') {
-						value = value % 1;
+						value = Math.round(value);
 					} else if (option.type === 'number') {
 						value = +value;
 					}
@@ -162,15 +175,14 @@ function storeOptions(values) {
 			var code = data.code;
 			var stringData = JSON.stringify({
 				date: Date.now(),
+				expiryDate: expiryDate || (Date.now() + 24*60*60*1000),
 				options: data
 			});
 			encrypt(new TextEncoder('utf8').encode(stringData)).then(function(encrypted) {
-			    var decoded = ''; //new TextDecoder('utf8').decode(new Uint8Array(encrypted));
-				for (var i = 0; i < encrypted.length; ++i) {
-					decoded += ('0' + encrypted[i].toString(16)).slice(-2);
-				}
+			    var decoded = stringCoder.decode(encrypted);
 				localStorage.setItem('options', decoded);
 				resolve({code: code, data: encrypted});
+				if (changed) stats.addTransient('options');
 			}).catch(function(err) {
 				reject(err);
 			});
@@ -473,12 +485,21 @@ try {
 	stats.events = JSON.parse(localStorage.getItem('events')) || [];
 } catch (e) {}
 
-stats.addEvent = function(type, time, value) {
-	console.log(type, time, value);
-	stats.addEvents([{type: type, time: time, value: value}]);
+
+stats.addTransient = function(type, time, value) {
+	stats.addEvents([{type: type, time: time, value: value}], 'transient');
 };
 
-stats.addEvents = function(events) {
+stats.addEvent = function(type, time, value) {
+	console.log(type, time, value);
+	stats.addEvents();
+};
+
+stats.addTransients = function(events) {
+	stats.addEvents(events, 'transient');
+};
+
+stats.addEvents = function(events, transient) {
 	var now = Date.now();
 	events = events.map(function(e) {
 		return {
@@ -487,13 +508,15 @@ stats.addEvents = function(events) {
 			value: e.value
 		};
 	});
-	events.forEach(function(e) {
-		stats.events.push(e);
-	});
-	stats.events.sort(function(a, b) {
-		return a.time - b.time;
-	});
-	localStorage.setItem('events', JSON.stringify(stats.events));
+	if (!transient) {
+		events.forEach(function(e) {
+			stats.events.push(e);
+		});
+		stats.events.sort(function(a, b) {
+			return a.time - b.time;
+		});
+		localStorage.setItem('events', JSON.stringify(stats.events));
+	}
 	if (stats.changes) {
 		events.forEach(function(e) {
 			stats.changes.push(e);

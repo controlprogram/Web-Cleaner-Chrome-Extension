@@ -57,7 +57,7 @@ function show_options() {
 		} else if (typeof opt[key] === 'boolean') {
 			q = '#' + key + '_checkbox';
 			a = 'checked';
-		} else if (typeof opt[key] === 'string' || typeof opt[key] === 'integer') {
+		} else if (typeof opt[key] === 'string' || typeof opt[key] === 'number') {
 			q = '#' + key;
 			a = 'value';
 		}
@@ -92,7 +92,7 @@ function save_and_update_background() {
 		} else if (typeof opt[key] === 'boolean') {
 			q = '#' + key + '_checkbox';
 			a = 'checked';
-		} else if (typeof opt[key] === 'string' || typeof opt[key] === 'integer') {
+		} else if (typeof opt[key] === 'string' || typeof opt[key] === 'number') {
 			q = '#' + key;
 			a = 'value';
 		}
@@ -105,6 +105,7 @@ function save_and_update_background() {
 			}
 		}
 	});
+	opt.password = password;
 	chrome.extension.getBackgroundPage().storeOptions(opt).then(function() {
 		load_page();
 	});
@@ -116,6 +117,11 @@ function load_page()
 	chrome.extension.getBackgroundPage().loadOptions().then(function(values) {
 		opt = values;
 		show_options();
+		if (!opt.password || opt.password === password) {
+			hideModal();
+		} else {
+			showModal('login');
+		}
 	});
 }
 
@@ -167,35 +173,7 @@ function save_button()
 	save_and_update_background();
 }
 
-function inport(e) {
-	e.preventDefault();
-	var file = document.createElement('input');
-	file.type = 'file';
-	file.accept = '.wcs';
-	file.addEventListener('change', function() {
-		var fr = new FileReader();
-		fr.addEventListener('load', function(data) {
-			chrome.extension.getBackgroundPage().importOptions(new Uint8Array(fr.result)).then(function() {
-				document.getElementById('password').value = password = '';
-				load_page();
-			}).catch(function(err) {
-				alert(err);
-			});
-		});
-		fr.readAsArrayBuffer(file.files[0]);
-	});
-	file.click();
-}
 
-function esport(e) {
-	chrome.extension.getBackgroundPage().storeOptions().then(function(result) {
-		var a = document.getElementById("export");
-		var blob = new Blob([result.data], {type: "octet/stream"});
-		var url = URL.createObjectURL(blob);
-		a.href = url;
-		a.download = result.code + '.wcs';
-	});
-}
 
 // These are the event handlers for the options page.
 
@@ -207,15 +185,30 @@ document.addEventListener('DOMContentLoaded', load_page);
 
 // This event handles what happens when the save button is clicked.
 document.getElementById("save_button").addEventListener('click', save_button);
-document.getElementById("import").addEventListener('click', inport);
-document.getElementById("export").addEventListener('mousedown', esport);
-
-document.getElementById("password").addEventListener('keyup', function() {
-	password = document.getElementById("password").value;
-	if (password === opt.password) {
-		show_options();
-	}
-}, false);
+$('#export').click(function() {
+	showModal('export');
+});$('#password').click(function() {
+	showModal('password');
+});
+$('#import').click(function(e) {
+	e.preventDefault();
+	var file = document.createElement('input');
+	file.type = 'file';
+	file.accept = '.wcs';
+	file.addEventListener('change', function() {
+		var fr = new FileReader();
+		fr.addEventListener('load', function(data) {
+			chrome.extension.getBackgroundPage().importOptions(new Uint8Array(fr.result)).then(function() {
+				password = '';
+				load_page();
+			}).catch(function(err) {
+				alert(err);
+			});
+		});
+		fr.readAsArrayBuffer(file.files[0]);
+	});
+	file.click();
+});
 
 [].forEach.call(document.getElementsByName('image_on'), function(radio) {
 	radio.addEventListener('change', function() {toggleWrapper('image', 'image_filter');});
@@ -228,3 +221,93 @@ document.getElementById("password").addEventListener('keyup', function() {
 [].forEach.call(document.getElementsByName('schedule_on'), function(radio) {
 	radio.addEventListener('change', function() {toggleWrapper('schedule', 'schedule');});
 });
+
+$('#modalBackground [data-form="login"] [data-role="password"]').on('keyup change', function() {
+	if (password !== opt.password) {
+		password = $(this).val();
+		if (password === opt.password) {
+			hideModal();
+			show_options();
+		}
+	}
+});
+
+$('#modalBackground [data-form="password"] [data-role="password"]').on('keydown', function(e) {
+	if (e.keyCode === 13) {
+		password = $('#modalBackground [data-form="password"] [data-role="password"]').val();
+		if (password !== opt.password) {
+			save_and_update_background();
+		}
+		hideModal();
+	}
+});
+$('#modalBackground [data-form="password"] [data-role="submit"]').on('click', function() {
+	password = $('#modalBackground [data-form="password"] [data-role="password"]').val();
+	if (password !== opt.password) {
+		save_and_update_background();
+	}
+	hideModal();
+});
+
+$('#modalBackground').on('click', function(e) {
+	if (this === e.target && password === opt.password) {
+		hideModal();
+	}
+});
+
+function showModal(form) {
+	var $form = $('#modalBackground > .modal[data-form="' + form + '"]');
+	if (!$form.is(':visible')) {
+		$('#modalBackground > .modal').not($form).hide();
+		$form.show();
+		if (form === 'login') {
+			$form.find('[data-role="code"]').text(opt.code);
+			$form.find('input[data-role="password"]').val('');
+			setTimeout(function() {
+				$form.find('input[data-role="password"]').focus();
+			}, 1);
+		} else if (form === 'password') {
+			$form.find('input[data-role="password"]').val(opt.password);
+			setTimeout(function() {
+				$form.find('input[data-role="password"]').focus().select();
+			}, 1);
+		} else if (form === 'export') {
+			pika.setDate(new Date());
+		}
+	}
+	$('#modalBackground').show();
+}
+
+function hideModal() {
+	$('#modalBackground').hide();
+}
+
+var pika = new Pikaday({
+	firstDay: 1,
+	minDate: new Date(),
+	maxDate: new Date(2020, 12, 31),
+	yearRange: [2000,2020],
+	onSelect: function() {
+		var expiry = this.getDate();
+		expiry.setHours(0);
+		expiry.setMinutes(0);
+		expiry.setSeconds(0);
+		expiry.setMilliseconds(0);
+		expiry = expiry.setDate(expiry.getDate() + 1);
+		chrome.extension.getBackgroundPage().storeOptions(null, expiry).then(function(result) {
+			var $a = $('#modalBackground [data-form="export"] [data-role="link"] a');
+			if ($a.length) {
+				URL.revokeObjectURL($a.eq(0).attr('href'));
+			} else {
+				$a = $('<a>');
+				$('#modalBackground [data-form="export"] [data-role="link"]').append($a);
+			}
+			$a.attr('href', URL.createObjectURL(new Blob([result.data], {type: "octet/stream"})));
+			$a.attr('download', result.code + '.wcs');
+			$a.text(result.code + '.wcs');
+			$('[data-form="export"] label[for="link"]').show();
+		});
+	}
+});
+$('#modalBackground [data-form="export"] [data-role="expiry-date"]').replaceWith(pika.el);
+

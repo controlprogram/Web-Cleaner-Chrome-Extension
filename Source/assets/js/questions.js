@@ -20,6 +20,9 @@ var questions = {
 		}
 	},
 	'feel': {
+		before: function() {
+			return false;
+		},
 		after: function(answer) {
 			stats.addEvent('feeled', Date.now(), answer);
 		}
