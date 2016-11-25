@@ -492,7 +492,7 @@ stats.addTransient = function(type, time, value) {
 
 stats.addEvent = function(type, time, value) {
 	console.log(type, time, value);
-	stats.addEvents();
+	stats.addEvents([{type: type, time: time, value: value}]);
 };
 
 stats.addTransients = function(events) {
