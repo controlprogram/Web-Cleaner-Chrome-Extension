@@ -1083,7 +1083,7 @@ function analyzeCanvas(canvas, callback)
 	var strategies;
 	var conjunction;
 
-	if (options.two_pass) {
+	if (options.image_two_pass) {
 		strategies = [simple, nudejs];
 		conjunction = 'or';
 	} else {

@@ -12,6 +12,11 @@
 #saved_note {
     margin: 0px 0px 0px 15px
 }
+#settings_links {
+	float:right;
+	margin-right: 15px;
+	color: #B37652
+}
 #scanner_sensitivity {
     margin-top: 5px;
     margin-left: 18px;
@@ -296,13 +301,23 @@ body {
     display: none;
     position: relative;
     top: 50%;
-    margin-top: -82.5px
+    margin-top: -120px
+}
+[data-form="login"] .modal-windowBar {
+    width: 335px;
+}
+[data-form="export"] .modal-windowBar {
+    width: 231px;
+}
+[data-form="password"] .modal-windowBar {
+    width: 160px;
 }
 .modal-windowBar {
-    width: 185px;
-    height: 32px;
+    height: 22px;
     margin: 0 auto;
     position: relative;
+	-webkit-transform: rotate(2deg);
+	-webkit-user-select: none;
     color: #A3A2A2
 }
 .modal-windowBar p {
@@ -310,7 +325,7 @@ body {
     margin: 0 0 20px;
     padding: 5px;
     font-size: 18px;
-    border-right: 1px solid #CCCCCC
+    border-right: 1px solid #9A9A9A
 }
 .modalContainer {
     padding: 1px;
@@ -319,26 +334,31 @@ body {
     text-align: center
 }
 .modalContent {
-    position: relative
+    position: relative;
+	padding: 0 10px 20px 10px
 }
 .modalContent .button, .modalContent .button-disabled {
     display: block;
     margin: 5px auto
 }
-.fillin_blank {
-    margin-top: 5px;
-    border-width: 0px 0px 2px 0px;
-    border-color: #8BADE4;
-    background-color: #FCFCFC;
-    text-align: center;
-    color: #3F99C0;
-    font-size: 18px;
-    font-family: Lucida Sans Unicode
+label[for=password] {
+	font-size: 14px;
+	font-weight: bold;
+	color: rgba(0,0,0,.8)
 }
 [data-form="login"] [data-role="code"] {
     font-size: 10em;
+    margin: 0;
+	color: rgba(0,0,0,.8)
 }
-
+[data-role="password"] {
+	padding: 6px 4px 4px 8px;
+    border-width: 0px 0px 2px 0px;
+    border-color: #8BADE4
+}
+[data-form="password"] [data-role="password"] {
+	margin: 25px 0 5px 0
+}
 [data-form="export"] label[for="link"] {
     display: none;
 }

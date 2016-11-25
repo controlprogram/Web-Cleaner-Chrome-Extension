@@ -308,7 +308,7 @@ chrome.extension.onMessage.addListener(
 		//window.alert("No need for loading options object."); // Used for testing. Test Case 002. same for line below
 		//window.alert("Options object: " + "\ntext_on " + options.text_on + "\n" + "blocked_words " + options.blocked_words + "\n" + "whitelisted_websites " + options.whitelisted_websites + '\n' + "replace_sentence " + options.replace_sentence + '\n' + "block_paragraph " + options.block_paragraph + '\n' + "block_webpage " + options.block_webpage + '\n' + "num_paragraph " + options.num_for_paragraph + '\n'+ "num_webpage " + options.num_for_webpage + '\n' + "image_on " + options.image_on + '\n' + "image_blocked_words " + options.image_blocked_words + '\n' + "image_whitelist " + options.image_whitelisted_websites + '\n'+ "image_scanner " + options.image_scanner + '\n' + "scanner_sensitivity " + options.scanner_sensitivity);  //Used for testing.
 		loadOptions().then(function(values) {
-			sendResponse({farewell: values});
+			sendResponse({farewell: values, templates: templates});
 		}).catch(function(err) {
 			console.log(err);
 		});

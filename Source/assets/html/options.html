@@ -17,20 +17,22 @@
 		<div id="logo">
 			<h2 style="margin: 0">Web Cleaner</h2>
 		</div><!-- '#logo' div -->
-		<div class="container">
+		<div id="settings_stuff" style="display:none;" class="container">
 			<!-- 
 				 # SAVED NOTE #
 								-->
 			<div id="saved_note_outer">
 				<span id="saved_note"></span>
-				<a id="import" href="#">Import</a>
-				<a id="export" href="#">Export</a>
-				<a id="password" href="#">Change Password</a>
+				<div id="settings_links">
+						<a id="import" href="#">Import</a> |
+						<a id="export" href="#">Export</a> | 
+						<a id="password" href="#">Change Password</a>
+				</div>
 			</div>
 			
 			<!-- Ensures the container div wraps around the two floating divs -->
 			<div class="clear"></div>
-			<div id="settings_stuff" style="display:none;">
+			<div>
 			<!-- 
 				 # IMAGE FILTER #
 								  -->
@@ -41,7 +43,7 @@
 					<input type="radio" name="image_on" value="true">On
 					<input type="radio" name="image_on" value="false">Off
 				</form><!-- '#image_active' form -->
-				<br>
+				<br />
 			<div id="image_filter_wrapper" class="wrapper">
 				<!--
 					 @ SCANNER SENSITIVITY @
@@ -67,7 +69,7 @@
 					<form id="image_replacement">
 						<div style="float: right">
 							<input type="radio" name="image_replacement" value="pixels"> Pixelate
-							<br>
+							<br />
 							<input type="radio" name="image_replacement" value="logo"> Logo
 						</div>
 					</form><!-- '#image_replacement' form -->
@@ -102,12 +104,12 @@
 				<div class="paragraph">
 					<p class="text">The Image Filter scans image names and search tags for any of the 'Blocked Filenames'. If a match is found, the image will be replaced. Partial word matches are detected. If a listed word appears as part of a word that is in the image name or search tag, then the image will still be blocked. In other words, if you listed 'porn' as a blocked word, then the word 'pornography' will also be checked, since the word 'porn' appears in 'pornography'.</p>
 				</div><!-- '.paragraph' div for Image Filter -->
-				<br>
+				<br />
 				<div id="image_text_boxes">
 					<table>
 						<tr>
-							<th><input type="checkbox" id="image_block_words_checkbox" name="image_block_words">Blocked Filenames<br><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
-							<th>Website Whitelist<br><span class="sub_text">(format: www.foxnews.com)</span></th>
+							<th><input type="checkbox" id="image_block_words_checkbox" name="image_block_words">Blocked Filenames<br /><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
+							<th>Website Whitelist<br /><span class="sub_text">(format: www.foxnews.com)</span></th>
 						</tr>
 						<tr>
 							<td><textarea id="image_blocked_words" rows="6"></textarea></td>
@@ -139,7 +141,7 @@
 				<div id="replace_word/sentence/paragraph">
 					<form id="word_or_sentence">
 						<input type="radio" name="WordOrSentence" value="word"> Only replace the blocked word.
-						<br>
+						<br />
 						<input type="radio" name="WordOrSentence" value="sentence"> Replace the entire sentence containing the blocked word.
 					</form><!-- 'word_or_sentence' form 
 -->
@@ -147,19 +149,19 @@
 				<!-- The radio button form that controls when a paragraph is replaced or a webpage is blocked. -->
 				<form id="block_page/paragraph">
 					<input type="checkbox" id="block_paragraph_checkbox" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="number_for_paragraph" maxlength="3" size="1"> or more bad words.
-					<br>
+					<br />
 					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1"> or more bad words.
 				</form><!-- '#block_page/paragraph' form -->
 				<!-- Text Filter explanation -->
 				<div class="paragraph">
 					<p class="text">The Text Filter searches for any 'Bad Words' listed below. When it finds one of these words, it will replace the entire word with '*'s. As with the Image Filter, partial word matches are detected. If a listed word appears as part of a whole word, then the word will still be replaced.</p>
 				</div><!-- '.paragraph' div for Text Filter -->
-				<br>
+				<br />
 				<div id="text_boxes">
 					<table>
 						<tr>
-							<th>Bad Words<br><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
-							<th>Website Whitelist<br><span class="sub_text">(format: www.foxnews.com)</span></th>
+							<th>Bad Words<br /><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
+							<th>Website Whitelist<br /><span class="sub_text">(format: www.foxnews.com)</span></th>
 						</tr>
 						<tr>
 							<td><textarea id="blocked_words" rows="6"></textarea></td>
@@ -233,7 +235,7 @@
 				</div>
 				<div id="hoursgrid" class="clearfix">
 					<div class="day" style="margin-left: -40px; height: 51px">
-							<ul class="clearfix"><li class="unset">12</li><li class="unset">1</li><li class="unset">2</li><li class="unset">3</li><li class="unset">4</li><li class="unset">5</li><li class="unset">6</li><li class="unset">7</li><li class="unset">8</li><li class="unset">9</li><li class="unset">10</li><li class="unset">11<br></li><li class="middle"></li><li class="unset">12</li><li class="unset">1</li><li class="unset">2</li><li class="unset">3</li><li class="unset">4</li><li class="unset">5</li><li class="unset">6</li><li class="unset">7</li><li class="unset">8</li><li class="unset">9</li><li class="unset">10</li><li class="unset">11</li>
+							<ul class="clearfix"><li class="unset">12</li><li class="unset">1</li><li class="unset">2</li><li class="unset">3</li><li class="unset">4</li><li class="unset">5</li><li class="unset">6</li><li class="unset">7</li><li class="unset">8</li><li class="unset">9</li><li class="unset">10</li><li class="unset">11<br /></li><li class="middle"></li><li class="unset">12</li><li class="unset">1</li><li class="unset">2</li><li class="unset">3</li><li class="unset">4</li><li class="unset">5</li><li class="unset">6</li><li class="unset">7</li><li class="unset">8</li><li class="unset">9</li><li class="unset">10</li><li class="unset">11</li>
 							<span class="ampmlabel">AM</span><span class="ampmlabel">PM</span>
 							</ul>
 					</div>
@@ -287,7 +289,7 @@
 					<div class="modalContent">
 						<label for="expiry-date">Expiration date:</label>
 						<input name="expiry-date" type="text" data-type="date" data-role="expiry-date" />
-						<br>
+						<br />
 						<label for="link">Link:</label> <span data-role="link"></span>
 					</div>
 				</div>
