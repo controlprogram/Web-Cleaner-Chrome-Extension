@@ -197,15 +197,19 @@
 
       drawDoughnutText(animationDecimal, segmentTotal);
 
+      if (!segmentTotal) {
+        segmentTotal = Infinity;
+      }
+
       $pathGroup.attr("opacity", animationDecimal);
-if (segmentTotal) {
+
       //If data have only one value, we draw hollow circle(#1).
       if (data.length === 1 && (4.7122 < (rotateAnimation * ((data[0].value / segmentTotal) * (PI * 2)) + startRadius))) {
         $paths[0].attr("d", getHollowCirclePath(doughnutRadius, cutoutRadius));
         return;
       }
       for (var i = 0, len = data.length; i < len; i++) {
-        var segmentAngle = rotateAnimation * ((data[i].value / segmentTotal) * (PI * 2)),
+        var segmentAngle = rotateAnimation * ((data[i].value / segmentTotal) * (PI * 2))*0.99999,
             endRadius = startRadius + segmentAngle,
             largeArc = ((endRadius - startRadius) % (PI * 2)) > PI ? 1 : 0,
             startX = centerX + cos(startRadius) * doughnutRadius,
@@ -223,10 +227,10 @@ if (segmentTotal) {
           'A', cutoutRadius, cutoutRadius, 0, largeArc, 0, endX2, endY2,//Draw inner arc path
           'Z'//Cloth path
         ];
+        console.log(startRadius, endRadius);
         $paths[i].attr("d", cmd.join(' '));
         startRadius += segmentAngle;
       }
-}
     }
     function drawDoughnutText(animationDecimal, segmentTotal) {
       $summaryNumber
