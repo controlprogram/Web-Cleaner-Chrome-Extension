@@ -198,7 +198,7 @@
       drawDoughnutText(animationDecimal, segmentTotal);
 
       $pathGroup.attr("opacity", animationDecimal);
-
+if (segmentTotal) {
       //If data have only one value, we draw hollow circle(#1).
       if (data.length === 1 && (4.7122 < (rotateAnimation * ((data[0].value / segmentTotal) * (PI * 2)) + startRadius))) {
         $paths[0].attr("d", getHollowCirclePath(doughnutRadius, cutoutRadius));
@@ -226,6 +226,7 @@
         $paths[i].attr("d", cmd.join(' '));
         startRadius += segmentAngle;
       }
+}
     }
     function drawDoughnutText(animationDecimal, segmentTotal) {
       $summaryNumber
