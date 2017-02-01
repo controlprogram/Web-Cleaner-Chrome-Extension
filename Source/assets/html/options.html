@@ -11,40 +11,92 @@
 		<meta charset="utf-8" />
 		<title>Options</title>
 		<link rel="stylesheet" href="../css/pikaday.css" />
+		<link rel="stylesheet" href="../css/bootstrap.min.css" />
 		<link rel="stylesheet" href="../css/options.css" />
 	</head>
 	<body>
 		<div id="logo">
-			<h2 style="margin: 0">Web Cleaner</h2>
+			<h2 style="margin: 0;-webkit-user-select: none">Web Cleaner</h2>
 		</div><!-- '#logo' div -->
-		<div id="settings_stuff" style="display:none;" class="container">
+		<div id="settings_stuff" style="display:none" class="container">
 			<!-- 
 				 # SAVED NOTE #
 								-->
 			<div id="saved_note_outer">
-				<span id="saved_note"></span>
+				<span class="glyphicon glyphicon-qrcode" aria-hidden="true" title="Code"></span><span style="-webkit-user-select: none"> </span><span id="saved_note"></span>
 				<div id="settings_links">
-						<a id="import" href="#">Import</a> |
-						<a id="export" href="#">Export</a> | 
-						<a id="password" href="#">Change Password</a>
+						<a id="import" href="#"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span> Import</a> |
+						<a id="export" href="#"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Export</a> | 
+						<a id="password" href="#"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Change Password</a>
 				</div>
 			</div>
 			
 			<!-- Ensures the container div wraps around the two floating divs -->
 			<div class="clear"></div>
-			<div>
+
+			<div id="toggles">
+				<div id="toggle_container" data-color="blue">
+					<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+					<span class="toggle_title">Image Filter</span>
+					
+					<form class="inline" id="image_active">
+						<div class="chkbox-toggle" data-color="blue" data-text="true" title="Turn the Image Filter ON/OFF">
+							<input id="image_on" type="checkbox" name="image_on">
+							<label for="image_on"><i></i></label>
+						</div>
+						<div style="display: none"><input type="radio" name="image_on" value="true">On
+						<input type="radio" name="image_on" value="false">Off</div>
+					</form><!-- '#image_active' form -->
+				</div>
+				<div id="toggle_container" data-color="blue">
+					<span class="glyphicon glyphicon-font" aria-hidden="true"></span>
+					<span class="toggle_title">Text Filter</span>
+					
+					<form class="inline" id="text_active">
+						<div class="chkbox-toggle" data-color="blue" data-text="true" title="Turn the Text Filter ON/OFF">
+							<input id="text_on" type="checkbox" name="text_on">
+							<label for="text_on"><i></i></label>
+						</div>
+						<div style="display: none"><input type="radio" name="text_on" value="true">On
+						<input type="radio" name="text_on" value="false">Off</div>
+					</form><!-- '#text_active' form -->
+				</div>
+				<div id="toggle_container" data-color="blue">
+					<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+					<span class="toggle_title">Schedule</span>
+					
+					<form class="inline" id="schedule_active">
+						<div class="chkbox-toggle" data-color="blue" data-text="true" title="Turn the Schedule ON/OFF">
+							<input id="schedule_on" type="checkbox" name="schedule_on">
+							<label for="schedule_on"><i></i></label>
+						</div>
+						<div style="display: none"><input type="radio" name="schedule_on" value="true">On
+						<input type="radio" name="schedule_on" value="false">Off</div>
+					</form><!-- '#schedule_active' form -->
+				</div>
+				<div id="toggle_container" data-color="pink">
+					<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+					<span class="toggle_title">Help / Tips</span>
+					
+					<form class="inline" id="tips_active">
+						<div class="chkbox-toggle" data-color="pink" data-text="true" title="Toggle Help / Tips">
+							<input id="tips_toggle" type="checkbox" name="tips_toggle">
+							<label for="tips_toggle"><i></i></label>
+						</div>
+					</form><!-- '#tips_active' form -->
+				</div>
+			</div>
+			
+			<!-- Ensures the toggle area div wraps around the header-->
+			<div class="clear"></div>
+			
 			<!-- 
 				 # IMAGE FILTER #
 								  -->
-			<h2 class="title">Image Filter</h2>
 			
-				<!-- The radio button form for turning the image filter on/off -->
-				<form class="inline" id="image_active">
-					<input type="radio" name="image_on" value="true">On
-					<input type="radio" name="image_on" value="false">Off
-				</form><!-- '#image_active' form -->
-				<br />
 			<div id="image_filter_wrapper" class="wrapper">
+				<h2 class="title">Image Filter</h2>
+				<br />
 				<!--
 					 @ SCANNER SENSITIVITY @
 											 -->
@@ -126,15 +178,9 @@
 			<!-- 
 				 # TEXT FILTER #
 								 -->
-			<h2 class="title">Text Filter</h2>
 			
-				<!-- The radio button form for turning the text filter on/off. -->
-				<form class="inline" id="text_active">
-					<input type="radio" name="text_on" value="true">On
-					<input type="radio" name="text_on" value="false">Off
-				</form><!-- '#text_active' form -->
-
 			<div id="text_filter_wrapper" class="wrapper">
+				<h2 class="title">Text Filter</h2>
 
 <!--
 				<!-- The radio button form that controls wether or not the word or the sentence is replaced.
@@ -152,10 +198,6 @@
 					<br />
 					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1"> or more bad words.
 				</form><!-- '#block_page/paragraph' form -->
-				<!-- Text Filter explanation -->
-				<div class="paragraph">
-					<p class="text">The Text Filter searches for any 'Bad Words' listed below. When it finds one of these words, it will replace the entire word with '*'s. As with the Image Filter, partial word matches are detected. If a listed word appears as part of a whole word, then the word will still be replaced.</p>
-				</div><!-- '.paragraph' div for Text Filter -->
 				<br />
 				<div id="text_boxes">
 					<table>
@@ -175,16 +217,10 @@
 			<!-- 
 				 # SCHEDULE #
 								 -->
-			<h2 class="title">Schedule</h2>
 			
-				<!-- The radio button form for turning the schedule on/off. -->
-				<form class="inline" id="schedule_active">
-					<input type="radio" name="schedule_on" value="true">On
-					<input type="radio" name="schedule_on" value="false">Off
-				</form><!-- '#schedule_active' form -->
-
 			<div id="schedule_wrapper" class="wrapper">		
-
+				<h2 class="title">Schedule</h2>
+			
 				<div id="legend">
 					<ul class="legend">
 							<div id="legendlabel">LEGEND</div>
@@ -245,7 +281,7 @@
 			<!-- 
 				 # SAVE SETTINGS #
 								   -->
-			<div id="buttons" style="float: right;">
+			<div id="buttons" style="float: right">
 
 				<!-- The button form for saving Web-Cleaner settings. -->
 				<form>
@@ -255,7 +291,6 @@
 					<input id="save_button" type="button" value="Save">
 				</form><!-- '#save_button' form -->
 			</div><!-- '#buttons' div -->
-			</div>
 		</div><!-- '#container' div -->
 		<div id="modalBackground">
 			<div class="modal" data-form="login">
@@ -276,7 +311,6 @@
 				<div class="container modalContainer">
 					<div class="modalContent">
 						<input type="text" data-type="text" data-role="password" />
-						<br />
 						<input type="button" data-role="submit" value="Save" />
 					</div>
 				</div>

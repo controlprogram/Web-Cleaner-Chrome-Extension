@@ -29,7 +29,7 @@ function showValue() {
 
 function show_options() {
 	if (password !== opt.password) {
-		document.getElementById('saved_note').innerHTML = 'Code: ' + opt.code;
+		document.getElementById('saved_note').innerHTML = opt.code;
 		document.getElementById('settings_stuff').style.display = 'none';
 		document.getElementById('save_button').style.display = 'none';
 		return;
@@ -39,7 +39,7 @@ function show_options() {
 		if (key === 'code') {
 			q = '#saved_note';
 			a = 'innerHTML';
-			v = 'Code: ' + opt[key];
+			v = opt[key];
 		} else if (key === 'image_replacement') {
 			if (opt[key]) {
 				q = '#image_replacement [value="' + opt[key] + '"]';

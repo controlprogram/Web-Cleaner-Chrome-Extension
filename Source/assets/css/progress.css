@@ -13,7 +13,7 @@
 #main-windowBar {
 	width: 848px;
     height: 32px;
-    position: relative;
+    position: relative
 }
 #countdown {
     margin-left: 25px
@@ -24,9 +24,7 @@
     display: inline-block;
     font-size: 18px
 }
-#countdown > p:last-child {
-    padding-left: 0;
-}
+#countdown > p:last-child { padding-left: 0 }
 #days { background-color: #6A98AF }
 #hours { background-color: #77ABBF }
 #minutes { background-color: #53C6D6 }
@@ -54,11 +52,11 @@
 }
 #mainContainer {
     width: 850px;
-    height: 815px;
+    height: 815px
 }
 .cal-heatmap-container {
     margin-bottom: -10px;
-    padding-top: 5px;
+    padding-top: 5px
 }
 #calendar-today,
 #calendar-hl {
@@ -69,7 +67,7 @@
 	background-color: #777777;
 	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 	font-size: 8px;
-	font-weight: bold;
+	font-weight: bold
 }
 #calendar-today {
 	border: 2px solid lime;
@@ -85,13 +83,13 @@
     position: relative;
     border-right: 1px solid #DBDBDB;
     top: 15px;
-    display: inline-block;
+    display: inline-block
 }
 .reportHolder {
     height: 68.6%;
     width: 64%;
     float: right;
-    margin: -10px 0 0 0;
+    margin: -10px 0 0 0
 }
 .reportHolder ul, .reportChartHolder ul { list-style: none; }
 .reportHolder ul { margin: 0 -10px 0 0; }
@@ -101,7 +99,7 @@
     border-bottom: 1px solid #ccc;
     height: 45px;
     width: 92.5%;
-    position: relative;
+    position: relative
 }
 .reportHolder h3,
 .reportChartHolder h3 {
@@ -118,12 +116,12 @@
 .reportCommon_Left {
     margin: 4px 0 0 15px;
     width: 150px;
-    float: left;
+    float: left
 }
 .reportCommon_Right {
     margin: 4px 0 0 0;
     display: inline-block;
-    float: left;
+    float: left
 }
 .reportCommon span.hlBlue {
     font-weight: bold;
@@ -146,7 +144,7 @@
     border-top: 0.2em solid #4A4A4A;
     margin-right: 0.5em;
     font-size: 200%;
-    cursor: pointer;
+    cursor: pointer
 }
 .arrowLeft::before {
     margin: 100px 0 0 30px;
@@ -170,7 +168,7 @@ h3.bold { font-weight: bold }
     height: 14px;
     border: none;
     top: 5px;
-    margin-bottom: 30px;
+    margin-bottom: 30px
 }
 .statsLeft h3,
 .statsRight h3 {
@@ -218,11 +216,11 @@ h3.bold { font-weight: bold }
     display: inline-block;
     margin-top: 10px;
     text-align: center;
-    color: #A3A2A2;
+    color: #A3A2A2
 }
 .reportFeelings .smileyContainer {
     cursor: pointer;
-    position: relative;
+    position: relative
 }
 div.happy,
 div.unhappy,
@@ -238,7 +236,7 @@ div.bored,
 div.hero {
     width: 16px;
     height: 16px;
-    zoom: 2;
+    zoom: 2
 }
 .reportFeelings div.happy,
 .reportFeelings div.unhappy,
@@ -255,7 +253,7 @@ div.hero {
     width: 16px;
     height: 16px;
     display: inline-block;
-    zoom: 2.5;
+    zoom: 2.5
 }
 .smileyContainer {
     width: 90px;
@@ -264,18 +262,18 @@ div.hero {
     background: #CCCCCC url(../img/gray_background.png) repeat scroll 0 0
 }
 .smileyContainer:hover { opacity: 0.65; }
-div.happy { background: url(../img/smilies.svg) 0px 0px; }
-div.unhappy { background: url(../img/smilies.svg) -51px 0px; }
-div.shocked { background: url(../img/smilies.svg) -68px 0px; }
-div.angry { background: url(../img/smilies.svg) 0px -17px; }
-div.upset { background: url(../img/smilies.svg) -51px -17px; }
-div.unsure { background: url(../img/smilies.svg) -102px 0px; }
-div.stressed { background: url(../img/smilies.svg) -85px 0px; }
-div.frustrated { background: url(../img/smilies.svg) -34px 0px; }
-div.turnedOn { background: url(../img/smilies.svg) -34px -34px; }
-div.addicted { background: url(../img/smilies.svg) -68px -34px; }
-div.bored { background: url(../img/smilies.svg) 0px -34px; }
-div.hero { background: url(../img/smilies.svg) -136px -17px; }
+div.happy { background: url(../img/smilies.svg) 0px 0px }
+div.unhappy { background: url(../img/smilies.svg) -51px 0px }
+div.shocked { background: url(../img/smilies.svg) -68px 0px }
+div.angry { background: url(../img/smilies.svg) 0px -17px }
+div.upset { background: url(../img/smilies.svg) -51px -17px }
+div.unsure { background: url(../img/smilies.svg) -102px 0px }
+div.stressed { background: url(../img/smilies.svg) -85px 0px }
+div.frustrated { background: url(../img/smilies.svg) -34px 0px }
+div.turnedOn { background: url(../img/smilies.svg) -34px -34px }
+div.addicted { background: url(../img/smilies.svg) -68px -34px }
+div.bored { background: url(../img/smilies.svg) 0px -34px }
+div.hero { background: url(../img/smilies.svg) -136px -17px }
 .c3 {
     width: 90%;
     height: 209px;
@@ -291,7 +289,7 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
     overflow: hidden;
     -webkit-transform: all .3s;
     transform: all .3s;
-    transition: width 0.8s;
+    transition: width 0.8s
 }
 .c3_col1:hover,
 .c3_col2:hover,
@@ -370,11 +368,9 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
 }
 .button:active {
 	position:relative;
-	top:1px;
+	top:1px
 }
-#questions {
-    margin-bottom: 30px;
-}
+#questions { margin-bottom: 30px }
 
 /**
  * Progress Bar
@@ -483,7 +479,7 @@ div.hero { background: url(../img/smilies.svg) -136px -17px; }
     height: 0;
     content: ' ';
     font-size: 0;
-    line-height: 0;
+    line-height: 0
 }
 @import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
 body {
@@ -567,14 +563,12 @@ g path:hover { opacity: .35 }
 	margin-top: 5px;
 	display: block
 }
-.liquidBubble {
-    margin: -60px 0 0 -40px
-}
+.liquidBubble { margin: -60px 0 0 -40px }
 .liquidBubble .green .outer,
 .liquidBubble .red .outer,
 .liquidBubble .blue .outer {
     position: relative;
-    border-radius: 50%;
+    border-radius: 50%
 }
 .liquidBubble .green .outer,
 .liquidBubble .red .outer,
@@ -590,7 +584,7 @@ g path:hover { opacity: .35 }
 .liquidBubble .red .outer,
 .liquidBubble .blue .outer {
     -webkit-transition: all 1s ease;
-    transition: all 1s ease;
+    transition: all 1s ease
 }
 .liquidBubble .green .outer .inner,
 .liquidBubble .red .outer .inner,
@@ -598,28 +592,22 @@ g path:hover { opacity: .35 }
     position: absolute;
     overflow: hidden;
     z-index: 2;
-    border-radius: 50%;
+    border-radius: 50%
 }
 .liquidBubble .green .outer .inner,
 .liquidBubble .red .outer .inner,
 .liquidBubble .blue .outer .inner {
     width: 105px;
-    height: 105px;
+    height: 105px
 }
-.liquidBubble .green .outer .inner {
-    border: 5px solid #146103;
-}
-.liquidBubble .red .outer .inner {
-    border: 5px solid #770202;
-}
-.liquidBubble .blue .outer .inner {
-    border: 5px solid #034361;
-}
+.liquidBubble .green .outer .inner { border: 5px solid #146103 }
+.liquidBubble .red .outer .inner { border: 5px solid #770202 }
+.liquidBubble .blue .outer .inner { border: 5px solid #034361 }
 .liquidBubble .green .outer .inner,
 .liquidBubble .red .outer .inner,
 .liquidBubble .blue .outer .inner {
     -webkit-transition: all 1s ease;
-    transition: all 1s ease;
+    transition: all 1s ease
 }
 .liquidBubble .green .outer .inner .water,
 .liquidBubble .red .outer .inner .water,
@@ -635,16 +623,14 @@ g path:hover { opacity: .35 }
     -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
     -webkit-animation-name: spin;
-    animation-name: spin;
+    animation-name: spin
 }
 .liquidBubble .green .outer .inner .water,
 .liquidBubble .red .outer .inner .water,
 .liquidBubble .blue .outer .inner .water {
-    top: 25%;
+    top: 25%
 }
-.liquidBubble .green .outer .inner .water {
-    background: rgba(83, 252, 83, 0.5);
-}
+.liquidBubble .green .outer .inner .water { background: rgba(83, 252, 83, 0.5) }
 .liquidBubble .green .outer .inner .water,
 .liquidBubble .red .outer .inner .water,
 .liquidBubble .blue .outer .inner .water {
@@ -655,11 +641,9 @@ g path:hover { opacity: .35 }
 .liquidBubble .red .outer .inner .water,
 .liquidBubble .blue .outer .inner .water {
     -webkit-animation-duration: 10s;
-    animation-duration: 10s;
+    animation-duration: 10s
 }
-.liquidBubble .green .outer .inner .water {
-    box-shadow: 0 0 20px #03BC03;
-}
+.liquidBubble .green .outer .inner .water { box-shadow: 0 0 20px #03BC03 }
 .liquidBubble .green .outer .inner .percent,
 .liquidBubble .red .outer .inner .percent,
 .liquidBubble .blue .outer .inner .percent {
@@ -669,61 +653,39 @@ g path:hover { opacity: .35 }
     width: 100%;
     height: 100%;
     font-weight: bold;
-    text-align: center;
+    text-align: center
 }
 .liquidBubble .green .outer .inner .percent,
 .liquidBubble .red .outer .inner .percent,
 .liquidBubble .blue .outer .inner .percent {
     line-height: 105px;
-    font-size: 45.3076923076923px;
+    font-size: 45.3076923076923px
 }
-.liquidBubble .green .outer .inner .percent {
-    color: #03c603;
-}
-.liquidBubble .green .outer .inner .percent {
-    text-shadow: 0 0 10px #029502;
-}
+.liquidBubble .green .outer .inner .percent { color: #03c603 }
+.liquidBubble .green .outer .inner .percent { text-shadow: 0 0 10px #029502 }
 .liquidBubble .green .outer .inner .percent,
 .liquidBubble .red .outer .inner .percent,
 .liquidBubble .blue .outer .inner .percent {
     -webkit-transition: all 1s ease;
-    transition: all 1s ease;
+    transition: all 1s ease
 }
-.red {
-    margin-top: 15px;
-}
+.red { margin-top: 15px }
 .liquidBubble .red .outer {
     box-shadow: 0 0 20px #7A0B0B;
     background-color: #1A1A1A
 }
-.liquidBubble .red .outer .inner .water {
-    background: rgba(237, 59, 59, 0.5);
-}
-.liquidBubble .red .outer .inner .water {
-    box-shadow: 0 0 20px #9B0E0E;
-}
-.liquidBubble .red .outer .inner .percent {
-    color: #A30F0F;
-}
-.liquidBubble .red .outer .inner .percent {
-    text-shadow: 0 0 10px #7A0B0B;
-}
+.liquidBubble .red .outer .inner .water { background: rgba(237, 59, 59, 0.5) }
+.liquidBubble .red .outer .inner .water { box-shadow: 0 0 20px #9B0E0E }
+.liquidBubble .red .outer .inner .percent { color: #A30F0F }
+.liquidBubble .red .outer .inner .percent { text-shadow: 0 0 10px #7A0B0B }
 .liquidBubble .blue .outer {
     box-shadow: 0 0 20px #0B477A;
     background-color: #1A1A1A
 }
-.liquidBubble .blue .outer .inner .water {
-    background: rgba(59, 147, 237, 0.5);
-}
-.liquidBubble .blue .outer .inner .water {
-    box-shadow: 0 0 20px #0B477A;
-}
-.liquidBubble .blue .outer .inner .percent {
-    color: #0F50A3;
-}
-.liquidBubble .blue .outer .inner .percent {
-    text-shadow: 0 0 10px #0B477A;
-}
+.liquidBubble .blue .outer .inner .water { background: rgba(59, 147, 237, 0.5) }
+.liquidBubble .blue .outer .inner .water { box-shadow: 0 0 20px #0B477A }
+.liquidBubble .blue .outer .inner .percent { color: #0F50A3 }
+.liquidBubble .blue .outer .inner .percent { text-shadow: 0 0 10px #0B477A }
 @-webkit-keyframes spin {
     from {
         -webkit-transform: rotate(0deg);
@@ -752,13 +714,13 @@ g path:hover { opacity: .35 }
 .ticket-pages {
     overflow: hidden;
     white-space: nowrap;
-    position: relative;
+    position: relative
 }
 
 .ticket-page {
     margin: 10px 0 0 10px;
     white-space: normal;
-    display: inline-block;
+    display: inline-block
 }
 
 /**
@@ -806,6 +768,29 @@ g path:hover { opacity: .35 }
     display: block;
     margin: 5px auto
 }
+
+#steps-bar {
+	display: inline-block;
+	margin-top: -105.5px;
+	width: 100%;
+	height: 375px;
+	font-size: 14px;
+	background-color: #FBD979
+}
+#steps-title {
+	margin: 10px 10px 5px 10px;
+	padding: 3px;
+	text-align: center;
+	color: #FCAEC3;
+	background-color: #190C0F;
+	font-weight: bold
+}
+#steps #step {
+	margin-left: 15px;
+	width: 205px;
+	display: inline-block;
+}
+#step ol li { margin-left: -10px }
 .fillin_blank {
 	margin-top: 5px;
     border-width: 0px 0px 2px 0px;
