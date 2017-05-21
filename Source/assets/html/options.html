@@ -22,8 +22,8 @@
 			<!-- 
 				 # SAVED NOTE #
 								-->
-			<div id="saved_note_outer">
-				<span class="glyphicon glyphicon-qrcode" aria-hidden="true" title="Code"></span><span style="-webkit-user-select: none"> </span><span id="saved_note"></span>
+			<div id="code_outer">
+				<span class="glyphicon glyphicon-qrcode" aria-hidden="true" title="Code"></span><span style="-webkit-user-select: none"> </span><span id="code"></span>
 				<div id="settings_links">
 						<a id="import" href="#"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span> Import</a> |
 						<a id="export" href="#"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Export</a> | 
@@ -44,8 +44,6 @@
 							<input id="image_on" type="checkbox" name="image_on">
 							<label for="image_on"><i></i></label>
 						</div>
-						<div style="display: none"><input type="radio" name="image_on" value="true">On
-						<input type="radio" name="image_on" value="false">Off</div>
 					</form><!-- '#image_active' form -->
 				</div>
 				<div id="toggle_container" data-color="blue">
@@ -57,8 +55,6 @@
 							<input id="text_on" type="checkbox" name="text_on">
 							<label for="text_on"><i></i></label>
 						</div>
-						<div style="display: none"><input type="radio" name="text_on" value="true">On
-						<input type="radio" name="text_on" value="false">Off</div>
 					</form><!-- '#text_active' form -->
 				</div>
 				<div id="toggle_container" data-color="blue">
@@ -70,8 +66,6 @@
 							<input id="schedule_on" type="checkbox" name="schedule_on">
 							<label for="schedule_on"><i></i></label>
 						</div>
-						<div style="display: none"><input type="radio" name="schedule_on" value="true">On
-						<input type="radio" name="schedule_on" value="false">Off</div>
 					</form><!-- '#schedule_active' form -->
 				</div>
 				<div id="toggle_container" data-color="pink">
@@ -80,8 +74,8 @@
 					
 					<form class="inline" id="tips_active">
 						<div class="chkbox-toggle" data-color="pink" data-text="true" title="Toggle Help / Tips">
-							<input id="tips_toggle" type="checkbox" name="tips_toggle">
-							<label for="tips_toggle"><i></i></label>
+							<input id="tips_on" type="checkbox" name="tips_on">
+							<label for="tips_on"><i></i></label>
 						</div>
 					</form><!-- '#tips_active' form -->
 				</div>
@@ -102,13 +96,13 @@
 											 -->
 				<div id="image_scanner_box">
 					<!-- The checkbox form that indicates if the image scanner is on or off. -->
-					<form id="image_scanner">
-						<input type="checkbox" id="image_scanner_checkbox" value="true"> Scan Images for at least...
+					<form id="image_scanner_form">
+						<input type="checkbox" id="image_scanner" name="image_scanner" value="true"> Scan Images for at least...
 					</form><!-- '#image_scanner' form -->
 					
 					<!-- The range form for adjusting the image scanner sensitivity. -->
 					<form class="inline">
-						<input id="scanner_sensitivity" class="range" type="range" min="0" max="100" step="1">
+						<input id="scanner_sensitivity" name="scanner_sensitivity" class="range" type="range" min="0" max="100" step="1">
 						<span id="range2"></span>
 					</form><!-- '#scanner_sensitivity' form -->
 				</div><!-- '#image_scanner_box' div -->
@@ -118,7 +112,7 @@
 													-->
 				<div id="image_replacement_box">
 					<!-- The radio button form for selecting the replacement image. -->
-					<form id="image_replacement">
+					<form id="image_replacement_form">
 						<div style="float: right">
 							<input type="radio" name="image_replacement" value="pixels"> Pixelate
 							<br />
@@ -132,18 +126,18 @@
 												-->
 				<div id="image_settings_box">
 					<!-- The checkbox form that indicates if background images are scanned. -->
-					<form id="image_background">
-						<input type="checkbox" id="image_background_checkbox" name="image_background_checkbox">Background Images
+					<form id="image_background_form">
+						<input type="checkbox" id="image_background" name="image_background">Background Images
 					</form><!-- '#image_background' form -->
 
 					<!-- The checkbox form that indicates if inital blur is on or off. -->
-					<form id="image_blurring">
-						<input type="checkbox" id="image_blurring_checkbox" name="image_blurring_checkbox">Initial Blurring
+					<form id="image_blurring_form">
+						<input type="checkbox" id="image_blurring" name="image_blurring">Initial Blurring
 					</form><!-- '#image_blurring' form -->
 					
 					<!-- The checkbox form that indicates if 2-Pass Scanning is on or off. -->
-					<form id="image_two_pass">
-						<input type="checkbox" id="image_two_pass_checkbox" name="image_two_pass_checkbox">2-Pass Scanning
+					<form id="image_two_pass_form">
+						<input type="checkbox" id="image_two_pass" name="image_two_pass">2-Pass Scanning
 					</form><!-- '#image_two-pass' form -->
 				</div><!-- '#image_settings_box' div -->
 				
@@ -160,7 +154,7 @@
 				<div id="image_text_boxes">
 					<table>
 						<tr>
-							<th><input type="checkbox" id="image_block_words_checkbox" name="image_block_words">Blocked Filenames<br /><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
+							<th><input type="checkbox" id="image_block_words" name="image_block_words">Blocked Filenames<br /><span class="sub_text">(Partial matching of words, <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
 							<th>Website Whitelist<br /><span class="sub_text">(format: www.foxnews.com)</span></th>
 						</tr>
 						<tr>
@@ -182,21 +176,21 @@
 			<div id="text_filter_wrapper" class="wrapper">
 				<h2 class="title">Text Filter</h2>
 
-<!--
-				<!-- The radio button form that controls wether or not the word or the sentence is replaced.
-				<div id="replace_word/sentence/paragraph">
-					<form id="word_or_sentence">
+
+				<!-- The radio button form that controls wether or not the word or the sentence is replaced. -->
+				<div style="display:none" id="replace_word/sentence/paragraph">
+					<form id="word_or_sentence_form">
 						<input type="radio" name="WordOrSentence" value="word"> Only replace the blocked word.
 						<br />
 						<input type="radio" name="WordOrSentence" value="sentence"> Replace the entire sentence containing the blocked word.
-					</form><!-- 'word_or_sentence' form 
--->
+					</form><!-- 'word_or_sentence' form  -->
+				</div>
 
 				<!-- The radio button form that controls when a paragraph is replaced or a webpage is blocked. -->
-				<form id="block_page/paragraph">
-					<input type="checkbox" id="block_paragraph_checkbox" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="number_for_paragraph" maxlength="3" size="1"> or more bad words.
+				<form id="block_page/paragraph_form">
+					<input type="checkbox" id="block_paragraph" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="num_for_paragraph" maxlength="3" size="1"> or more bad words.
 					<br />
-					<input type="checkbox" id="block_webpage_checkbox" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="number_for_webpage" maxlength="3" size="1"> or more bad words.
+					<input type="checkbox" id="block_webpage" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="num_for_webpage" maxlength="3" size="1"> or more bad words.
 				</form><!-- '#block_page/paragraph' form -->
 				<br />
 				<div id="text_boxes">
@@ -206,8 +200,8 @@
 							<th>Website Whitelist<br /><span class="sub_text">(format: www.foxnews.com)</span></th>
 						</tr>
 						<tr>
-							<td><textarea id="blocked_words" rows="6"></textarea></td>
-							<td><textarea id="whitelisted_websites" rows="6"></textarea></td>
+							<td><textarea id="blocked_words" name="blocked_words"rows="6"></textarea></td>
+							<td><textarea id="whitelisted_websites" name="whitelisted_websites" rows="6"></textarea></td>
 						</tr>
 					</table>
 					<p class="notice">NOTE: Only place one word / website per line without punctuation.</p>

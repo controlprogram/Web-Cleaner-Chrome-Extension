@@ -29,37 +29,30 @@ function showValue() {
 
 function show_options() {
 	if (password !== opt.password) {
-		document.getElementById('saved_note').innerHTML = opt.code;
+		document.getElementById('code').innerHTML = opt.code;
 		document.getElementById('settings_stuff').style.display = 'none';
 		document.getElementById('save_button').style.display = 'none';
 		return;
 	}
 	Object.keys(opt).forEach(function(key) {
 		var q, a, v = opt[key];
-		if (key === 'code') {
-			q = '#saved_note';
-			a = 'innerHTML';
-			v = opt[key];
-		} else if (key === 'image_replacement') {
-			if (opt[key]) {
-				q = '#image_replacement [value="' + opt[key] + '"]';
+		if (document.querySelector('[name="' + key + '"][type="radio"]')) {
+			if (v) {
+				q = '[name="' + key + '"][type="radio"][value="' + v + '"]';
 				a = 'checked';
+				v = true;
 			} else {
 				q = null;
 			}
-		} else if (key === 'replace_sentence') {
-			q = null;
-			//document.querySelector('[name="WordOrSentence"][value="' + (opt[key] ? 'sentence' : 'word') + '"]').checked = true;
-		} else if (key.slice(-3) === '_on') {
-			q = '[name="' + key + '"][value="' + opt[key] + '"]';
+		} else if (document.querySelector('[name="' + key + '"][type="checkbox"]')) {
+			q = '[name="' + key + '"][type="checkbox"]';
 			a = 'checked';
-			v = true;
-		} else if (typeof opt[key] === 'boolean') {
-			q = '#' + key + '_checkbox';
-			a = 'checked';
-		} else if (typeof opt[key] === 'string' || typeof opt[key] === 'number') {
-			q = '#' + key;
+		} else if (document.querySelector('[name="' + key + '"]')) {
+			q = '[name="' + key + '"]';
 			a = 'value';
+		} else {
+			q = '#' + key;
+			a = 'textContent';
 		}
 		if (q) {
 			var el = document.querySelector(q);
@@ -81,19 +74,14 @@ function show_options() {
 function save_and_update_background() {
 	Object.keys(opt).forEach(function(key) {
 		var q, a;
-		if (key === 'image_replacement') {
-			q = '#image_replacement :checked';
+		if (document.querySelector('[name="' + key + '"][type="radio"]')) {
+			q = '[name="' + key + '"][type="radio"]:checked';
 			a = 'value';
-		} else if (key === 'replace_sentence') {
-			q = null;
-		} else if (key.slice(-3) === '_on') {
-			q = '[name="' + key + '"][value="' + opt[key] + '"]';
+		} else if (document.querySelector('[name="' + key + '"][type="checkbox"]')) {
+			q = '[name="' + key + '"][type="checkbox"]';
 			a = 'checked';
-		} else if (typeof opt[key] === 'boolean') {
-			q = '#' + key + '_checkbox';
-			a = 'checked';
-		} else if (typeof opt[key] === 'string' || typeof opt[key] === 'number') {
-			q = '#' + key;
+		} else if (document.querySelector('[name="' + key + '"]')) {
+			q = '[name="' + key + '"]';
 			a = 'value';
 		}
 		if (q) {
@@ -156,7 +144,7 @@ function validateWordLists() {
 function toggleWrapper(radioOn, wrapper) {
 	var on = document.querySelector('[name=' + radioOn + '_on]:checked');
 	wrapper = document.getElementById(wrapper + '_wrapper');
-	if (on.value == "true") {
+	if (on && (on.type === 'checkbox' || on.value == "true")) {
 		wrapper.classList.remove('hidden');
 	} else {
 		wrapper.classList.add('hidden');
@@ -178,7 +166,7 @@ function save_button()
 // These are the event handlers for the options page.
 
 // This event is when the slider bar is changed. It will update the html value of the number that shows the value of the slider bar.
-document.getElementById("scanner_sensitivity").addEventListener('change', showValue);
+document.getElementById("scanner_sensitivity").addEventListener('input', showValue);
 
 // This event will load the options, populating all the fields, and checking the appropriate radio/checkbox buttons.
 document.addEventListener('DOMContentLoaded', load_page);

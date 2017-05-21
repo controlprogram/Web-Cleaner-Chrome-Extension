@@ -40,7 +40,7 @@ var options = [
 	{name: "text_on", type: 'boolean', default: true},
 	{name: "blocked_words", type: 'string', default: "sex\nbreast\nboob\npenis\ndick\nvagina\nfuck\ndamn\nhell\nmasturbate\nmasturbation\nhandjob\nblowjob\nfellatio\nnaked\nnude"},
 	{name: "whitelisted_websites", type: 'string', default: ""},
-	{name: "replace_sentence", type: 'boolean', default: false},
+	{name: "WordOrSentence", type: 'string', default: ""},
 	{name: "block_paragraph", type: 'boolean', default: false},
 	{name: "num_for_paragraph", type: 'integer', default: 3},
 	{name: "block_webpage", type: 'boolean', default: false},
@@ -57,6 +57,7 @@ var options = [
 	{name: "image_two_pass", type: 'boolean', default: true},
 	{name: "schedule_on", type: 'boolean', default: true},
 	//{name: "save_note", type: 'boolean', default: true}
+	{name: "tips_on", type: 'boolean', default: true},
 ], optionsByName = {};
 
 options.forEach(function(option) {

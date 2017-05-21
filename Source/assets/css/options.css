@@ -4,7 +4,7 @@
     margin: 10px;
     color: #FFFFFF
 }
-#saved_note_outer {
+#code_outer {
     width: 100%;
     padding: 8px 0px 8px 0px;
     background: #8BC1D9
@@ -12,11 +12,11 @@
 .glyphicon { font-size: 13px }
 .glyphicon-qrcode { margin: 0px 0px 0px 15px }
 .glyphicon-qrcode,
-#saved_note {
+#code {
     color: #F5F9FB;
     text-shadow: 1px 1px #626364
 }
-#saved_note { font-size: 14px }
+#code { font-size: 14px }
 #settings_links {
     float: right;
     margin-right: 15px;
