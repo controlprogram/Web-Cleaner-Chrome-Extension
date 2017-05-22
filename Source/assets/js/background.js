@@ -413,14 +413,18 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
-    if (info.status && optionsByName['image_on'].value && optionsByName['image_blurring'].value) {
-        chrome.tabs.insertCSS(tabId, {
-            file: "assets/css/blockimg.css",
-            runAt: "document_start",
-            allFrames: true,
-            matchAboutBlank: true
-        });
-    }
+	if (info.status) {
+		loadOptions().then(function(values) {
+			if (values['image_on'] && values['image_blurring']) {
+				chrome.tabs.insertCSS(tabId, {
+					file: "assets/css/blockimg.css",
+					runAt: "document_start",
+					allFrames: true,
+					matchAboutBlank: true
+				});
+			}
+		});
+	}
 });
 
 chrome.browserAction.onClicked.addListener(function(activeTab) {
