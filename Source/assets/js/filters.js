@@ -1038,7 +1038,7 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 
 // This function loads the data url as a down scaled(!) canvas.
 function getCanvasFromDataUrl(src, maxPixels, callback) {
-	if (!/^data:image\/[^,;]+;base64,[-+_/a-z0-9]+=?=?$/i.test(src)) {
+	if (!/^data:[^/]+\/[^,;]+;base64,[-+_/a-z0-9]+=?=?$/i.test(src)) {
 		// The url isn't an image or invalid.
 		callback(null);
 		return;
