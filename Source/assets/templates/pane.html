@@ -16,8 +16,8 @@
 	    opacity: 1;
 	    transition: visibility 0s 0s, opacity .5s 0s
 	}
-	#background {
-	    width: 150px;
+	:host(.scanning-complete) #close {
+	    background-color: #AEFF39
 	}
 	#header {
 	    background-color: #008BEB;
@@ -28,8 +28,9 @@
 	    font-family: "Lucida Sans Unicode"
 	}
 	#title {
-	    width: 135px;
-	    margin-left: 5px
+	    width: 155px;
+	    margin-left: 5px;
+	    font-size: 16px
 	}
 	#close {
 	    float: right;
@@ -38,11 +39,8 @@
 	    background-color: #39AEFF;
 	    font-size: 12px
 	}
-	:host(.scanning-complete) #close {
-	    background-color: #AEFF39
-	}
 	#background {
-	    /*width: 35px;*/
+	    width: 170px;
 	    opacity: 0.9;
 	    background-color: #0068B0;
 	    -webkit-transition: max-height 0.8s;
@@ -56,18 +54,14 @@
 	    font-family: "Lucida Sans Unicode"
 	}
 	.entry {
-	    width: 140px;
+	    width: 160px;
 	    height: 25px;
 	    line-height: 25px;
 	    color: #B0DFFF
 	}
-	.left {
-	    width: 75px
-	}
 	.right {
-	    width: 70px;
+	    width: 65px;
 	    float: right;
-	    text-align: right;
 	    overflow: hidden
 	}
 	a.close:link, a.close:active {
@@ -80,8 +74,8 @@
 	<div id="background">
 		<div id="list">
 			<div class="entry"><span id="images" class="left">0/0</span><span class="right">Images</span></div>
-			<div class="entry"><span id="blocked" class="entry">0</span><span class="right">Blocked</span></div>
-			<div class="entry"><span id="avg_pixels" class="entry">0%</span><span class="right">Avg. Pixels</span></div>
+			<div class="entry"><span id="blocked" class="left">0</span><span class="right">Blocked</span></div>
+			<div class="entry"><span id="avg_pixels" class="left">0%</span><span class="right">Avg. Pixels</span></div>
 		</div>
 	</div>
 </content>
