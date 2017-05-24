@@ -893,6 +893,8 @@ function processTask(task) {
 
 	// Check if image is already blocked.
 	else if (replacements.has(src)) {
+		// We already counted that one.
+		updateStats({images: {total: -1, processed: -1, blocked: -1}});
 		task.block = true;
 		finish();
 	}
