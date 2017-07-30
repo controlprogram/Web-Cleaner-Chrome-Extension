@@ -5,7 +5,8 @@
    "permissions": [
       "http://*/", "https://*/",
       "tabs",
-      "notifications"
+      "notifications",
+      "webNavigation"
    ],
    "version": "1.0.0",
    "background": {

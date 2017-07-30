@@ -412,15 +412,16 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 	} // end async if
 }
 
-chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
-	if (info.status) {
+chrome.webNavigation.onCommitted.addListener(function({tabId, frameId, url}) {
+	if (/^https?:\/\/|^about:/.test(url)) { // TODO: check which schemas work
 		loadOptions().then(function(values) {
-			if (values['image_on'] && values['image_blurring']) {
+			if (values['image_on'] && values['image_blurring'] && !isUrlWhitelisted(values.image_whitelisted_websites, url)) {
 				chrome.tabs.insertCSS(tabId, {
+					matchAboutBlank: true,
 					file: "assets/css/blockimg.css",
 					runAt: "document_start",
-					allFrames: true,
-					matchAboutBlank: true
+					frameId: frameId,
+					allFrames: false
 				});
 			}
 		});
@@ -430,6 +431,32 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
 chrome.browserAction.onClicked.addListener(function(activeTab) {
 	openProgress();
 });
+
+function isUrlWhitelisted(list, url) {
+	var re = /^([^:]*:\/\/)?([^\/#?:]*)(:[^\/#?])?(\/[^#?]*)?(\?[^#]*)?(#.*)?$/;
+	var m = re.exec(url);
+	if (!m) {
+		return false;
+	}
+	url = m[2] + (m[3] || ':') + (m[4] || '/') + (m[5] || '?') + (m[6] || '#');
+	var whitelisted = list.split('\n').some(function(item) {
+		var m = re.exec(item.trim());
+		var protocol = m[1], hostname = m[2], port = m[3], path = m[4], search = m[5], hash = m[6];
+		var regex =
+			'^' +
+			hostname.split('*').map(escape).join('[^:]*') + 
+			(!port ? ':\\d*' : port.split('*').map(escape).join('[^/]*')) +
+			(!path ? '/[^#?]*' : path.split('*').map(escape).join('[^#?]*')) +
+			(!search ? '\\?[^#]*' : search.split('*').map(escape).join('[^#]*')) +
+			(!hash ? '#.*' : hash.split('*').map(escape).join('.*')) +
+			'$';
+		return new RegExp(regex, 'img').test(url);
+		function escape(str) {
+			return str.replace(/[\[\]\{\}\(\)\+\?\.\\\^\$\|]/g, '\\$&');
+		}
+	});
+	return whitelisted;
+}
 
 
 

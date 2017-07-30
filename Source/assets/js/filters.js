@@ -141,9 +141,7 @@ function(response)
 	// Check to ensure that this website is not whitelisted on the text filter.
 	if(options.whitelisted_websites != null && options.whitelisted_websites != "") // When no whitelisted websites exist, and the options have not been saved yet, options.whitelisted_websites will have a null value, which cannot be split. This handles that eventuality.
 	{
-		var whitelist = new RegExp( '(\S*' + options.whitelisted_websites.split('\n').join('\S*|\S*') + '\S*)', 'igm');
-		var website = window.location.hostname;
-		if (!whitelist.test(website)) // the indexOf will return -1 if it does not find the hostname in the whitelist
+		if (!isUrlWhitelisted(options.whitelisted_websites, window.location.href)) // the indexOf will return -1 if it does not find the hostname in the whitelist
 		{
 			
 			//window.alert(options.whitelisted_websites.split('\n')); // used for testing.
@@ -197,17 +195,16 @@ function(response)
  if (options.image_on == true)
  {
   
-		var whitelisted = false;
+		var whitelisted;
 		
 		// Check if the webpage is whitelisted.
 		if(options.image_whitelisted_websites != null && options.image_whitelisted_websites != "") // When no whitelisted websites exist, and the options have not been saved yet, options.whitelisted_websites will have a null value, which cannot be split. This handles that eventuality.
 		{
-			var whitelist = new RegExp( '(' + options.image_whitelisted_websites.split('\n').join('|') + ')', 'igm');
-			var website = window.location.hostname;
-			if (whitelist.test(website)) 
-			{
-				whitelisted = true;
-			}
+			whitelisted = isUrlWhitelisted(options.image_whitelisted_websites, window.location.href);
+		}
+		else
+		{
+			whitelisted = false;
 		}
 
 		if (!whitelisted)
@@ -247,7 +244,31 @@ function(response)
 } // end load_filters function
 
 
-
+function isUrlWhitelisted(list, url) {
+	var re = /^([^:]*:\/\/)?([^\/#?:]*)(:[^\/#?])?(\/[^#?]*)?(\?[^#]*)?(#.*)?$/;
+	var m = re.exec(url);
+	if (!m) {
+		return false;
+	}
+	url = m[2] + (m[3] || ':') + (m[4] || '/') + (m[5] || '?') + (m[6] || '#');
+	var whitelisted = list.split('\n').some(function(item) {
+		var m = re.exec(item.trim());
+		var protocol = m[1], hostname = m[2], port = m[3], path = m[4], search = m[5], hash = m[6];
+		var regex =
+			'^' +
+			hostname.split('*').map(escape).join('[^:]*') + 
+			(!port ? ':\\d*' : port.split('*').map(escape).join('[^/]*')) +
+			(!path ? '/[^#?]*' : path.split('*').map(escape).join('[^#?]*')) +
+			(!search ? '\\?[^#]*' : search.split('*').map(escape).join('[^#]*')) +
+			(!hash ? '#.*' : hash.split('*').map(escape).join('.*')) +
+			'$';
+		return new RegExp(regex, 'img').test(url);
+		function escape(str) {
+			return str.replace(/[\[\]\{\}\(\)\+\?\.\\\^\$\|]/g, '\\$&');
+		}
+	});
+	return whitelisted;
+}
 
 
 // getTextNodes This funtion will iterate down through all the children of the supplied nodes and create an array of text nodes.
