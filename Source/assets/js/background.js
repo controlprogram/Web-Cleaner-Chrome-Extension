@@ -362,6 +362,17 @@ chrome.extension.onMessage.addListener(
 		xhr.send(); // Send the request.
 		return true; // Keep message port open. We'll respond later.
 	}
+
+	else if (request.greeting == "run_nudejs")
+	{
+		var myWorker = new Worker(chrome.extension.getURL("assets/js/worker.nude.js"));
+		var message = request.data;
+		myWorker.postMessage(message);
+		myWorker.onmessage = function(event) {
+			sendResponse({data: event.data});
+		};
+		return true;
+	}
   });
 
 function getCanvasFromUrl(src, maxPixels, callback) {

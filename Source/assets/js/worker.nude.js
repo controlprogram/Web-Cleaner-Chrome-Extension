@@ -236,7 +236,7 @@ postMessage({
 	skin: totalSkin,
 	regions: skinRegions.map(function(region) {
 		return region.length;
-	});
+	})
 });
 
 // TODO:

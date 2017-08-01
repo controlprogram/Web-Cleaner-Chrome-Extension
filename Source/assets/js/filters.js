@@ -1168,24 +1168,25 @@ function analyzeCanvas(canvas, callback)
 	}
 
 	function nudejs(callback) {
-		// Get image data and create scanner worker
-		var myWorker = new Worker("assets/js/worker.nude.js");
-		var message = [data, width, height];
-		myWorker.postMessage(message);
-		myWorker.onmessage = function(event) {
-			var pixels = event.data.pixels,
-				skin = event.data.skin,
-				regions = event.data.regions,
-				nude =
-					3 <= regions.length && regions.length <= 60 &&
-					skin / pixels >= sensitivity &&
-					regions[0] / skin >= 0.45;
+		chrome.extension.sendMessage({"greeting": "run_nudejs", data: [data, width, height]}, function(response) {
+			if (response.result) {
+				var event = response.result;
+				var pixels = event.data.pixels,
+					skin = event.data.skin,
+					regions = event.data.regions,
+					nude =
+						3 <= regions.length && regions.length <= 60 &&
+						skin / pixels >= sensitivity &&
+						regions[0] / skin >= 0.45;
 
-			updateStats({
-				pixels: {total: pixels, skin: skin}
-			});
-			callback(nude);
-		};
+				updateStats({
+					pixels: {total: pixels, skin: skin}
+				});
+				callback(nude);
+			} else {
+				callback(false);
+			}
+		});
 	}
 
 } // end Event Handler function
