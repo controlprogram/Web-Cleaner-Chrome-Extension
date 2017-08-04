@@ -3,7 +3,7 @@ var questions = {
 		before: function() {
 			return !stats.getEvents(['cummed', 'milked', 'ruined'], today().getTime()).length;
 		},
-		question: 'Have you needed CPR today?',
+		question: 'Do you need to report another CPR?',
 		answers: {
 			cummed: 'Cummed',
 			milked: 'Prostate Milked',
