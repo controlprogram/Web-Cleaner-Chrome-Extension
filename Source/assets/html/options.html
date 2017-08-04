@@ -15,9 +15,6 @@
 		<link rel="stylesheet" href="../css/options.css" />
 	</head>
 	<body>
-		<div id="logo">
-			<h2 style="margin: 0;-webkit-user-select: none">Web Cleaner</h2>
-		</div><!-- '#logo' div -->
 		<div id="settings_stuff" style="display:none" class="container">
 			<!-- 
 				 # SAVED NOTE #
@@ -27,7 +24,7 @@
 				<div id="settings_links">
 						<a id="import" href="#"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span> Import</a> |
 						<a id="export" href="#"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Export</a> | 
-						<a id="password" href="#"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Change Password</a>
+						<a id="password" href="#"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Password Settings</a>
 				</div>
 			</div>
 			
@@ -154,7 +151,7 @@
 				<div id="image_text_boxes">
 					<table>
 						<tr>
-							<th><input type="checkbox" id="image_block_words" name="image_block_words">Blocked Filenames<br /><span class="sub_text">(Partial matching of words, full <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
+							<th><input type="checkbox" id="image_block_words" name="image_block_words">Blocked Filenames<br /><span class="sub_text">(Partial matching of words, full <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span><p /></th>
 							<th>Website Whitelist<br /><span class="sub_text">(Limited wildcard support,<br />format: www.foxnews.com or *.tumblr.com/post/*)</span></th>
 						</tr>
 						<tr>
@@ -196,7 +193,7 @@
 				<div id="text_boxes">
 					<table>
 						<tr>
-							<th>Bad Words<br /><span class="sub_text">(Partial matching of words, full <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span></th>
+							<th>Bad Words<br /><span class="sub_text">(Partial matching of words, full <a href="https://www.debuggex.com/cheatsheet/regex/javascript" target="_blank">RegEx</a> support)</span><p /></th>
 							<th>Website Whitelist<br /><span class="sub_text">(Limited wildcard support,<br />format: www.foxnews.com or *.tumblr.com/post/*)</span></th>
 						</tr>
 						<tr>
@@ -288,23 +285,40 @@
 		</div><!-- '#container' div -->
 		<div id="modalBackground">
 			<div class="modal" data-form="login">
+				<div id="logo">
+					<img src="../img/logo.svg" width="135px" height="135px"/>
+				</div><!-- '#logo' div -->
+				<div id="passwordBackdrop">
+					<ul class="bg-bubbles">
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
 				<div class="windowBar modal-windowBar">
 					<p>Password Protected</p>
 				</div>
 				<div class="container modalContainer">
 					<div class="modalContent">
 						<span data-role="code"></span><br />
-						<label for="password">Password:</label> <input name="password" type="text" data-type="text" data-role="password" />
+						<input name="password" type="text" data-type="text" placeholder="Enter your password." data-role="password"/>
 					</div>
 				</div>
 			</div>
 			<div class="modal" data-form="password">
 				<div class="windowBar modal-windowBar">
-					<p>Change Password</p>
+					<p>Password Settings</p>
 				</div>
 				<div class="container modalContainer">
 					<div class="modalContent">
-						<input type="text" data-type="text" data-role="password" />
+						<input type="text" data-type="text" placeholder="No password." data-role="password" />
 						<input type="button" data-role="submit" value="Save" />
 					</div>
 				</div>
