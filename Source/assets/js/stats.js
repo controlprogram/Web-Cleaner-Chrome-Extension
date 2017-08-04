@@ -129,8 +129,8 @@ function updateStuff() {
 
 	edgesSince = stats.getEvents('edged', lastOrgasm && lastOrgasm.time);
 
-	$('#field-last-orgasm').text(lastOrgasm ? formatDateShort(new Date(lastOrgasm.time - startOfDay)) : 'never');
-	$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(timeSinceLastAnything) + ' ago' : 'ever');
+	$('#field-last-orgasm').text(lastOrgasm ? formatDateShort(new Date(lastOrgasm.time - startOfDay)) : 'Never');
+	$('#field-last-orgasm').attr('title', lastOrgasm ? formatTimespan(timeSinceLastAnything) + ' ago' : 'Ever');
 	$('#field-edges-since-last-orgasm').text(edgesSince.length);
 	$('#field-longest-streak').text(longestStreakDays === 1 ? '1 Day' : longestStreakDays + ' Days');
 	$('#field-longest-streak').attr('title', formatTimespan(longestStreak));
