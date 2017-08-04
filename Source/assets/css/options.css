@@ -274,7 +274,7 @@ div#legend {
 body {
     margin: 0;
     font-family: Tahoma;
-    background: #EEEEEE url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfAgMAAABiwP6qAAAADFBMVEVobHhqbnllaXdtcHmtITtVAAABHklEQVQY0wXBO0vDUAAG0C+hLUGLpprQFFq4fShpp6hxFO7FpKhkSGsdRAsZ1SmF7sY0SIQ6+Jwckg4i4iAOzu3gpiDYwaGruz+h58B/IQ+fXwDimnPDFQwRj2Du6eybCI/TmgVJBXJR0lrcPCfwMu9mTIsuRt4uPXyKAsxLGGso9dHbT1rLFcGGlmZ6E3AgSfWZhWdZBC9ul7xA74IpZ2Fqg1pgAx5+VmxhSCNKc20JO7HQH2W5CcLrqnkp513QopewmZ0AXzM4+0inuF/q2FpL8FBdCeoYHldwe/DDoIYB0N1qNwghoMkrlAX1Fbwi0wEpp9GZy5U4Qckjs7d6ITjyNxofJ73UnwFIfsUkk3+K3yJh1vqdCIVPaGOspacF7kYgvr/Z8wAAAABJRU5ErkJggg==") repeat scroll 0 0
+    background: #EEEEEE url("../img/gray_background.png") repeat scroll 0 0
 }
 
 /**
