@@ -65,12 +65,15 @@ function initBoxes() {
 
 
 
-$(document).on('click', '.button[data-role]', function() {({
+$(document).on('click', '[data-role]', function() {({
 	'report-cpr': function() {
 		showModal('cpr')
 	},
 	'report-edge': function() {
 		showModal('edges');
+	},
+	'lock': function() {
+		showModal('lock-up');
 	},
 	'add-edges': function() {
 		var amount = +$('#modalBackground > .modal[data-form="edges"] input[data-role="amount"]').val();

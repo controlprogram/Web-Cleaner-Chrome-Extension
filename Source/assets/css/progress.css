@@ -536,7 +536,15 @@ body {
     text-align: center;
     cursor: default
 }
-#doughnutChart { background: no-repeat 50% 30%/25% url(../img/lock-open.svg) }
+#lock {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    left: 118px;
+    top: 64px;
+    background: no-repeat url(../img/lock-open.svg);
+    cursor: pointer;
+}
 .doughnutSummaryTitle {
     position: absolute;
     top: 50%;
