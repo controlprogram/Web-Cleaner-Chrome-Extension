@@ -274,7 +274,7 @@ div#legend {
 body {
     margin: 0;
     font-family: Tahoma;
-    background: #EEEEEE url("../img/gray_background.png") repeat scroll 0 0
+    background: #EEEEEE url("../img/gray_transparent_background.png") repeat scroll 0 0
 }
 
 /**
