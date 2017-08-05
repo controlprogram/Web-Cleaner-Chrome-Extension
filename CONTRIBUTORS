@@ -1,5 +1,7 @@
+Original work:
+
 Name: Web Cleaner Extension
-Original-Author: Joseph Gray, with contributions from:
+Author: Joseph Gray, with contributions from:
 		Maria Solomond (Logo)
 		Notmasteryet (jpg.js, Base64.js, Deflate.js)
 		Sebastian Markbåge (PNG.js)
@@ -7,6 +9,8 @@ Original-Author: Joseph Gray, with contributions from:
 		Google (mutation_summary.js)
 
 #######################################################
+
+Modifications:
 
 This version contains some modifications from rob204 and Mopar though.
 Actually rob204 did some changes in the image file handling etc while
