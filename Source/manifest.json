@@ -24,9 +24,9 @@
    } ],
    "description": "Filters inappropriate content from the internet.",
    "icons": {
-      "128": "assets/img/joseph'slogo2(transparent).png",
-      "16": "assets/img/joseph'slogo2(white).png",
-      "48": "assets/img/joseph'slogo2(white).png"
+      "16": "assets/img/logo-16.png",
+      "48": "assets/img/logo-48.png",
+      "128": "assets/img/logo-128.png"
    },
    "browser_action": {
       "default_title": "Web Cleaner",
@@ -35,8 +35,8 @@
    "web_accessible_resources": [
       "assets/css/blockimg.css",
       "assets/js/worker.nude.js",
-      "assets/img/joseph'slogo.png",
-      "assets/img/joseph'slogo2(transparent).png",
-      "assets/img/joseph'slogo2(white).png"
+      "assets/img/logo-16.png",
+      "assets/img/logo-48.png",
+      "assets/img/logo-128.png"
    ]
 }
