@@ -156,6 +156,9 @@ $(document).ready(function() {
 		$('#hours').next().text(hours === 1 ? 'hour' : 'hours');
 		$('#days').text(days < 100 ? ('00' + days).slice(-3) : finite ? days : '∞');
 		$('#days').next().text(days === 1 ? 'day' : 'days');
+
+		$('#field-next-milestone').text(!finite ? 'Never' : !days ? 'Today' : days + ' ' + (days === 1 ? 'Day' : 'Days'));
+		$('#field-next-milestone').attr('title', !finite ? 'Ever' : formatTimespan(d));
 	}
 
 });
