@@ -68,6 +68,8 @@ var stats = {
 	images: {total: 0, processed: 0, blocked: 0},
 };
 
+var logo = chrome.extension.getURL("assets/img/logo.svg");
+
 function updateStats(adds) {
 	if (!adds) {
 		adds = {};
@@ -934,14 +936,12 @@ function processTask(task) {
 			var replacement = bad.get(src) || unsure.get(src) || good.get(src) || '';
 			if (task.tag == "img")
 			{
-				if (replacement === "logo") {
+				if (replacement === logo) {
 					var rect = img.getBoundingClientRect();
 					img.width = rect.width;
 					img.height = rect.height;
-					img.src = chrome.extension.getURL("assets/img/logo.svg");
-				} else {
-					img.src = replacement;
 				}
+				img.src = replacement;
 
 				// Also remove a possible srcset.
 				// Alternatively we could create a replacement for each version which doesn't make any sense.
@@ -1203,7 +1203,7 @@ function getReplacement(task, callback)
 {
 	if (options.image_replacement == "logo")
 	{
-		callback("logo");
+		callback(logo);
 	} // end logo if
 
 	else // use pixelation
@@ -1214,7 +1214,7 @@ function getReplacement(task, callback)
 			getCanvasFromUrl(task.src, imageLoadPixel, function(canvas) {
 				if (!canvas) {
 					console.log('could not load ' + task.src);
-					callback("logo");
+					callback(logo);
 					return;
 				}
 				task.canvas = canvas;
