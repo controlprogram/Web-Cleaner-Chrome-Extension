@@ -101,16 +101,17 @@
     width: 92.5%;
     position: relative
 }
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro);
 .reportHolder select {
 	-webkit-padding-end: 5px;
 	-webkit-padding-start: 5px;
 	-webkit-user-select: none;
-	width: 85px;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	text-align: center;
+	width: 95px;
+	padding-top: 1px;
+	padding-bottom: 1px;
 	border: 0;
 	outline: 0;
+    font-family: 'Source Code Pro', monospace;
     font-size: 16px;
 	color: #A3A2A2;
 	background-image: url(../images/select-arrow.png), 
@@ -502,6 +503,7 @@ div.hero { background: url(../img/smilies.svg) -136px -17px }
 body {
     margin: 0;
     font-family: 'Lato', Calibri, Arial, sans-serif;
+	font-weight: 300;
     background-color: #EEEEEE
 }
 
