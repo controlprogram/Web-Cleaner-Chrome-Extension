@@ -934,7 +934,14 @@ function processTask(task) {
 			var replacement = bad.get(src) || unsure.get(src) || good.get(src) || '';
 			if (task.tag == "img")
 			{
-				img.src = replacement;
+				if (replacement === "logo") {
+					var rect = img.getBoundingClientRect();
+					img.width = rect.width;
+					img.height = rect.height;
+					img.src = chrome.extension.getURL("assets/img/logo.svg");
+				} else {
+					img.src = replacement;
+				}
 
 				// Also remove a possible srcset.
 				// Alternatively we could create a replacement for each version which doesn't make any sense.
@@ -1196,7 +1203,7 @@ function getReplacement(task, callback)
 {
 	if (options.image_replacement == "logo")
 	{
-		callback(chrome.extension.getURL("assets/img/joseph'slogo2(transparent).png"));
+		callback("logo");
 	} // end logo if
 
 	else // use pixelation
@@ -1207,7 +1214,7 @@ function getReplacement(task, callback)
 			getCanvasFromUrl(task.src, imageLoadPixel, function(canvas) {
 				if (!canvas) {
 					console.log('could not load ' + task.src);
-					callback(chrome.extension.getURL("assets/img/joseph'slogo2(transparent).png"));
+					callback("logo");
 					return;
 				}
 				task.canvas = canvas;

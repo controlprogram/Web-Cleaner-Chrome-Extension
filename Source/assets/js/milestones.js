@@ -188,7 +188,7 @@ var milestones = (function(s) {
 			type: "basic",
 			title: "Milestone Reached",
 			message: "Congratulations! You didn't orgasm for " + milestones.name(ms.stage, ms.i - 1) + ". Keep up the good work!",
-			iconUrl: "assets/img/joseph'slogo2(transparent).png",
+			iconUrl: "assets/img/logo-128.png",
 			eventTime: Date.now()
 		}, function(){});
 	}
