@@ -129,7 +129,7 @@
 	-webkit-padding-end: 5px;
 	-webkit-padding-start: 5px;
 	-webkit-user-select: none;
-	width: 110px;
+	width: 100px;
 	padding-top: 1px;
 	padding-bottom: 1px;
 	border: 0;
@@ -137,6 +137,7 @@
     font-family: 'Source Code Pro', monospace;
 	font-weight: 300;
     font-size: 19px;
+	letter-spacing: -1px;
 	color: #A3A2A2;
 	background-image: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E2E2E2);
 	background-position: center right;
