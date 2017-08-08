@@ -838,7 +838,7 @@ g path:hover { opacity: .35 }
 }
 #steps-upload {
 	width: 177px;
-	height: 200px;
+	height: 198px;
     background-color: #33342E;
     border: 20px solid rgba(0, 0, 0, 0);
     border-image: url("../img/border-image.png") 25 25 25 25 repeat repeat;
