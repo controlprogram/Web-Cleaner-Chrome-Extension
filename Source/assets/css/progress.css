@@ -277,7 +277,7 @@ div.hero {
     width: 90px;
     padding: 5px 0px 5px 0px;
     border-radius: 5px;
-    background: #CCCCCC url(../img/gray_background.png) repeat scroll 0 0
+    background: #CCCCCC url(../img/gray_transparent_background.png) repeat scroll 0 0
 }
 .smileyContainer:hover { opacity: 0.65; }
 div.happy { background: url(../img/smilies.svg) 0px 0px }
