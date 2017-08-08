@@ -825,7 +825,8 @@ g path:hover { opacity: .35 }
 	width: 100%;
 	height: 375px;
 	font-size: 14px;
-	background-color: #FBD979
+	background-color: #FBD979;
+	overflow: hidden
 }
 #steps-title {
 	margin: 10px 10px 5px 10px;
@@ -836,8 +837,9 @@ g path:hover { opacity: .35 }
 	font-weight: bold
 }
 #steps-upload {
-	float: left;
-	width: 200px;
+	float: right;
+	width: auto;
+	max-width: 120px;
 	height: 200px;
     background-color: #33342E;
     border: 20px solid rgba(0, 0, 0, 0);
@@ -848,14 +850,13 @@ g path:hover { opacity: .35 }
     font-weight: bold;
     margin-top: 3.5px;
     margin-left: 20px;
+    margin-right: 20px;
     margin-bottom: 30px;
     padding: 40px 50px;
     text-align: center;
-    text-transform: uppercase;
-	vertical-align: center;
+    text-transform: uppercase
 }
 #steps-upload #steps-drop {
-	width: 100px;
 	margin: 0 auto;
     background-color: #CD0252;
     border-radius: 2px;
@@ -865,12 +866,12 @@ g path:hover { opacity: .35 }
     font-size: 14px;
     line-height: 1;
     margin-top: 12px;
-    padding: 12px 26px;
+    padding: 12px 26px
 }
 #steps #step {
 	margin-left: 15px;
 	width: 205px;
-	display: inline-block;
+	display: inline-block
 }
 #step ol li { margin-left: -10px }
 .fillin_blank {
