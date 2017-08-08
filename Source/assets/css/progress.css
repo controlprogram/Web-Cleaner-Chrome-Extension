@@ -835,6 +835,38 @@ g path:hover { opacity: .35 }
 	background-color: #190C0F;
 	font-weight: bold
 }
+#steps-upload {
+	float: left;
+	width: 200px;
+	height: 200px;
+    background-color: #33342E;
+    border: 20px solid rgba(0, 0, 0, 0);
+    border-image: url("../img/border-image.png") 25 25 25 25 repeat repeat;
+    border-radius: 3px;
+    color: #787A70;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 3.5px;
+    margin-left: 20px;
+    margin-bottom: 30px;
+    padding: 40px 50px;
+    text-align: center;
+    text-transform: uppercase;
+	vertical-align: center;
+}
+#steps-upload #steps-drop {
+	width: 100px;
+	margin: 0 auto;
+    background-color: #CD0252;
+    border-radius: 2px;
+    color: #FFF;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    line-height: 1;
+    margin-top: 12px;
+    padding: 12px 26px;
+}
 #steps #step {
 	margin-left: 15px;
 	width: 205px;
