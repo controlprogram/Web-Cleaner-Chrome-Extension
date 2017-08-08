@@ -101,18 +101,42 @@
     width: 92.5%;
     position: relative
 }
-@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro);
+/* vietnamese */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v10/SKK6Nusyv8QPNMtI4j9J2yEAvth_LlrfE80CYdSH47w.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v10/gFXtEMCp1m_YzxsBpKl68iEAvth_LlrfE80CYdSH47w.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v10/zhcz-_WihjSQC0oHJ9TCYPk_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
 .reportHolder select {
 	-webkit-padding-end: 5px;
 	-webkit-padding-start: 5px;
 	-webkit-user-select: none;
-	width: 95px;
+	width: 110px;
 	padding-top: 1px;
 	padding-bottom: 1px;
 	border: 0;
 	outline: 0;
     font-family: 'Source Code Pro', monospace;
-    font-size: 16px;
+	font-weight: 300;
+    font-size: 19px;
 	color: #A3A2A2;
 	background-image: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E2E2E2);
 	background-position: center right;
@@ -123,7 +147,7 @@
     display: inline-block;
     color: #A3A2A2;
     font-weight: 300;
-    font-size: 20px
+    font-size: 19px
 }
 .reportCommon h3 {
     margin: 237px 0 0 15px;
@@ -498,10 +522,9 @@ div.hero { background: url(../img/smilies.svg) -136px -17px }
     font-size: 0;
     line-height: 0
 }
-@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
 body {
     margin: 0;
-    font-family: 'Lato', Calibri, Arial, sans-serif;
+    font-family: Calibri;
 	font-weight: 300;
     background-color: #EEEEEE
 }
