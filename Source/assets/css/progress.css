@@ -580,10 +580,10 @@ body {
 }
 #lock {
     position: absolute;
-    width: 76px;
-    height: 76px;
-    left: 118px;
-    top: 64px;
+    width: 66px;
+    height: 66px;
+    left: 121px;
+    top: 74px;
     background: no-repeat url(../img/lock-open.svg);
     cursor: pointer;
 }
