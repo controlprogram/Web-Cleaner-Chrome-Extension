@@ -395,9 +395,9 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     inkscape:label="Ticket"
      inkscape:groupmode="layer"
-     id="layer1"
+     id="Ticket"
      transform="translate(-166.51567,-369.29413)">
     <g
        id="g5409"
@@ -405,48 +405,48 @@
       <path
          clip-path="url(#clipPath5405)"
          inkscape:connector-curvature="0"
-         id="rect4147"
+         id="Ticket_bg"
          d="m 166.51567,369.29412 0,44.20339 a 22.922227,20.963817 0 0 1 14.77655,6.79127 l 0.32118,0.33105 a 22.922227,20.963817 0 0 1 -2.23858,29.4999 22.922227,20.963817 0 0 1 -12.85915,5.0683 l 0,44.20144 264.11322,0 0,-44.19757 a 22.922227,20.963817 0 0 1 -14.94009,-6.96358 22.922227,20.963817 0 0 1 1.89793,-29.51732 22.922227,20.963817 0 0 1 13.04216,-5.20962 l 0,-44.20726 -264.11322,0 z"
          style="opacity:1;fill:#b59e4a;fill-opacity:1;stroke:#a88d40;stroke-width:6.0000007;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <path
          inkscape:connector-curvature="0"
-         id="path4268"
-         d="m 222.05322,384.39883 0,100.25764"
+         id="Left_Bar"
+         d="m 216.05322,384.39883 0,100.25764"
          style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
       <path
-         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-         d="m 387.21316,384.39883 0,100.25764"
-         id="path4270"
-         inkscape:connector-curvature="0" />
+         inkscape:connector-curvature="0"
+         id="Right_Bar"
+         d="m 381.21316,384.39883 0,100.25764"
+         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
       <path
          inkscape:connector-curvature="0"
-         id="path4276"
-         d="m 233.05209,405.86458 143.18912,0"
+         id="Top_Bar"
+         d="m 227.05209,405.86458 143.18912,0"
          style="opacity:0.18399999;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <text
          transform="scale(0.99288341,1.0071676)"
          sodipodi:linespacing="125%"
-         id="text7966"
+         id="Admit_One"
          y="473.60727"
-         x="258.65244"
+         x="250.65244"
          style="font-style:normal;font-weight:normal;font-size:52.51297379px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;transform:rotate(0.03deg)"
          xml:space="preserve"><tspan
            style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:18.78561783px;font-family:KabobLight;-inkscape-font-specification:'KabobLight Thin';fill:#ffffff;fill-opacity:1;stroke-width:2.00000024;stroke-miterlimit:4;stroke-dasharray:none"
            y="473.60727"
-           x="258.65244"
+           x="250.65244"
            id="tspan7968"
            sodipodi:role="line">ADMIT ONE</tspan></text>
       <text
          transform="scale(1.0109182,0.98919972)"
          sodipodi:linespacing="125%"
-         id="text4176"
+         id="Days_Text"
          y="451.50641"
-         x="233.17534"
+         x="228.17534"
          style="font-style:normal;font-weight:normal;font-size:33.23516464px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;transform:rotate(0.03deg)"
          xml:space="preserve"><tspan
            style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-family:KabobLight;-inkscape-font-specification:'KabobLight Thin';fill:#ffffff;fill-opacity:1;stroke-width:2.00000024;stroke-miterlimit:4;stroke-dasharray:none"
            y="451.50641"
-           x="233.17534"
+           x="228.17534"
            id="tspan4178"
            sodipodi:role="line">120 DAYS</tspan></text>
     </g>

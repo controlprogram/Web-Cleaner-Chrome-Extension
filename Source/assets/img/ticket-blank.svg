@@ -395,12 +395,12 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     inkscape:label="Ticket"
      inkscape:groupmode="layer"
-     id="layer1"
+     id="Ticket"
      transform="translate(-166.51567,-369.29413)">
     <g
-       id="g5409"
+       id="Ticket_bg"
        style="filter:url(#filter4033)">
       <path
          clip-path="url(#clipPath5405)"
