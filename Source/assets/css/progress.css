@@ -392,21 +392,26 @@ div.hero { background: url(../img/smilies.svg) -136px -17px }
 	font-weight: bold;
 	text-decoration: none;
 	display: inline-block
-
 }
 .button {
 	cursor: pointer;
 	color: #4C6A4C;
 	border: 1px solid #7FB27F;
 	background: #CBDFCB;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #DAE8DA), color-stop(50%, #DAE8DA), color-stop(50%, #CBDFCB), color-stop(100%, #CBDFCB))
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #DAE8DA), color-stop(50%, #DAE8DA), color-stop(50%, #CBDFCB), color-stop(100%, #CBDFCB));
+	box-shadow: 0.5px 0.5px #A3CAB0,
+				0.5px 0.5px #A3CAB0,
+				1px 1px #A3CAB0
 }
 .button-disabled {
 	cursor: not-allowed;
 	color: #B7B7B7;
 	border: 1px solid #B7B7B7;
 	background: #FAFAFA;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFFFFF), color-stop(50%, #FFFFFF), color-stop(50%, #FAFAFA), color-stop(100%, #FAFAFA))
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FFFFFF), color-stop(50%, #FFFFFF), color-stop(50%, #FAFAFA), color-stop(100%, #FAFAFA));
+	box-shadow: 0.5px 0.5px #B6B6B6,
+				0.5px 0.5px #B6B6B6,
+				1px 1px #B6B6B6
 }
 .button:active {
 	position:relative;
