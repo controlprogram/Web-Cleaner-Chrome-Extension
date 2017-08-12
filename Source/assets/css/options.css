@@ -46,9 +46,9 @@
     top: -10px
 }
 #image_scanner_box { padding: 0px 20px 5px 0px }
-#image_replacement_box { padding-left: 15px }
+#image_replacement_box  { margin-left: 15px }
 #image_settings_box {
-    padding-left: 25px;
+    margin-left: 25px;
     display: inline-block
 }
 #image_replacement_box,
@@ -203,8 +203,14 @@
     border-width: 0px 0px 2px 0px;
     border-color: #8BADE4;
     background-color: #EEEEEE;
-    text-align: center;
     font-family: Lucida Sans Unicode
+}
+#paragraph_text {
+	padding: 0 10px;
+}
+#num_for_paragraph,
+#num_for_webpage {
+	text-align: center
 }
 .ampmlabel {
     display: inline-block;
