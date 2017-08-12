@@ -61,8 +61,8 @@ var image_cache = {
 };
 
 var debug = false;
-var imageLoadPixel = 30;
-var imageMaxPixel = 30;
+var imageLoadPixel = 50;
+var imageMaxPixel = 50;
 var stats = {
 	pixels: {total: 0, skin: 0, images: 0},
 	images: {total: 0, processed: 0, blocked: 0},
