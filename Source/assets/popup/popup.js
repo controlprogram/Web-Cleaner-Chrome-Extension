@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.getElementById('button-fake').addEventListener('click', function() {
 		stats.dbg.fake();
 	}, false);
+	$('#container').empty();
 
 	stats.listen(['installed', 'cummed', 'milked', 'ruined'], onStats);
 	milestones.listen('milestone', onMilestone);
@@ -85,11 +86,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		}).forEach(function(e) {
 			if (e.type === 'installed') {
 				$('#container').find('[data-type]').remove();
-				return;
+				//return;
 			}
 			var $item = $('<div><div class="inline"><img align="top" /> <span></span></div><div class="time inline"></span></div></div>')
 			var type, $img = $item.find('img'), $msg = $item.find('span').first(), $time = $item.find('.time');
-			if (e.type === 'milestone') {
+			if (e.type === 'installed') {
+				type = 'installed';
+				$img.attr('src', '../img/silk/computer_add.png');
+				$msg.text('Installed Web Cleaner');
+			} else if (e.type === 'milestone') {
 				type = 'milestone';
 				$img.attr('src', '../img/silk/award_star_bronze_2.png');
 				$msg.text(milestones.name(e.value.stage, e.value.index) + ' Achieved');
