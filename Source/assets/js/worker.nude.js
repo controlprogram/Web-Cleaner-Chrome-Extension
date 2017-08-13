@@ -239,6 +239,8 @@ postMessage({
 	})
 });
 
+close();
+
 // TODO:
 // build the bounding polygon by the regions edge values:
 // Identify the leftmost, the uppermost, the rightmost, and the lowermost skin pixels of the three largest skin regions.
