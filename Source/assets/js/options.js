@@ -210,6 +210,18 @@ $('#import').click(function(e) {
 	radio.addEventListener('change', function() {toggleWrapper('schedule', 'schedule');});
 });
 
+[].forEach.call(document.getElementsByName('image_replacement'), function(radio) {
+	radio.addEventListener('change', function() {
+		[].forEach.call(document.querySelectorAll('#image_pixelization_box'), function(wrapper) {
+			if (document.querySelector('[name="image_replacement"][value="pixels"]').checked) {
+				wrapper.style.display = 'block';
+			} else {
+				wrapper.style.display = 'none';
+			}
+		});
+	});
+});
+
 $('#modalBackground [data-form="login"] [data-role="password"]').on('keyup change', function() {
 	if (password !== opt.password) {
 		password = $(this).val();

@@ -125,6 +125,7 @@ function(response)
 {
   options = (response.farewell);
   templates = (response.templates);
+  imageLoadPixel = imageMaxPixel = Math.max(1, Math.floor(options.image_pixelization)) || 50;
   insertTemplates();
 
   // This must be placed here, since sendMessage is an asyncronous function, meaning that code execution continues after this function before this function completes.
