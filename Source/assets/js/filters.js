@@ -123,7 +123,7 @@ function load_filters()
 chrome.extension.sendMessage({"greeting": "request_options"}, 
 function(response)
 {
-  options = (response.farewell);
+  options = (response.farewell).effective;
   templates = (response.templates);
   imageLoadPixel = imageMaxPixel = Math.max(1, Math.floor(options.image_pixelization)) || 50;
   insertTemplates();

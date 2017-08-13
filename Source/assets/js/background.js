@@ -57,6 +57,7 @@ var options = [
 	{name: "image_blurring", type: 'boolean', default: true},
 	{name: "image_two_pass", type: 'boolean', default: true},
 	{name: "schedule_on", type: 'boolean', default: true},
+	{name: "schedule", type: 'string', default: '[]'},
 	//{name: "save_note", type: 'boolean', default: true}
 	{name: "tips_on", type: 'boolean', default: true},
 ], optionsByName = {};
@@ -121,6 +122,18 @@ function loadOptions() {
 				}
 				values[option.name] = value;
 			});
+			values.effective = Object.assign({}, values);
+			if (values.schedule_on) {
+				var now = new Date();
+				var currentHour = now.getDay() * 24 + now.getHours();
+				var currentSchedule = JSON.parse(values.schedule)[currentHour] || 0;
+				if (currentSchedule < 1) {
+					values.effective['image_on'] = false;
+				}
+				if (currentSchedule < 2) {
+					values.effective['text_on'] = false;
+				}
+			}
 			resolve(values);
 		}
 	});
@@ -427,6 +440,7 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 chrome.webNavigation.onCommitted.addListener(function({tabId, frameId, url}) {
 	if (/^https?:\/\/|^about:/.test(url)) { // TODO: check which schemas work
 		loadOptions().then(function(values) {
+			values = values.effective;
 			if (values['image_on'] && values['image_blurring'] && !isUrlWhitelisted(values.image_whitelisted_websites, url)) {
 				chrome.tabs.insertCSS(tabId, {
 					matchAboutBlank: true,

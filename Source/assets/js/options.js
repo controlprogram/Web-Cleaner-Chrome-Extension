@@ -70,6 +70,7 @@ function show_options() {
 	document.getElementById('settings_stuff').style.display = 'block';
 	document.getElementById('save_button').style.display = 'inline-block';
 	document.getElementById('image_pixelization_box').style.display = opt.image_replacement === "pixels" ? "block" : "none";
+	updateSchedule();
 }
 
 function save_and_update_background() {
