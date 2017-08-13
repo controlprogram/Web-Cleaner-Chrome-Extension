@@ -61,7 +61,7 @@ var image_cache = {
 };
 
 var debug = false;
-var imageLoadPixel = 50;
+var imageLoadPixel = 200;
 var imageMaxPixel = 50;
 var stats = {
 	pixels: {total: 0, skin: 0, images: 0},
@@ -125,7 +125,8 @@ function(response)
 {
   options = (response.farewell).effective;
   templates = (response.templates);
-  imageLoadPixel = imageMaxPixel = Math.max(1, Math.floor(options.image_pixelization)) || 50;
+  imageMaxPixel = Math.max(1, Math.floor(options.image_pixelization)) || 50;
+  imageLoadPixel = 200; //imageMaxPixel * 3;
   insertTemplates();
 
   // This must be placed here, since sendMessage is an asyncronous function, meaning that code execution continues after this function before this function completes.
@@ -1177,8 +1178,8 @@ function analyzeCanvas(canvas, callback)
 
 	function nudejs(callback) {
 		chrome.extension.sendMessage({"greeting": "run_nudejs", data: [data, width, height]}, function(response) {
-			if (response.result) {
-				var event = response.result;
+			if (response) {
+				var event = response;
 				var pixels = event.data.pixels,
 					skin = event.data.skin,
 					regions = event.data.regions,
