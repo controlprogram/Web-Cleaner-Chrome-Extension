@@ -440,7 +440,7 @@ function text_filter(text_nodes)
 			if ((options.block_paragraph == true) && (options.num_for_paragraph <= paragraph_count))
 			{
 				// If we have surpassed the limit, replace the text node's value with "This paragraph has been censored."
-				text_nodes[i].nodeValue = "This paragraph has been censored.";
+				text_nodes[i].nodeValue = options.paragraph_text;
 					
 				//window.alert("Paragraph censored."); // Used for testing. Test Case 007
 			

@@ -43,6 +43,7 @@ var options = [
 	{name: "WordOrSentence", type: 'string', default: ""},
 	{name: "block_paragraph", type: 'boolean', default: false},
 	{name: "num_for_paragraph", type: 'integer', default: 3},
+	{name: "paragraph_text", type: 'text', default: '[:Censored Paragraph:]'},
 	{name: "block_webpage", type: 'boolean', default: false},
 	{name: "num_for_webpage", type: 'integer', default: 10},
 	{name: "image_on", type: 'boolean', default: true},
