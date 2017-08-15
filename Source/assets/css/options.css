@@ -406,7 +406,7 @@ body {
     margin: 20px;
     text-align: center
 }
-[data-form="login"] .modalContent, [data-form="password"] .modalContent { width: 375px }
+[data-form="login"] .modalContent, [data-form="password"] .modalContent { width: 383px }
 .modalContent {
     position: relative;
     padding: 0 10px 20px 10px
