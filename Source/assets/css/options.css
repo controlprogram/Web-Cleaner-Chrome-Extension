@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
+@import url('https://fonts.googleapis.com/css?family=Cousine:100,700');
 
 #code_outer {
     width: 100%;
@@ -10,9 +11,10 @@
 .glyphicon-qrcode,
 #code {
     color: #F5F9FB;
-    text-shadow: 1px 1px #626364
+    text-shadow: 1px 1px #626364;
+	font-size: 14px;
+	font-weight: 100
 }
-#code { font-size: 14px; }
 #settings_links {
     float: right;
     margin-right: 15px;
@@ -401,7 +403,7 @@ body {
     margin: 20px;
     text-align: center
 }
-[data-form="login"] .modalContent, [data-form="password"] .modalContent { min-width: 410px }
+[data-form="login"] .modalContent, [data-form="password"] .modalContent { min-width: 360px }
 .modalContent label { margin-top: 20px }
 .modalContent {
     position: relative;
@@ -413,6 +415,7 @@ body {
     margin: 5px auto
 }
 [data-form="login"] [data-role="code"] {
+	font-family: "Cousine";
     font-size: 9.5em;
     margin: 0;
     color: rgba(0, 0, 0, .8)
