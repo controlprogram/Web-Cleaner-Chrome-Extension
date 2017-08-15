@@ -15,6 +15,7 @@
 }
 #code {
 	font-size: 16px;
+    letter-spacing: .02em;
 	font-family: monospace
 }
 #settings_links {
