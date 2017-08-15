@@ -399,7 +399,8 @@ body {
 	margin-bottom: 0;
 	padding: 5px;
     font-size: 18px;
-	font-family: "Lato"
+	font-family: "Lato";
+    -webkit-user-select: none
 }
 .modalContainer {
     padding: 1px;
