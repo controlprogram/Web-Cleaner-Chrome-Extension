@@ -218,13 +218,8 @@
     background-color: #EEEEEE;
     font-family: Lucida Sans Unicode
 }
-#paragraph_text {
-	padding: 0 10px;
-}
-#num_for_paragraph,
-#num_for_webpage {
-	text-align: center
-}
+#paragraph_text { padding: 0 10px }
+#num_for_paragraph, #num_for_webpage { text-align: center }
 .ampmlabel {
     display: inline-block;
     margin-right: 3px;
@@ -387,13 +382,14 @@ body {
     top: 50%;
     margin-top: -120px
 }
-[data-form="login"] .modal-windowBar, [data-form="password"] .modal-windowBar { width: 430px }
-[data-form="export"] .modal-windowBar { width: 254px }
+[data-form="login"] .modal-windowBar, [data-form="password"] .modal-windowBar, [data-form="export"] .modal-windowBar  { width: 100% }
 .modal-windowBar {
     color: #818080;
-	background-color: #F2EAEA
+	border-bottom: 1.5px solid #E5C6C6;
+	background-color: #FFE7E7
 }
 .modal-windowBar div {
+	width: 100%;
 	margin-bottom: 0;
 	padding: 5px;
     font-size: 18px;
@@ -406,6 +402,7 @@ body {
     text-align: center
 }
 [data-form="login"] .modalContent, [data-form="password"] .modalContent { min-width: 410px }
+.modalContent label { margin-top: 20px }
 .modalContent {
     position: relative;
     padding: 0 10px 20px 10px
@@ -416,7 +413,7 @@ body {
     margin: 5px auto
 }
 [data-form="login"] [data-role="code"] {
-    font-size: 10em;
+    font-size: 9.5em;
     margin: 0;
     color: rgba(0, 0, 0, .8)
 }
@@ -428,7 +425,7 @@ body {
     border-width: 0px 0px 2px 0px;
     border-color: #8BADE4
 }
-[data-form="password"] [data-role="password"] { margin: 25px 0 5px 0 }
+[data-form="password"] [data-role="password"] { margin: 20px 0 5px 0 }
 [data-form="export"] label[for="link"] { display: none }
 
 /**

@@ -3,7 +3,7 @@
 	This is the options page.
 			Author: Joseph Gray & updated by Mopar
 			Date Created: 10/22/2012
-			Date Updated: 10/11/2016
+			Date Updated: 8/15/2017
 
 -->
 <html lang="en">
@@ -330,10 +330,10 @@
 				</div>
 			</div>
 			<div class="modal" data-form="password">
-				<div class="windowBar modal-windowBar">
-					<p>Password Settings</p>
-				</div>
 				<div class="container modalContainer">
+					<div class="windowBar modal-windowBar">
+						<div>Password Settings</div>
+					</div>
 					<div class="modalContent">
 						<input type="text" data-type="text" placeholder="No password." data-role="password" />
 						<input type="button" data-role="submit" value="Save" />
@@ -341,12 +341,13 @@
 				</div>
 			</div>
 			<div class="modal" data-form="export">
-				<div class="windowBar modal-windowBar">
-					<p>Export Settings</p>
-				</div>
 				<div class="container modalContainer">
+					<div class="windowBar modal-windowBar">
+						<div>Export Settings</div>
+					</div>
 					<div class="modalContent">
-						<label for="expiry-date">Expiration date:</label>
+						<div style="margin-top: 25px"></div>
+						<label for="expiry-date" style="margin-top: 50px">Expiration date:</label>
 						<input name="expiry-date" type="text" data-type="date" data-role="expiry-date" />
 						<br />
 						<label for="link">Link:</label> <span data-role="link"></span>
