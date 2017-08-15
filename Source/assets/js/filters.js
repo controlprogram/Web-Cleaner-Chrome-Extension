@@ -47,6 +47,7 @@ Date Modified: 9-10-2016
 var options; // Give the options object global reference so we can hopefully use it in the DOM Mutation stuff.
 var templates, pane;
 var word_count = 0; // This is a counter variable for the text filter for blocking pages. It is given global scope so that we can use it in the initial filter as well as the text_changes_filter.
+var page_blocked = false;
 
 var text_observer;
 var image_observer;
@@ -447,15 +448,26 @@ function text_filter(text_nodes)
 			} // end paragraph block if
 			
 			// If we have turned on the webpage blocking, check to see if we have surpassed the word limit on the webpage.
-			if ((options.block_webpage == true) && (options.num_for_webpage <= word_count))
+			if ((options.block_webpage == true) && (options.num_for_webpage <= word_count) && !page_blocked)
 			{
 				//window.alert ("Blocking Webpage"); // Used for testing Test Case 008
 				
 				// First, stop loading the webpage.
-				window.stop(); // May be unnecessary.
+				//window.stop(); // May be unnecessary.
+
+				page_blocked = true;
+
+				document.documentElement.innerHTML = `
+					<HEAD>
+						<TITLE>404 Not Found</TITLE>
+					</HEAD>
+					<BODY>
+						<H1>Not Found</H1>
+						The requested URL ${escape_html(location.pathname)} was not found on this server.
+						<HR>
+						<I>${escape_html(location.hostname)}</I>
+					</BODY>`;
 			
-				document.write(`<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"><HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY><H1>Not Found</H1>The requested URL ${location.pathname} was not found on this server.<HR><I>${location.hostname}</I></BODY></HTML>`);
-				document.close();
 				
 				//window.alert("Replaced Webpage."); // Used for testing 
 				
@@ -471,6 +483,9 @@ function text_filter(text_nodes)
 
 	} // end text node for
 	
+	function escape_html(text) {
+		return text.replace(/<|&/g, c => ({'<': '&lt;', '&': '&amp;'}[c]));
+	}
 	
 } // end text filter function
 
