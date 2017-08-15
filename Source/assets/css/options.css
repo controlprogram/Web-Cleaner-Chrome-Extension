@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
 #code_outer {
     width: 100%;
     padding: 8px 0px 8px 0px;
@@ -385,20 +387,17 @@ body {
     top: 50%;
     margin-top: -120px
 }
-[data-form="login"] .modal-windowBar, [data-form="password"] .modal-windowBar { width: 370px }
+[data-form="login"] .modal-windowBar, [data-form="password"] .modal-windowBar { width: 430px }
 [data-form="export"] .modal-windowBar { width: 254px }
 .modal-windowBar {
-    height: 22px;
-    margin: -5px auto;
-    -webkit-transform: rotate(2deg);
-    -webkit-user-select: none;
-    color: #A3A2A2
+    color: #818080;
+	background-color: #F2EAEA
 }
-.modal-windowBar p {
-    display: inline-block;
-    margin: 5px;
-    padding: 5px;
-    font-size: 18px
+.modal-windowBar div {
+	margin-bottom: 0;
+	padding: 5px;
+    font-size: 18px;
+	font-family: "Lato"
 }
 .modalContainer {
     padding: 1px;
@@ -406,7 +405,7 @@ body {
     margin: 20px;
     text-align: center
 }
-[data-form="login"] .modalContent, [data-form="password"] .modalContent { width: 383px }
+[data-form="login"] .modalContent, [data-form="password"] .modalContent { min-width: 410px }
 .modalContent {
     position: relative;
     padding: 0 10px 20px 10px
@@ -422,7 +421,7 @@ body {
     color: rgba(0, 0, 0, .8)
 }
 [data-role="password"] {
-	width: 75%;
+	width: 80%;
 	text-align: center;
 	outline: none;
     padding: 6px 4px 4px 8px;
