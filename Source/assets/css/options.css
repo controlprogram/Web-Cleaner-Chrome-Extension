@@ -196,7 +196,7 @@
     transform: translate(-50%);
     vertical-align: top;
     background: #F7F7F7 none repeat scroll 0 0;
-    -webkit-box-shadow: 0 0 10px #000000
+    -webkit-box-shadow: 0 2px 6px 0 rgba(0,0,0,.2)
 }
 .wrapper {
     overflow: hidden;
