@@ -197,14 +197,17 @@
 						<input type="radio" name="WordOrSentence" value="sentence"> Replace the entire sentence containing the blocked word.
 					</form><!-- 'word_or_sentence' form  -->
 				</div>
-
+				
 				<!-- The radio button form that controls when a paragraph is replaced or a webpage is blocked. -->
 				<form id="block_page/paragraph_form">
 					<input type="checkbox" id="block_paragraph" name="block_paragraph"> Replace all paragraphs containing <input type="text" class="fillin_blank" id="num_for_paragraph" name="num_for_paragraph" maxlength="3" size="1"> or more bad words with <input type="text" class="fillin_blank" id="paragraph_text" name="paragraph_text" size="26" value="[:Censored Paragraph:]">
 					<br />
-					<input type="checkbox" id="block_webpage" name="block_webpage"> Block the webpage after finding <input type="text" class="fillin_blank" id="num_for_webpage" name="num_for_webpage" maxlength="3" size="1"> or more bad words.
+					<input type="checkbox" id="block_webpage" name="block_webpage"> Block the webpage after finding <input type="text" style="margin-top: 2px" class="fillin_blank" id="num_for_webpage" name="num_for_webpage" maxlength="3" size="1"> or more bad words.
 				</form><!-- '#block_page/paragraph' form -->
 				<br />
+				<div class="txt_button" style="color:#5E6086">Mild</div>
+				<div class="txt_button" style="color:#5C415D">Moderate</div>
+				<div class="txt_button" style="color:#773737">Strict</div>
 				<div id="text_boxes">
 					<table>
 						<tr>
