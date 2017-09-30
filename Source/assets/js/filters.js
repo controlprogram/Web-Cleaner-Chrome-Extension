@@ -61,7 +61,7 @@ var image_cache = {
 	converting: new Map() // stores all currently converted images as {url: [listeners]}
 };
 
-var debug = false;
+var debug = true;
 var imageLoadPixel = 200;
 var imageMaxPixel = 50;
 var stats = {
@@ -441,6 +441,8 @@ function text_filter(text_nodes)
 			if ((options.block_paragraph == true) && (options.num_for_paragraph <= paragraph_count))
 			{
 				// If we have surpassed the limit, replace the text node's value with "This paragraph has been censored."
+				if (debug) console.log('blocked whole paragraph because ' + paragraph_count + ' bad words were found');
+
 				text_nodes[i].nodeValue = options.paragraph_text;
 					
 				//window.alert("Paragraph censored."); // Used for testing. Test Case 007
@@ -456,6 +458,7 @@ function text_filter(text_nodes)
 				//window.stop(); // May be unnecessary.
 
 				page_blocked = true;
+				if (debug) console.log('blocked whole page because ' + word_count + ' bad words were found');
 
 				document.documentElement.innerHTML = `
 					<HEAD>
@@ -473,6 +476,8 @@ function text_filter(text_nodes)
 				
 				break; // This breaks out of the loop going through the text nodes.
 			} // end webpage block if
+
+			if (debug) console.log('blocked ' + paragraph_count + ' bad words');
 
 			text_nodes[i].nodeValue = text_nodes[i].nodeValue.replace(blocked_pat, function(m) {
 				return '*'.repeat(m.length);
@@ -512,7 +517,6 @@ It then calls background_filter and passes this array into it.
 function background_preparation()
 {
 	//window.alert("Inside image_prep function."); // Used for testing.
-	
 	background_filter(document.querySelectorAll("div,span")); // This creates an array of all the div nodes and passes it into the background_filter function.
 
 } // end background prep function
@@ -590,6 +594,17 @@ function background_filter(nodes)
 	// end if
 	
 	var blocked_pat = new RegExp( '(' + options.image_blocked_words.split('\n').join('|') + ')', 'igm');
+	var offender;
+	function test(text) {
+		var m = blocked_pat.exec(text);
+		if (m) {
+			offender = m[0];
+			return true;
+		} else {
+			offender = undefined;
+			return false;
+		}
+	}
 
 	var	good = image_cache.good,
 		bad = image_cache.bad,
@@ -603,7 +618,7 @@ function background_filter(nodes)
 		var node = nodes[i];
 		var data = node.wcData;
 		var src = /^url\("(.*)"\)$/.exec(node.style.backgroundImage);
-		src = src ? src[1].replace(/\\"/g, '"') : "";
+		src = src ? makeUrlAbsolute(src[1].replace(/\\"/g, '"')) : "";
 
 		if (!data && !src)
 		{
@@ -617,24 +632,24 @@ function background_filter(nodes)
 			data = node.wcData = new Map();
 		}
 
-		var block = false;
+		var blockReason = false;
 		if (options.image_block_words) {
 			// Otherwise, if the image has a title that matches a blocked word...
 			if (data.has('replacedTitle') && data.get('replacedTitle') === node.title)
 			{
-				block = 'replaced title ' + data.get('originalTitle');
+				blockReason = 'replaced title ' + data.get('originalTitle');
 			}
 			else 
 			{
 				data.set('originalTitle', node.title);
-				if (options.image_block_words && blocked_pat.test(node.title))
+				if (options.image_block_words && test(node.title))
 				{
 					node.title = node.title.replace(blocked_pat, function(m) {
 						return '*'.repeat(m.length);
 					});
 					data.set('replacedTitle', node.title);
 					
-					block = 'original title ' + data.get('originalTitle');
+					blockReason = 'original title ' + data.get('originalTitle') + ' contains "' + offender + '"';
 
 				} // end if
 				else
@@ -646,26 +661,26 @@ function background_filter(nodes)
 			
 			// If the image URL has a match with a blocked word... All replacement URLs are not blocked by definition.
 			// Also ignore data urls since they don't contain words.
-			if (!src.startsWith('data:') && !replacements.has(src) && blocked_pat.test(src))
+			if (!src.startsWith('data:') && !replacements.has(src) && test(src))
 			{
 			
 				// HAVING A PROBLEM WITH WORD MATCHING IN SRC ATTRIBUTE. PROBLEM SOLVED JANUARY 2013
 				//window.alert("Replacing image step 1."); // used for testing.
 				//window.alert("Image number: " + i); //used for testing.
 				
-				block = 'src ' + src;
+				blockReason = 'src ' + src + ' contains "' + offender + '"';
 
 			} // end if
 			
 			
 			
 			// If the image name has a match with a blocked word...
-			if (blocked_pat.test(node.name))
+			if (test(node.name))
 			{
 				//window.alert("Replacing image step 2."); // used for testing.
 				//window.alert("Image number: " + i); //used for testing.
 				
-				block = 'name ' + node.name;
+				blockReason = 'name ' + node.name + ' contains "' + offender + '"';
 
 			} // end if
 			
@@ -675,14 +690,14 @@ function background_filter(nodes)
 			if (node.parentNode.nodeName == 'A')
 			{
 
-				if (blocked_pat.test(node.parentNode.href))
+				if (test(node.parentNode.href))
 				{
-					block = 'link href ' + node.parentNode.href;
+					blockReason = 'link href ' + node.parentNode.href + ' contains "' + offender + '"';
 				} // end if
 				
-				else if (blocked_pat.test(node.parentNode.title))
+				else if (test(node.parentNode.title))
 				{
-					block = 'link title ' + node.parentNode.title;
+					blockReason = 'link title ' + node.parentNode.title + ' contains "' + offender + '"';
 				} // end else if
 			} // end if for parent node
 		}
@@ -696,7 +711,7 @@ function background_filter(nodes)
 			img: node,
 			originalSrc: node.getAttribute('style'),
 			src: src,
-			block: false
+			blockReason: blockReason
 		};
 
 		delete node.dataset.webCleanerReady;
@@ -732,7 +747,17 @@ function image_filter(images)
 	// I used \S instead of \w since \w only matches word characters (letters and numbers) while \S matches anything not whitespace.
 	// This is necessary since image urls will contain non-word non-whitespace characters in the singel string.
 	var blocked_pat = new RegExp( '(' + options.image_blocked_words.split('\n').join('|') + ')', 'igm');
-	
+	var offender;
+	function test(text) {
+		var m = blocked_pat.exec(text);
+		if (m) {
+			offender = m[0];
+			return true;
+		} else {
+			offender = undefined;
+			return false;
+		}
+	}
 	//window.alert(blocked_pat); // Used for testing.
 
 	var	good = image_cache.good,
@@ -744,7 +769,7 @@ function image_filter(images)
 	
 	for (var i = 0; i < images.length; i++)
 	{
-		var block = false;
+		var blockReason = false;
 		//window.alert("Src text: " + images[i].src + '\n Alt text: ' + images[i].alt + "\nDest text: " + images[i].attr("dest_src")); // used for testing.
 		
 		var img = images[i];
@@ -758,19 +783,19 @@ function image_filter(images)
 			// Otherwise, if the image has a title that matches a blocked word...
 			if (data.has('replacedTitle') && data.get('replacedTitle') === img.title)
 			{
-				block = 'replaced title ' + data.get('originalTitle');
+				blockReason = 'replaced title ' + data.get('originalTitle');
 			}
 			else 
 			{
 				data.set('originalTitle', img.title);
-				if (options.image_block_words && blocked_pat.test(img.title))
+				if (options.image_block_words && test(img.title))
 				{
 					img.title = img.title.replace(blocked_pat, function(m) {
 						return '*'.repeat(m.length);
 					});
 					data.set('replacedTitle', img.title);
 					
-					block = 'original title ' + data.get('originalTitle');
+					blockReason = 'original title ' + data.get('originalTitle') + ' contains "' + offender + '"';
 
 				} // end if
 				else
@@ -782,27 +807,27 @@ function image_filter(images)
 			
 			// If the image URL has a match with a blocked word... All replacement URLs are not blocked by definition.
 			// Also ignore data urls since they don't contain words.
-			if (!img.src.startsWith('data:') && !replacements.has(img.src) && blocked_pat.test(img.src))
+			if (!img.src.startsWith('data:') && !replacements.has(img.src) && test(img.src))
 			{
 			
 				// HAVING A PROBLEM WITH WORD MATCHING IN SRC ATTRIBUTE. PROBLEM SOLVED JANUARY 2013
 				//window.alert("Replacing image step 1."); // used for testing.
 				//window.alert("Image number: " + i); //used for testing.
 				
-				block = 'src ' + img.src;
+				blockReason = 'src ' + img.src + ' contains "' + offender + '"';
 
 			} // end if
 			
 			
 			if (data.has('replacedAlt') && data.get('replacedAlt') === img.alt)
 			{
-				block = 'replaced alt ' + data.get('originalAlt');
+				blockReason = 'replaced alt ' + data.get('originalAlt');
 			}
 			else
 			{
 				data.set('originalAlt', img.alt);
 				// If the image alternate text has a match with a blocked word...
-				if (blocked_pat.test(img.alt))
+				if (test(img.alt))
 				{
 					//window.alert("Replacing image step 3."); // used for testing.
 					//window.alert("Image number: " + i); //used for testing.
@@ -811,7 +836,7 @@ function image_filter(images)
 					});
 					data.set('replacedAlt', img.alt);
 					
-					block = 'original alt ' + data.get('originalTitle');
+					blockReason = 'original alt ' + data.get('originalTitle') + ' contains "' + offender + '"';
 					
 				} // end if
 				else
@@ -823,12 +848,12 @@ function image_filter(images)
 			
 			
 			// If the image name has a match with a blocked word...
-			if (blocked_pat.test(img.name))
+			if (test(img.name))
 			{
 				//window.alert("Replacing image step 2."); // used for testing.
 				//window.alert("Image number: " + i); //used for testing.
 				
-				block = 'name ' + img.name;
+				blockReason = 'name ' + img.name + ' contains "' + offender + '"';
 
 			} // end if
 			
@@ -838,14 +863,14 @@ function image_filter(images)
 			if (img.parentNode.nodeName == 'A')
 			{
 
-				if (blocked_pat.test(img.parentNode.href))
+				if (test(img.parentNode.href))
 				{
-					block = 'link href ' + img.parentNode.href;
+					blockReason = 'link href ' + img.parentNode.href + ' contains "' + offender + '"';
 				} // end if
 				
-				else if (blocked_pat.test(img.parentNode.title))
+				else if (test(img.parentNode.title))
 				{
-					block = 'link title ' + img.parentNode.title;
+					blockReason = 'link title ' + img.parentNode.title + ' contains "' + offender + '"';
 				} // end else if
 			} // end if for parent node
 		}
@@ -859,7 +884,7 @@ function image_filter(images)
 			img: img,
 			originalSrc: img.src,
 			src: img.src,
-			block: block
+			blockReason: blockReason
 		};
 
 		delete img.dataset.webCleanerReady;
@@ -877,7 +902,7 @@ function processTask(task) {
 	var img = task.img,
 		data = img.wcData,
 		src = task.src,
-		block = task.block,
+		blockReason = task.blockReason,
 		canvas = task.canvas,
 		good = image_cache.good,
 		bad = image_cache.bad,
@@ -905,14 +930,18 @@ function processTask(task) {
 	else if (replacements.has(src)) {
 		// We already counted that one.
 		updateStats({images: {total: -1, processed: -1, blocked: -1}});
-		task.block = true;
+		if (!blockReason) {
+			task.blockReason = blockReason = 'is known to be bad';
+		}
 		finish();
 	}
 
 	// Check if it's known that the image has to be blocked.
-	else if (bad.has(src) || block && src) {
-		task.block = true;
-		if (debug) console.log('blocked image because ' + (block || 'is bad') + ': ' + src.slice(0, 100));
+	else if (bad.has(src) || blockReason && src) {
+		if (!blockReason) {
+			task.blockReason = blockReason = 'is known to be bad';
+		}
+		if (debug) console.log('blocked image because ' + blockReason + ': ' + src.slice(0, 100));
 		// Replace image without analyzing it.
 		// Maybe we have the replacement somewhere already.
 		if (
@@ -997,7 +1026,7 @@ function processTask(task) {
 		}
 	}
 	function finish() {
-		updateStats({images: {processed: 1, blocked: task.block ? 1 : 0}});
+		updateStats({images: {processed: 1, blocked: task.blockReason ? 1 : 0}});
 		if (options.image_blurring) {
 			img.dataset.webCleanerReady = true;
 		}
@@ -1276,4 +1305,14 @@ function insertTemplates() {
 	}, false);
 	document.children[0].appendChild(root);
 	updateStats();
+}
+
+var tmpLink;
+function makeUrlAbsolute(url) {
+	if (!tmpLink) {
+		tmpLink = document.createElement('a');
+	}
+	tmpLink.href = url;
+	var absolute = tmpLink.href;
+	return absolute;
 }
