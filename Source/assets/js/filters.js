@@ -441,7 +441,7 @@ function text_filter(text_nodes)
 			if ((options.block_paragraph == true) && (options.num_for_paragraph <= paragraph_count))
 			{
 				// If we have surpassed the limit, replace the text node's value with "This paragraph has been censored."
-				if (debug) console.log('blocked whole paragraph because ' + paragraph_count + ' bad words were found');
+				if (debug) console.log('Blocked whole paragraph because ' + paragraph_count + ' bad words were found');
 
 				text_nodes[i].nodeValue = options.paragraph_text;
 					
@@ -458,7 +458,7 @@ function text_filter(text_nodes)
 				//window.stop(); // May be unnecessary.
 
 				page_blocked = true;
-				if (debug) console.log('blocked whole page because ' + word_count + ' bad words were found');
+				if (debug) console.log('Blocked whole page because ' + word_count + ' bad words were found');
 
 				document.documentElement.innerHTML = `
 					<HEAD>
@@ -477,7 +477,7 @@ function text_filter(text_nodes)
 				break; // This breaks out of the loop going through the text nodes.
 			} // end webpage block if
 
-			if (debug) console.log('blocked ' + paragraph_count + ' bad words');
+			if (debug) console.log('Blocked ' + paragraph_count + ' bad words');
 
 			text_nodes[i].nodeValue = text_nodes[i].nodeValue.replace(blocked_pat, function(m) {
 				return '*'.repeat(m.length);
@@ -941,7 +941,7 @@ function processTask(task) {
 		if (!blockReason) {
 			task.blockReason = blockReason = 'is known to be bad';
 		}
-		if (debug) console.log('blocked image because ' + blockReason + ': ' + src.slice(0, 100));
+		if (debug) console.log('Blocked image because ' + blockReason + ': ' + src.slice(0, 100));
 		// Replace image without analyzing it.
 		// Maybe we have the replacement somewhere already.
 		if (
@@ -1229,7 +1229,7 @@ function getReplacement(task, callback)
 		} else {
 			getCanvasFromUrl(task.src, imageLoadPixel, function(canvas) {
 				if (!canvas) {
-					console.log('could not load ' + task.src);
+					console.log('Could not load ' + task.src);
 					callback(logo);
 					return;
 				}
