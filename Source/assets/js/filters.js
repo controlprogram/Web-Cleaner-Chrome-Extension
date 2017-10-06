@@ -69,6 +69,8 @@ var stats = {
 	images: {total: 0, processed: 0, blocked: 0},
 };
 
+var isImageDocument = /^image\//.test(document.contentType);
+
 var logo = chrome.extension.getURL("assets/img/logo.svg");
 
 function updateStats(adds) {
@@ -962,6 +964,11 @@ function processTask(task) {
 				// Also remove a possible srcset.
 				// Alternatively we could create a replacement for each version which doesn't make any sense.
 				img.srcset = ""; // remove src
+
+				if (isImageDocument) {
+					// In ImageDocuments the img element is magic so we have to replace it.
+					replaceImageDocumentElement(img);
+				}
 			}
 			else
 			{
@@ -1315,4 +1322,31 @@ function makeUrlAbsolute(url) {
 	tmpLink.href = url;
 	var absolute = tmpLink.href;
 	return absolute;
+}
+
+function replaceImageDocumentElement(img) {
+	var repl = document.createElement('img');
+	img.getAttributeNames().forEach(function(name) {
+		repl.setAttribute(name, img.getAttribute(name));
+	});
+	repl.removeAttribute('width');
+	repl.removeAttribute('height');
+	var zoomed = repl.style.cursor === 'zoom-out';
+	repl.addEventListener('click', function() {
+		zoomed = !zoomed;
+		updateStyle();
+	});
+	updateStyle();
+	img.parentNode.replaceChild(repl, img);
+	return repl;
+
+	function updateStyle() {
+		if (zoomed) {
+			repl.style.cursor = 'zoom-out';
+			repl.style.maxWidth = repl.style.maxHeight = '';
+		} else {
+			repl.style.cursor = 'zoom-in';
+			repl.style.maxWidth = repl.style.maxHeight = '100%';
+		}
+	}
 }
