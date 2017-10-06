@@ -12,9 +12,10 @@
 		<script type="text/javascript" src="../js/questions.js"></script>
 		<script type="text/javascript" src="../js/progress.js"></script>
 		<script type="text/javascript" src="../js/intro.js"></script>
-		<link rel="stylesheet" type="text/css" href="../css/cal-heatmap.css">
-		<link rel="stylesheet" type="text/css" href="../css/introjs.css">
-		<link rel="stylesheet" type="text/css" href="../css/progress.css">
+		<link rel="stylesheet" type="text/css" href="../css/cal-heatmap.css" />
+		<link rel="stylesheet" type="text/css" href="../css/introjs.css" />
+		<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/progress.css" />
 	</head>
 	<body>
 		<div class="windowBar" id="main-windowBar">
@@ -66,7 +67,7 @@
 			<script type="text/javascript" src="../js/heatmap.js"></script>
             <div class="reportChartHolder">    
 				<ul>
-					<li><h3>Orgasm Statistics</h3></li>
+					<li><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> <h3>Orgasm Statistics</h3></li>
                 </ul>         
 				<div id="doughnutChart" class="chart" data-hint="Orgasming <i>is</i> needing CPR: Cumming, Prostate Milking, or Ruining. This graph displays a simple visual breakdown of all the orgasms you had this month. If you are in a chastity session and are locked up by an accountability partner, it will display so here." data-position="right"></div>
 				<div id="lock" data-role="lock"></div>
@@ -98,13 +99,16 @@
             </div>
             <div class="reportHolder">
                 <ul>		
-					<li><h3 data-hint="This extension keeps track of your overall mood every month to help you you better understand the effects of porn, orgasming or lack thereof. This data is stored locally and will not leave your browser." data-position="right">*Report for
-						<select>
-							<option>Aug '17</option>
-							<option>Jul '17</option>
-							<option>Jun '17</option>
-						</select>
-					</h3><span style="float: right; margin-left: -145px"><h3><a class="switch" data-box="feels">Mood</a> / <a class="switchHl" data-box="tickets" data-hint="Tickets are given to you at every milestone and can be taken away if you relapse or orgasm without permission." data-position="left">Tickets</a></h3></li>
+					<li>
+						<h3>
+							<select>
+								<option>Aug '17</option>
+								<option>Jul '17</option>
+								<option>Jun '17</option>
+							</select>
+						</h3>
+						<span style="float: right; margin-left: -145px"><h3><a class="switch" data-box="feels" data-hint="This extension keeps track of your overall mood every month to help you you better understand the effects of porn, orgasming or lack thereof. This data is stored locally and will not leave your browser." data-position="right">Mood</a> / <a class="switchHl" data-box="tickets" data-hint="Tickets are given to you at every milestone and can be taken away if you relapse or orgasm without permission." data-position="left">Tickets</a></h3></span>
+					</li>
                 </ul>
                 <div id="feels-box">
 					<ul class="statsLeft">
