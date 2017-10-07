@@ -3,9 +3,9 @@ var startOfDay = 2*60*60*1000;
 
 function initDoughnut() {
   doughnut = $("#doughnutChart").drawDoughnutChart([
-	{ title: "Cummed",		  get value() { return cums.length; },  color: "#D7757B" },
-	{ title: "Prostate Milked", get value() { return milks.length; },   color: "#FEFDD5" },
-	{ title: "Ruined",        get value() { return ruins.length; },   color: "#E0F0F3" }
+	{ title: "Cummed",		  get value() { return cums.length; },  color: "#DB8288" },
+	{ title: "Prostate Milked", get value() { return milks.length; },   color: "#FEFDD9" },
+	{ title: "Ruined",        get value() { return ruins.length; },   color: "#E3F1F4" }
   ], {
   	summaryTitle: 'TOTAL'
   });
