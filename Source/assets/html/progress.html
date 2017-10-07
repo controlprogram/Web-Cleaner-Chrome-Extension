@@ -28,7 +28,7 @@
 				<p>minutes</p>
 				<p id="seconds">00</p>
 				<p>seconds</p>
-				<p>until your next <span style="font-weight: bold; color: #50C46E" data-hint="A countdown until your next milestone or orgasm as decided by the extension. Other messages may also display here." data-position="bottom">milestone.</span></p>
+				<p>until your next <span style="font-weight: bold; color: #50C46E" data-hint="A countdown until your next milestone or orgasm as decided by the Web Cleaner extension. Other messages may also display here." data-position="bottom">milestone.</span></p>
 			</div>
 		</div>
 		<div class="container" id="mainContainer">
@@ -69,17 +69,19 @@
 				<ul>
 					<li><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> <h3>Orgasm Statistics</h3></li>
                 </ul>         
-				<div id="doughnutChart" class="chart" data-hint="Orgasming <i>is</i> needing CPR: Cumming, Prostate Milking, or Ruining. This graph displays a simple visual breakdown of all the orgasms you had this month. If you are in a chastity session and are locked up by an accountability partner, it will display so here." data-position="right"></div>
-				<div id="lock" data-role="lock"></div>
+				<div id="doughnutChart" class="chart" data-hint="Orgasming <i>is</i> needing CPR: Cumming, Prostate Milking, or Ruining. This graph displays a simple visual breakdown of all the orgasms you had this month." data-position="right"></div>
+				<div id="lock" data-role="lock" data-hint="If you are in a chastity session and are locked up by an accountability partner, it will display so here. This feature is still in development." data-position="right"></div>
 				<div class="reportCommon">
-					<h3><span class="reportCommon_Left">Last Orgasm<br /><span class="hlBlue" id="field-last-orgasm"></span></span>
-					<span class="reportCommon_Right">Edges Since<br /><span class="hlBlue" id="field-edges-since-last-orgasm"></span></span>
-					<span class="reportCommon_Left">Next Milestone<br /><span class="hlBlue" id="field-next-milestone"></span></span>
-					<span class="reportCommon_Right">Longest Streak<br /><span class="hlBlue" id="field-longest-streak"></span></span>
-					<span class="reportCommon_Left">Frequent Relapse Day<br /><span class="hlRed" id="field-frequent-relapse"></span></span>
-					<span class="reportCommon_Right">Mood<br /><span class="hlBlue" id="field-mood"></span></span>
-					<span class="reportCommon_Left">Sep '16 Rating<br /><span class="hlRed">60%</span></span>
-					<span class="reportCommon_Right">Aug '16 Rating<br /><span class="hlRed">60%</span></span>
+					<h3>
+						<span class="reportCommon_Left">Last Orgasm<br /><span class="hlBlue" id="field-last-orgasm"></span></span>
+						<span class="reportCommon_Right">Edges Since<br /><span class="hlBlue" id="field-edges-since-last-orgasm"></span></span>
+						<span class="reportCommon_Left">Next Milestone<br /><span class="hlBlue" id="field-next-milestone"></span></span>
+						<span class="reportCommon_Right">Longest Streak<br /><span class="hlBlue" id="field-longest-streak"></span></span>
+						<span class="reportCommon_Left">Freq. Relapse Day<br /><span class="hlRed" id="field-frequent-relapse"></span></span>
+						<span class="reportCommon_Right">Mood<br /><span class="hlBlue" id="field-mood"></span></span>
+						<span class="reportCommon_Left">---<br /><span class="hlRed">N/A</span></span>
+						<span class="reportCommon_Right">---<br /><span class="hlRed">N/A</span></span>
+					</h3>
 				</div>
 				<div id="buttons">
 					<div class="button" data-role="report-cpr" data-hint="If you orgasm with or without permission, you must report it." data-position="top">Report CPR</div>
@@ -90,8 +92,8 @@
 					<div class="blue">
 						<div class="outer">
 							<div class="inner">
-							<div class="percent"><span>00:</span>59</div>
-							<div class="water" data-hint="If you are permitted to look at porn, all filters are disabled for the time displayed in this countdown timer. When the water depletes, play time is over and you will be instructed to lock back up if in chastity.<span id=porn-timer><span style=color:#2BE12B><b>Green:</b></span> You may orgasm once<br /><span style=color:#C82525><b>Red:</b></span> Only edging is permitted<br /><span style=color:#2571C8><b>Blue:</b></span> No touching whatsoever</span>" data-position="right"></div>
+							<div class="percent"><span>00:</span>00</div>
+							<div class="water" data-hint="If you are permitted to look at porn, all filters are disabled for the time displayed in this countdown timer. When the water depletes, play time is over and you will be instructed to lock back up if in chastity. This feature has yet to be developed.<span id=porn-timer><span style=color:#2BE12B><b>Green:</b></span> You may orgasm once<br /><span style=color:#C82525><b>Red:</b></span> Only edging is permitted<br /><span style=color:#2571C8><b>Blue:</b></span> No touching whatsoever</span>" data-position="right"></div>
 							</div>
 						</div>
 					</div>
@@ -102,12 +104,10 @@
 					<li>
 						<h3>
 							<select>
-								<option>Aug '17</option>
-								<option>Jul '17</option>
-								<option>Jun '17</option>
+								<option>N/A</option>
 							</select>
 						</h3>
-						<span style="float: right; margin-left: -145px"><h3><a class="switch" data-box="feels" data-hint="This extension keeps track of your overall mood every month to help you you better understand the effects of porn, orgasming or lack thereof. This data is stored locally and will not leave your browser." data-position="right">Mood</a> / <a class="switchHl" data-box="tickets" data-hint="Tickets are given to you at every milestone and can be taken away if you relapse or orgasm without permission." data-position="left">Tickets</a></h3></span>
+						<span style="float: right; margin-left: -145px"><h3><a class="switch" data-box="feels" data-hint="This extension keeps track of your overall mood every month to help you you better understand the effects of porn, orgasming or lack thereof. This data is stored locally and will not leave your browser. This feature is non-functional at this time." data-position="right">Mood</a> / <a class="switchHl" data-box="tickets" data-hint="Tickets are given to you at every milestone and can be taken away if you relapse or orgasm without permission." data-position="left">Tickets</a></h3></span>
 					</li>
                 </ul>
                 <div id="feels-box">
