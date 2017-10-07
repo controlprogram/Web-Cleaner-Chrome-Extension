@@ -19,7 +19,7 @@
       sin = Math.sin,
       PI = Math.PI,
       settings = $.extend({
-        baseColor: "rgba(0,0,0,0.5)",
+        baseColor: "rgba(0,0,0,0.15)",
         baseOffset: 1.5,
         edgeOffset : 10,//offset from edge of $this
         percentageInnerCutout : 75,
