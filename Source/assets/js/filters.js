@@ -73,6 +73,7 @@ var stats = {
 var isImageDocument = /^image\//.test(document.contentType);
 
 var logo = chrome.extension.getURL("assets/img/logo.svg");
+var initialBlockUrl = '';
 
 function updateStats(adds) {
 	if (!adds) {
@@ -635,6 +636,11 @@ function background_filter(nodes)
 			data = node.wcData = new Map();
 		}
 
+		if (options.image_blocking && node.task && src === initialBlockUrl) {
+			// The background image was changed by the extension.
+			continue;
+		}
+
 		var blockReason = false;
 		if (options.image_block_words) {
 			// Otherwise, if the image has a title that matches a blocked word...
@@ -712,7 +718,9 @@ function background_filter(nodes)
 		node.task = {
 			tag: node.tagName.toLowerCase(),
 			img: node,
-			originalSrc: node.getAttribute('style'),
+			originalStyle: node.getAttribute('style'),
+			style: node.getAttribute('style'),
+			originalSrc: src,
 			src: src,
 			blockReason: blockReason
 		};
@@ -780,6 +788,11 @@ function image_filter(images)
 		if (!data)
 		{
 			data = img.wcData = new Map();
+		}
+
+		if (options.image_blocking && img.task && (initialBlockUrl ? img.src === initialBlockUrl : !img.hasAttribute('src'))) {
+			// The image src was changed by the extension.
+			continue;
 		}
 		
 		if (options.image_block_words) {
@@ -905,6 +918,9 @@ function processTask(task) {
 	var img = task.img,
 		data = img.wcData,
 		src = task.src,
+		originalSrc = task.originalSrc,
+		style = task.style,
+		originalStyle = task.originalStyle,
 		blockReason = task.blockReason,
 		canvas = task.canvas,
 		good = image_cache.good,
@@ -917,11 +933,11 @@ function processTask(task) {
 	// Check if the preconditions have changed.
 	if (
 		task.tag == 'img' ? (
-			src !== img.src || 
+			(src ? src !== img.src : img.hasAttribute('src')) || 
 			data.has('replacedTitle') && img.title !== data.get('replacedTitle') ||
 			data.has('replacedAlt') && img.alt !== data.get('replacedAlt')
 		) : (
-			task.originalSrc !== img.getAttribute('style')
+			task.style !== img.getAttribute('style')
 		)
 	) {
 		// A new task will be scheduled soon.
@@ -930,7 +946,7 @@ function processTask(task) {
 	}
 
 	// Check if image is already blocked.
-	else if (replacements.has(src)) {
+	else if (replacements.has(originalSrc)) {
 		// We already counted that one.
 		updateStats({images: {total: -1, processed: -1, blocked: -1}});
 		if (!blockReason) {
@@ -940,27 +956,30 @@ function processTask(task) {
 	}
 
 	// Check if it's known that the image has to be blocked.
-	else if (bad.has(src) || blockReason && src) {
+	else if (bad.has(originalSrc) || blockReason && originalSrc) {
 		if (!blockReason) {
 			task.blockReason = blockReason = 'is known to be bad';
 		}
-		if (debug) console.log('Blocked image because ' + blockReason + ': ' + src.slice(0, 100));
+		if (debug) console.log('Blocked image because ' + blockReason + ': ' + originalSrc.slice(0, 100));
 		// Replace image without analyzing it.
 		// Maybe we have the replacement somewhere already.
 		if (
-			typeof bad.get(src) === 'string' ||
-			typeof unsure.get(src) === 'string' ||
-			typeof good.get(src) === 'string'
+			typeof bad.get(originalSrc) === 'string' ||
+			typeof unsure.get(originalSrc) === 'string' ||
+			typeof good.get(originalSrc) === 'string'
 		) {
-			var replacement = bad.get(src) || unsure.get(src) || good.get(src) || '';
+			var replacement = bad.get(originalSrc) || unsure.get(originalSrc) || good.get(originalSrc) || '';
+			src = task.src = replacement;
 			if (task.tag == "img")
 			{
-				if (replacement === logo) {
+				if (src === logo) {
+					// Need to set dimensions so layouts won't break
 					var rect = img.getBoundingClientRect();
 					img.width = rect.width;
 					img.height = rect.height;
 				}
-				img.src = replacement;
+
+				img.src = src;
 
 				// Also remove a possible srcset.
 				// Alternatively we could create a replacement for each version which doesn't make any sense.
@@ -968,31 +987,33 @@ function processTask(task) {
 
 				if (isImageDocument) {
 					// In ImageDocuments the img element is magic so we have to replace it.
-					replaceImageDocumentElement(img);
+					img = task.img = replaceImageDocumentElement(img);
 				}
 			}
 			else
 			{
-				img.style.backgroundImage = "url(\"" + replacement.replace(/"/g, "\\\"") + "\")";
+				img.style.backgroundImage = "url(\"" + src.replace(/"/g, "\\\"") + "\")";
+				style = task.style = img.getAttribute('style');
 			}
 			finish();
 		} else {
 			// It's necessary to convert the image.
-			if (converting.has(src)) {
-				converting.get(src).push(task);
+			block();
+			if (converting.has(originalSrc)) {
+				converting.get(originalSrc).push(task);
 			} else {
-				converting.set(src, [task]);
+				converting.set(originalSrc, [task]);
 				getReplacement(task, function(replacement) {
 					replacements.add(replacement);
-					if (bad.has(src)) {
-						bad.set(src, replacement);
-					} else if (good.has(src)) {
-						good.set(src, replacement);
+					if (bad.has(originalSrc)) {
+						bad.set(originalSrc, replacement);
+					} else if (good.has(originalSrc)) {
+						good.set(originalSrc, replacement);
 					} else {
-						unsure.set(src, replacement);
+						unsure.set(originalSrc, replacement);
 					}
-					var tasks = converting.get(src);
-					converting.delete(src);
+					var tasks = converting.get(originalSrc);
+					converting.delete(originalSrc);
 					tasks.forEach(processTask);
 				});
 			}
@@ -1000,31 +1021,32 @@ function processTask(task) {
 	}
 
 	// Check if it's known that the image does not have to be blocked.
-	else if (good.has(src) || options.image_scanner != true || !src) {
+	else if (good.has(originalSrc) || options.image_scanner != true || !originalSrc) {
 		finish();
 	}
 
 	else {
 		// It's necessary to analyze the image.
-		if (analyzing.has(src)) {
+		block();
+		if (analyzing.has(originalSrc)) {
 			// Analying process is already running. Just add this task.
-			analyzing.get(src).push(task);
+			analyzing.get(originalSrc).push(task);
 		} else {
-			analyzing.set(src, [task]);
-			getCanvasFromUrl(src, imageLoadPixel, function(canvas) {
+			analyzing.set(originalSrc, [task]);
+			getCanvasFromUrl(originalSrc, imageLoadPixel, function(canvas) {
 				analyzeCanvas(canvas, function(nude) {
 					var replacement = true;
-					if (unsure.has(src)) {
-						replacement = unsure.get(src);
-						unsure.delete(src);
+					if (unsure.has(originalSrc)) {
+						replacement = unsure.get(originalSrc);
+						unsure.delete(originalSrc);
 					}
 					if (nude) {
-						bad.set(src, replacement);
+						bad.set(originalSrc, replacement);
 					} else {
-						good.set(src, replacement);
+						good.set(originalSrc, replacement);
 					}
-					var tasks = analyzing.get(src);
-					analyzing.delete(src);
+					var tasks = analyzing.get(originalSrc);
+					analyzing.delete(originalSrc);
 					tasks.forEach(function(task) {
 						task.canvas = canvas;
 					});
@@ -1033,12 +1055,55 @@ function processTask(task) {
 			});
 		}
 	}
+
+	function block() {
+		if (options.image_blocking) {
+			src = task.src = initialBlockUrl;
+			img.dataset.webCleanerBlocked = true;
+			if (task.tag == "img") {
+				if (isImageDocument) {
+					// In ImageDocuments the img element is magic so we have to replace it.
+					img = task.img = replaceImageDocumentElement(img);
+				}
+				if (src) {
+					img.src = src;
+				} else {
+					img.removeAttribute('src');
+				}
+			} else {
+				if (src) {
+					img.style.backgroundImage = '';
+				} else {
+					img.style.backgroundImage = "url(\"" + src.replace(/"/g, "\\\"") + "\")";
+				}
+				style = task.style = img.getAttribute('style');
+			}
+		}
+	}
+
 	function finish() {
+		delete img.task;
 		updateStats({images: {processed: 1, blocked: task.blockReason ? 1 : 0}});
 		if (options.image_blurring) {
 			img.dataset.webCleanerReady = true;
 		}
-		delete img.task;
+		if (options.image_blocking) {
+			img.dataset.webCleanerBlocked = false;
+			if (!task.blockReason) {
+				if (task.tag === 'img') {
+					if (src !== originalSrc) {
+						src = task.src = originalSrc;
+						img.src = src;
+					}
+				} else {
+					if (style !== originalStyle) {
+						src = task.src = originalSrc;
+						style = task.style = originalStyle;
+						img.setAttribute('style', style);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -1050,7 +1115,7 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 	} // end sync if
 
 	// If the image src is an ObjectURL, use it synchronously.
-	if (src.startsWith('blob:'))
+	else if (src.startsWith('blob:'))
 	{
 		getCanvasFromDataObjectUrl(src, maxPixels, callback);
 	} // end sync if
@@ -1285,9 +1350,9 @@ function getReplacement(task, callback)
 		if (task.canvas) {
 			callback(pixelate(task.canvas, imageMaxPixel).toDataURL());
 		} else {
-			getCanvasFromUrl(task.src, imageLoadPixel, function(canvas) {
+			getCanvasFromUrl(task.originalSrc, imageLoadPixel, function(canvas) {
 				if (!canvas) {
-					console.log('Could not load ' + task.src);
+					console.log('Could not load ' + task.originalSrc);
 					callback(logo);
 					return;
 				}
@@ -1376,20 +1441,27 @@ function makeUrlAbsolute(url) {
 }
 
 function replaceImageDocumentElement(img) {
-	var repl = document.createElement('img');
-	img.getAttributeNames().forEach(function(name) {
-		repl.setAttribute(name, img.getAttribute(name));
-	});
-	repl.removeAttribute('width');
-	repl.removeAttribute('height');
-	var zoomed = repl.style.cursor === 'zoom-out';
-	repl.addEventListener('click', function() {
-		zoomed = !zoomed;
+	if (!img.wcData.has('replaced') || img.wcData.get('replaced') != true) {
+		var repl = document.createElement('img');
+		img.getAttributeNames().forEach(function(name) {
+			repl.setAttribute(name, img.getAttribute(name));
+		});
+		repl.removeAttribute('width');
+		repl.removeAttribute('height');
+		var zoomed = repl.style.cursor === 'zoom-out';
+		repl.addEventListener('click', function() {
+			zoomed = !zoomed;
+			updateStyle();
+		});
 		updateStyle();
-	});
-	updateStyle();
-	img.parentNode.replaceChild(repl, img);
-	return repl;
+		img.parentNode.replaceChild(repl, img);
+		repl.wcData = img.wcData;
+		repl.wcData.set('replaced', true);
+		repl.task = img.task;
+		return repl;
+	} else {
+		return img;
+	}
 
 	function updateStyle() {
 		if (zoomed) {

@@ -56,6 +56,7 @@ var options = [
 	{name: "image_replacement", type: 'string', default: "logo"},
 	{name: "image_pixelization", type: 'integer', default: 50},
 	{name: "image_blurring", type: 'boolean', default: true},
+	{name: "image_blocking", type: 'boolean', default: true},
 	{name: "image_two_pass", type: 'boolean', default: true},
 	{name: "schedule_on", type: 'boolean', default: true},
 	{name: "schedule", type: 'string', default: '[]'},
