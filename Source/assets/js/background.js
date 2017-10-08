@@ -361,12 +361,23 @@ chrome.extension.onMessage.addListener(
 				// And we got an OK response...
 				if (xhr.status == 200)
 				{
-					// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
-					var reader = new FileReader();
-					reader.addEventListener("loadend", function() {
-						sendResponse({status: xhr.status, result: reader.result});
-					});
-					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+					if (request.type === 'data-url')
+					{
+						// Convert the blob to a DataURL.
+						var reader = new FileReader();
+						reader.addEventListener("loadend", function() {
+							sendResponse({status: xhr.status, type: request.type, result: reader.result});
+						});
+						reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+					}
+					else if (request.type === 'object-url')
+					{
+						sendResponse({status: xhr.status, type: request.type, result: URL.createObjectURL(xhr.response)});
+					}
+					else // request.type === 'blob'
+					{
+						sendResponse({status: xhr.status, type: 'blob', result: xhr.response});
+					}
 				} // end if
 				else
 				{

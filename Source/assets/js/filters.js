@@ -62,6 +62,7 @@ var image_cache = {
 };
 
 var debug = true;
+var preferDataUrls = false;
 var imageLoadPixel = 200;
 var imageMaxPixel = 50;
 var stats = {
@@ -1048,6 +1049,12 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 		getCanvasFromDataUrl(src, maxPixels, callback);
 	} // end sync if
 
+	// If the image src is an ObjectURL, use it synchronously.
+	if (src.startsWith('blob:'))
+	{
+		getCanvasFromDataObjectUrl(src, maxPixels, callback);
+	} // end sync if
+
 	else // load it asynchronously
 	{
 		// Now create an xml request for the image so we can circumvent the cross-origin problem.
@@ -1062,18 +1069,32 @@ function getCanvasFromUrl(src, maxPixels, callback) {
 				// And we got an OK response...
 				if (xhr.status == 200)
 				{
-					// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
-					var reader = new FileReader();
-					reader.addEventListener("loadend", function() {
-						getCanvasFromDataUrl(reader.result, maxPixels, callback);
-					});
-					reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+					if (preferDataUrls)
+					{
+						// Convert the blob to a DataURL, then load it into an img to extract pixel data from it.
+						var reader = new FileReader();
+						reader.addEventListener("loadend", function() {
+							getCanvasFromDataUrl(reader.result, maxPixels, callback);
+						});
+						reader.readAsDataURL(xhr.response); // This should encode the image data as base64.
+					}
+					else
+					{
+						getCanvasFromObjectUrl(URL.createObjectURL(xhr.response), maxPixels, callback);
+					}
 				} // end if
 				else if (xhr.status == 0)
 				{
-					chrome.extension.sendMessage({"greeting": "request_xhr", url: src}, function(response) {
+					chrome.extension.sendMessage({"greeting": "request_xhr", url: src, type: preferDataUrls ? 'data-url' : 'blob'}, function(response) {
 						if (response.result) {
-							getCanvasFromDataUrl(response.result, maxPixels, callback);
+							if (response.type === 'data-url')
+							{
+								getCanvasFromDataUrl(response.result, maxPixels, callback);
+							}
+							else
+							{
+								getCanvasFromObjectUrl(URL.createObjectURL(response.result), maxPixels, callback);
+							}
 						} else {
 							callback(null);
 						}
@@ -1118,6 +1139,36 @@ function getCanvasFromDataUrl(src, maxPixels, callback) {
 	image.src = src;
 }
 
+// This function loads the object url as a down scaled(!) canvas and revokes the object url.
+function getCanvasFromObjectUrl(src, maxPixels, callback) {
+	if (!/^blob:/i.test(src)) {
+		// The url isn't an object url.
+		callback(null);
+		return;
+	}
+	var image = new Image();
+	image.onload = function() {
+		URL.revokeObjectURL(src);
+
+		// Draw the image onto a canvas.
+		var width = image.width,
+			height = image.height,
+			scale = 1;
+		if (0 < maxPixels && (maxPixels < width || maxPixels < height)) {
+			scale = maxPixels / Math.max(width, height);
+		}
+		var canvas = document.createElement('canvas');
+		canvas.originalWidth = width;
+		canvas.originalHeight = height;
+		canvas.scale = scale;
+		canvas.width = Math.round(width * scale);
+		canvas.height = Math.round(height * scale);
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+		callback(canvas);
+	};
+	image.src = src;
+}
 
 function analyzeCanvas(canvas, callback)
 {
