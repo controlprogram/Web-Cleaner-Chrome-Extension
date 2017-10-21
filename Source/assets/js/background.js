@@ -58,7 +58,7 @@ var options = [
 	{name: "image_blurring", type: 'boolean', default: true},
 	{name: "image_blocking", type: 'boolean', default: true},
 	{name: "image_two_pass", type: 'boolean', default: true},
-	{name: "schedule_on", type: 'boolean', default: true},
+	{name: "schedule_on", type: 'boolean', default: false},
 	{name: "schedule", type: 'string', default: '[]'},
 	//{name: "save_note", type: 'boolean', default: true}
 	{name: "tips_on", type: 'boolean', default: true},
