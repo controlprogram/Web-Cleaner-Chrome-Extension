@@ -449,7 +449,7 @@ body {
     border-color: #8BADE4;
 	background-color: rgba(0, 0, 0, 0.05)
 }
-[data-form="password"] [data-role="password"] { margin: 20px 0 5px 0 }
+[data-form="password"] [data-role="password"] { margin: 10px 0 5px 0 }
 [data-form="export"] label[for="link"] { display: none }
 
 /**
